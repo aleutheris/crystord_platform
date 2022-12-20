@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html ng-app="voViewer">
+
+<head>
+<meta charset="utf-8" />
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>LinkedID</title>
+</head>
+
+<body>
+
+	<div ng-controller="FrameController">
+		<div id="divImagePixelsGenerated">
+            <table>
+            <tr>
+                <th>Name</th>
+                <th>Age</th>
+                <th>City</th>
+            </tr>
+            <tr ng-repeat="row in tableData">
+                <td>{{row.name}}</td>
+                <td>{{row.age}}</td>
+                <td>{{row.city}}</td>
+            </tr>
+            </table>
+		</div>
+		
+		<script type="text/javascript" src="script.js"></script>
+	</div>
+</body>
+</html>
