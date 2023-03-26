@@ -12,10 +12,16 @@
 
 <body>
     <div ng-controller="pyController">
+      <button ng-click="create_unitbase()">Create Unitbase</button><br>
+      <input type="text" ng-model="unit_title">
+      <button ng-click="add_unit()">Add Unit</button><br>
+      <input type="text" ng-model="unit_id">
+      <button ng-click="remove_unit()">Remove Unit</button>
+      <br>
 
       <input type="text" ng-model="number1">
       <input type="text" ng-model="number2">
-      <button ng-click="calculate()">Calculate</button>
+      <button ng-click="calculate()">Calculate</button><br>
 
       <table>
           <tr>

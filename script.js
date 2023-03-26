@@ -6,6 +6,37 @@
   var pyController = function ($scope, $http) {
     const server_url = "http://localhost:5000";
 
+    $scope.create_unitbase = function () {
+      const url = `${server_url}/create_unitbase`;
+      $http.get(url)
+        .then(function(response) {
+          console.log(response);
+        }, function(error) {
+          console.log(error);
+        });
+    };
+
+    $scope.add_unit = function () {
+      const url = `${server_url}/add_unit?title=${$scope.unit_title}`;
+      $http.get(url)
+        .then(function(response) {
+          console.log(response);
+        }, function(error) {
+          console.log(error);
+        });
+    };
+
+    $scope.remove_unit = function () {
+      const url = `${server_url}/remove_unit?unit_id=${$scope.unit_id}`;
+      $http.get(url)
+        .then(function(response) {
+          console.log(response);
+        }, function(error) {
+          console.log(error);
+        });
+    };
+
+
     $scope.calculate = function () {
       const url_add = `${server_url}/add/${$scope.number1}/${$scope.number2}`;
       const url_sub = `${server_url}/sub/${$scope.number1}/${$scope.number2}`;
