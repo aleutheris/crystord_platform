@@ -1,34 +1,40 @@
 <!DOCTYPE html>
-<html ng-app="voViewer">
+<html ng-app="pyApp">
 
 <head>
-<meta charset="utf-8" />
-<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+    <meta charset="utf-8" />
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
 
-<meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>LinkedID</title>
+    <title>LinkedID</title>
 </head>
 
 <body>
+    <div ng-controller="pyController">
 
-	<div ng-controller="FrameController">
-		<div id="divImagePixelsGenerated">
+      <input type="text" ng-model="number1">
+      <input type="text" ng-model="number2">
+      <button ng-click="calculate()">Calculate</button>
+
       <table>
-      <tr>
-          <th>Name</th>
-          <th>Age</th>
-          <th>City</th>
-      </tr>
-      <tr ng-repeat="row in tableData">
-          <td>{{row.name}}</td>
-          <td>{{row.age}}</td>
-          <td>{{row.city}}</td>
-      </tr>
+          <tr>
+              <th>Ad3d</th>
+              <th>Sub</th>
+              <th>Mul</th>
+              <th>Div</th>
+              <th>Exp</th>
+          </tr>
+          <tr ng-repeat="row in calcTable">
+              <td>{{row.add}}</td>
+              <td>{{row.sub}}</td>
+              <td>{{row.mul}}</td>
+              <td>{{row.div}}</td>
+              <td>{{row.exp}}</td>
+          </tr>
       </table>
-		</div>
 
-		<script type="text/javascript" src="script.js"></script>
-	</div>
+      <script type="text/javascript" src="script.js"></script>
+    </div>
 </body>
 </html>
