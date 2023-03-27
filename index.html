@@ -1,46 +1,48 @@
 <!DOCTYPE html>
 <html ng-app="pyApp">
-
-<head>
+  <head>
     <meta charset="utf-8" />
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
 
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>LinkedID</title>
-</head>
+  </head>
 
-<body>
+  <body>
     <div ng-controller="pyController">
-      <button ng-click="create_unitbase()">Create Unitbase</button><br>
-      <input type="text" ng-model="unit_title">
-      <button ng-click="add_unit()">Add Unit</button><br>
-      <input type="text" ng-model="unit_id">
+      <button ng-click="create_unitbase()">Create Unitbase</button><br />
+      <input type="text" ng-model="unit_title" />
+      <button ng-click="add_unit()">Add Unit</button><br />
+      <input type="text" ng-model="unit_id" />
       <button ng-click="remove_unit()">Remove Unit</button>
-      <br>
+      <br />
 
-      <input type="text" ng-model="number1">
-      <input type="text" ng-model="number2">
-      <button ng-click="calculate()">Calculate</button><br>
+      <button ng-click="search_units()">Get Search Table</button><br />
 
       <table>
-          <tr>
-              <th>Ad3d</th>
-              <th>Sub</th>
-              <th>Mul</th>
-              <th>Div</th>
-              <th>Exp</th>
-          </tr>
-          <tr ng-repeat="row in calcTable">
-              <td>{{row.add}}</td>
-              <td>{{row.sub}}</td>
-              <td>{{row.mul}}</td>
-              <td>{{row.div}}</td>
-              <td>{{row.exp}}</td>
-          </tr>
+        <tr>
+          <th>Title</th>
+          <th>Tags</th>
+          <th>Content</th>
+          <th>Description</th>
+          <th>Constants</th>
+          <th>Links</th>
+          <th>Operation</th>
+        </tr>
+        <tr ng-repeat="row in search_table">
+          <td>{{row["Title"]}}</td>
+          <td>{{row["Tags"]}}</td>
+          <td>{{row["Content"]}}</td>
+          <td>{{row["Description"]}}</td>
+          <td>{{row["Constants"]}}</td>
+          <td>{{row["Links"]}}</td>
+          <td>{{row["Operation"]}}</td>
+        </tr>
+
       </table>
 
       <script type="text/javascript" src="script.js"></script>
     </div>
-</body>
+  </body>
 </html>

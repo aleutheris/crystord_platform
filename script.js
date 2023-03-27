@@ -7,7 +7,7 @@
     const server_url = "http://localhost:5000";
 
     $scope.create_unitbase = function () {
-      const url = `${server_url}/create_unitbase`;
+      const url = `${server_url}/api/create_unitbase`;
       $http.get(url)
         .then(function(response) {
           console.log(response);
@@ -17,7 +17,7 @@
     };
 
     $scope.add_unit = function () {
-      const url = `${server_url}/add_unit?title=${$scope.unit_title}`;
+      const url = `${server_url}/api/add_unit?title=${$scope.unit_title}`;
       $http.get(url)
         .then(function(response) {
           console.log(response);
@@ -27,7 +27,7 @@
     };
 
     $scope.remove_unit = function () {
-      const url = `${server_url}/remove_unit?unit_id=${$scope.unit_id}`;
+      const url = `${server_url}/api/remove_unit?unit_id=${$scope.unit_id}`;
       $http.get(url)
         .then(function(response) {
           console.log(response);
@@ -36,58 +36,15 @@
         });
     };
 
+    $scope.search_units = function () {
+      const url = `${server_url}/api/search_units`;
 
-    $scope.calculate = function () {
-      const url_add = `${server_url}/add/${$scope.number1}/${$scope.number2}`;
-      const url_sub = `${server_url}/sub/${$scope.number1}/${$scope.number2}`;
-      const url_mul = `${server_url}/mul/${$scope.number1}/${$scope.number2}`;
-      const url_div = `${server_url}/div/${$scope.number1}/${$scope.number2}`;
-      const url_exp = `${server_url}/exp/${$scope.number1}/${$scope.number2}`;
-
-      $scope.calcTable = [
-        { add: 0, sub: 0, mul: 0, div: 0, exp: 0 }
-      ];
-
-      $http.get(url_add)
+      $http.get(url)
         .then(function(response) {
-          $scope.calcTable[0].add = response.data.result;
+          $scope.search_table = response.data;
         }, function(error) {
           console.log(error);
         });
-
-      $http.get(url_sub)
-        .then(function(response) {
-          $scope.calcTable[0].sub = response.data.result;
-        }
-        , function(error) {
-          console.log(error);
-        });
-
-      $http.get(url_mul)
-        .then(function(response) {
-          $scope.calcTable[0].mul = response.data.result;
-        }
-        , function(error) {
-          console.log(error);
-        });
-
-      $http.get(url_div)
-        .then(function(response) {
-          $scope.calcTable[0].div = response.data.result;
-        }
-        , function(error) {
-          console.log(error);
-        }
-      );
-
-      $http.get(url_exp)
-        .then(function(response) {
-          $scope.calcTable[0].exp = response.data.result;
-        }
-        , function(error) {
-          console.log(error);
-        }
-      );
     };
   };
 
