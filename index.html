@@ -39,7 +39,28 @@
           <td>{{row["Links"]}}</td>
           <td>{{row["Operation"]}}</td>
         </tr>
+      </table>
 
+
+      <input type="text" ng-model="number1">
+      <input type="text" ng-model="number2">
+      <button ng-click="calculate()">Calculate</button>
+
+      <table>
+          <tr>
+              <th>Add</th>
+              <th>Sub</th>
+              <th>Mul</th>
+              <th>Div</th>
+              <th>Exp</th>
+          </tr>
+          <tr ng-repeat="row in calcTable">
+              <td>{{row.add}}</td>
+              <td>{{row.sub}}</td>
+              <td>{{row.mul}}</td>
+              <td>{{row.div}}</td>
+              <td>{{row.exp}}</td>
+          </tr>
       </table>
 
       <script type="text/javascript" src="script.js"></script>
