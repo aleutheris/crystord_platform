@@ -55,9 +55,10 @@
       const url_mul = `${server_url}/mul/${$scope.number1}/${$scope.number2}`;
       const url_div = `${server_url}/div/${$scope.number1}/${$scope.number2}`;
       const url_exp = `${server_url}/exp/${$scope.number1}/${$scope.number2}`;
+      const url_title = `${server_url}/get_title/0`;
 
       $scope.calcTable = [
-        { add: 0, sub: 0, mul: 0, div: 0, exp: 0 }
+        { add: 0, sub: 0, mul: 0, div: 0, exp: 0, title: "" }
       ];
 
       $http.get(url_add)
@@ -95,6 +96,15 @@
       $http.get(url_exp)
         .then(function(response) {
           $scope.calcTable[0].exp = response.data.result;
+        }
+        , function(error) {
+          console.log(error);
+        }
+      );
+
+      $http.get(url_title)
+        .then(function(response) {
+          $scope.calcTable[0].title = response.data.result;
         }
         , function(error) {
           console.log(error);
