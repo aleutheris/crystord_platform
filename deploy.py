@@ -6,6 +6,8 @@ from datetime import datetime
 SERVER_ADDRESS = "nucubuntunl"
 SERVER_PORT_OUT = "80"
 SERVER_PORT_IN = "80"
+SERVER_HOME = "/home/ample"
+WEBPAGE_DIR = "/webpage"
 JSON_FILE_PATH = 'modified_date.json'
 DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
 PROJECT_NAME = "crystord_web"
@@ -86,6 +88,11 @@ def get_image_ids_by_tag(tag, server_address=None):
 
 
 change_date()
+
+# Update the webpage
+run_command(["ssh", "nucubuntunl", "rm", "-r", SERVER_HOME + WEBPAGE_DIR])
+run_command(["scp", "-r", "."+WEBPAGE_DIR, "nucubuntunl:" + SERVER_HOME + "/"])
+
 local_container_ids = get_container_ids_by_tag(TAG)
 server_container_ids = get_container_ids_by_tag(TAG, server_address=SERVER_ADDRESS)
 local_image_ids = get_image_ids_by_tag(TAG)
@@ -128,7 +135,7 @@ run_command(["rm", "/home/ample/" + PROJECT_NAME + ".tar"])
 run_command(["ssh", "nucubuntunl", "docker", "load", "-i", "/home/ample/" + PROJECT_NAME + ".tar"])
 
 # Run the container
-run_command(["ssh", "nucubuntunl", "sudo", "docker", "run", "--name", PROJECT_NAME, "-d", "-p", SERVER_PORT_OUT+":"+SERVER_PORT_IN, TAG])
+run_command(["ssh", "nucubuntunl", "sudo", "docker", "run", "--name", PROJECT_NAME, "-d", "-p", SERVER_PORT_OUT+":"+SERVER_PORT_IN, "-v", SERVER_HOME+WEBPAGE_DIR+":"+WEBPAGE_DIR, TAG])
 
 # Connect network
 run_command(["ssh", "nucubuntunl", "docker", "network", "connect", DOCKER_NETWORK, PROJECT_NAME])
