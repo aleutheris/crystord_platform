@@ -4,7 +4,7 @@
   var app = angular.module("pyApp", []);
 
   var pyController = function ($scope, $http) {
-    const server_url = `http://crystord:5000`;
+    const server_url = `http://aleutherisnl1.synology.me:5000`;
 
     $scope.create_unitbase = function () {
       const url = `${server_url}/`;

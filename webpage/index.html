@@ -11,8 +11,14 @@
 
   <body>
     <div ng-controller="pyController">
-      <button ng-click="create_unitbase()">Create Element</button><br />
-      <input type="text" ng-model="unit_title" />
+      Title: <input type="text" ng-model="element_title"/><br/>
+      Labels: <input type="text" ng-model="element_labels"/><br/>
+      Content: <input type="text" ng-model="element_content"/><br/>
+
+      <div>
+        <button ng-click="create_unitbase()">Create Element</button><br/>
+      </div>
+
       <div>{{r}}</div>
 
       <script type="text/javascript" src="script.js"></script>
