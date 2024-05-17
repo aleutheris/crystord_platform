@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import argparse
 import subprocess
 import json
 from datetime import datetime
@@ -87,59 +88,55 @@ def get_image_ids_by_tag(tag, server_address=None):
         return []
 
 
-change_date()
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-c", "--container", action="store_false", dest="silent", help="Disable standard output")
+    args = parser.parse_args()
 
-# Update the webpage
-run_command(["ssh", "nucubuntunl", "rm", "-r", SERVER_HOME + WEBPAGE_DIR])
-run_command(["scp", "-r", "."+WEBPAGE_DIR, "nucubuntunl:" + SERVER_HOME + "/"])
+    change_date()
+    run_command(["rsync", "-avz", "--delete", "-e", "ssh", "."+WEBPAGE_DIR, "nucubuntunl:" + SERVER_HOME + "/"])
 
-local_container_ids = get_container_ids_by_tag(TAG)
-server_container_ids = get_container_ids_by_tag(TAG, server_address=SERVER_ADDRESS)
-local_image_ids = get_image_ids_by_tag(TAG)
-server_image_ids = get_image_ids_by_tag(TAG, server_address=SERVER_ADDRESS)
+    if not args.silent:
+        print("Deploying the container...")
 
-# Stop running containers
-if local_container_ids != ['']:
-    run_command(["docker", "stop"] + local_container_ids)
-if server_container_ids != ['']:
-    run_command(["ssh", "nucubuntunl", "docker", "stop"] + server_container_ids)
+        local_container_ids = get_container_ids_by_tag(TAG)
+        server_container_ids = get_container_ids_by_tag(TAG, server_address=SERVER_ADDRESS)
+        local_image_ids = get_image_ids_by_tag(TAG)
+        server_image_ids = get_image_ids_by_tag(TAG, server_address=SERVER_ADDRESS)
 
-# Remove stopped containers
-if local_container_ids != ['']:
-    run_command(["docker", "rm"] + local_container_ids)
-if server_container_ids != ['']:
-    run_command(["ssh", "nucubuntunl", "docker", "rm"] + server_container_ids)
+        if local_container_ids != ['']:
+            run_command(["docker", "stop"] + local_container_ids)
+        if server_container_ids != ['']:
+            run_command(["ssh", "nucubuntunl", "docker", "stop"] + server_container_ids)
 
-# Delete images
-if local_image_ids != ['']:
-    run_command(["docker", "rmi", "-f"] + local_image_ids)
-if server_image_ids != ['']:
-    run_command(["ssh", "nucubuntunl", "docker", "rmi", "-f", TAG])
+        if local_container_ids != ['']:
+            run_command(["docker", "rm"] + local_container_ids)
+        if server_container_ids != ['']:
+            run_command(["ssh", "nucubuntunl", "docker", "rm"] + server_container_ids)
 
-# Build the image
-run_command(["docker", "build", "-t", TAG, "."])
+        if local_image_ids != ['']:
+            run_command(["docker", "rmi", "-f"] + local_image_ids)
+        if server_image_ids != ['']:
+            run_command(["ssh", "nucubuntunl", "docker", "rmi", "-f", TAG])
 
-# Tag the image with the GCR name
-run_command(["docker", "tag", TAG, TAG_2])
+        run_command(["docker", "build", "-t", TAG, "."])
 
-# Push to the Container Registry
-run_command(["docker", "save", "-o", "/home/ample/" + PROJECT_NAME + ".tar", TAG])
+        run_command(["docker", "tag", TAG, TAG_2])
 
-# Copy the image to the server
-run_command(["scp", "/home/ample/" + PROJECT_NAME + ".tar", "nucubuntunl:/home/ample/"])
+        run_command(["docker", "save", "-o", "/home/ample/" + PROJECT_NAME + ".tar", TAG])
 
-# Delete the tar file from the local machine
-run_command(["rm", "/home/ample/" + PROJECT_NAME + ".tar"])
+        run_command(["scp", "/home/ample/" + PROJECT_NAME + ".tar", "nucubuntunl:/home/ample/"])
+        run_command(["rm", "/home/ample/" + PROJECT_NAME + ".tar"])
 
-# Run the load command remotely
-run_command(["ssh", "nucubuntunl", "docker", "load", "-i", "/home/ample/" + PROJECT_NAME + ".tar"])
+        run_command(["ssh", "nucubuntunl", "docker", "load", "-i", "/home/ample/" + PROJECT_NAME + ".tar"])
 
-# Run the container
-run_command(["ssh", "nucubuntunl", "sudo", "docker", "run", "--name", PROJECT_NAME, "-d", "-p", SERVER_PORT_OUT+":"+SERVER_PORT_IN, "-v", SERVER_HOME+WEBPAGE_DIR+":"+WEBPAGE_DIR, TAG])
+        run_command(["ssh", "nucubuntunl", "sudo", "docker", "run", "--name", PROJECT_NAME, "-d", "-p", SERVER_PORT_OUT+":"+SERVER_PORT_IN, "-v", SERVER_HOME+WEBPAGE_DIR+":"+WEBPAGE_DIR, TAG])
 
-# Connect network
-run_command(["ssh", "nucubuntunl", "docker", "network", "connect", DOCKER_NETWORK, PROJECT_NAME])
+        run_command(["ssh", "nucubuntunl", "docker", "network", "connect", DOCKER_NETWORK, PROJECT_NAME])
 
-# List the docker images
-run_command(["docker", "images"])
-run_command(["ssh", "nucubuntunl", "docker", "images"])
+        run_command(["docker", "images"])
+        run_command(["ssh", "nucubuntunl", "docker", "images"])
+
+
+if __name__ == "__main__":
+    main()
