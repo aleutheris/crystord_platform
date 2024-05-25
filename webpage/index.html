@@ -11,15 +11,23 @@
 
   <body>
     <div ng-controller="pyController">
-      Title: <input type="text" ng-model="element_title"/><br/>
-      Labels: <input type="text" ng-model="element_labels"/><br/>
-      Content: <input type="text" ng-model="element_content"/><br/>
+      Title: <input type="text" ng-model="element_title" placeholder="Enter title here"/><br/>
+      <!-- Label: <input type="text" ng-model="element_labels" placeholder="Add a label here"/><br/> -->
+      Content: <input type="text" ng-model="element_content" placeholder="Add your Element content here"/><br/>
 
       <div>
-        <button ng-click="create_unitbase()">Create Element</button><br/>
+        <button ng-click="create_element()">Create Element</button><br/>
       </div>
 
-      <div>{{r}}</div>
+      <br/><br/>
+
+      Element ID: <input type="text" ng-model="element_id" placeholder="Enter element ID here"/><br/>
+
+      <div>
+        <button ng-click="get_element()">Get Element</button><br/>
+      </div>
+
+      <div>{{element_content}}</div>
 
       <script type="text/javascript" src="script.js"></script>
     </div>

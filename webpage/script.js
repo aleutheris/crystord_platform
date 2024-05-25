@@ -6,12 +6,12 @@
   var pyController = function ($scope, $http) {
     const server_url = `http://aleutherisnl1.synology.me:5000`;
 
-    $scope.create_unitbase = function () {
-      const url = `${server_url}/`;
+    $scope.get_element = function () {
+      const url = `${server_url}/api/get_element_content/${$scope.element_id}`;
+
       $http.get(url)
         .then(function(response) {
-          console.log(response);
-          $scope.r = response.data.message;
+          $scope.element_content = response.data.result;
         }, function(error) {
           console.log(error);
         });
