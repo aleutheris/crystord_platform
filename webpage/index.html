@@ -12,7 +12,7 @@
   <body>
     <div ng-controller="pyController">
       Title: <input type="text" ng-model="element_title" placeholder="Enter title here"/><br/>
-      <!-- Label: <input type="text" ng-model="element_labels" placeholder="Add a label here"/><br/> -->
+      Label: <input type="text" ng-model="element_labels" placeholder="Add a label here"/><br/>
       Content: <input type="text" ng-model="element_content" placeholder="Add your Element content here"/><br/>
 
       <div>
@@ -24,7 +24,7 @@
       Element ID: <input type="text" ng-model="element_id" placeholder="Enter element ID here"/><br/>
 
       <div>
-        <button ng-click="get_element()">Get Element</button><br/>
+        <button ng-click="get_element_content()">Get Element</button><br/>
       </div>
 
       <div>{{element_content}}</div>
