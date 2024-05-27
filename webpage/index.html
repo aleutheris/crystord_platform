@@ -19,8 +19,12 @@
         <button ng-click="create_element()">Create Element</button><br/>
       </div>
 
-      <br/><br/>
+      Element ID: {{element_id}}
+      Share Element Content (feed):
+      Share Element Content (web):
     </div>
+
+    <br/><br/>
 
     <div ng-controller="GetElement">
       Element ID: <input type="text" ng-model="element_id" placeholder="Enter element ID here"/><br/>
@@ -32,6 +36,17 @@
       <div>{{element_content}}</div>
 
       <script type="text/javascript" src="script.js"></script>
+    </div>
+
+    <br/><br/>
+
+    <div ng-controller="UpdateElement">
+      Element ID: <input type="text" ng-model="element_id" placeholder="Enter element ID here"/><br/>
+      Content: <input type="text" ng-model="element_content" placeholder="Add your Element content here"/><br/>
+
+      <div>
+        <button ng-click="update_element_content()">Update Element</button><br/>
+      </div>
     </div>
   </body>
 </html>
