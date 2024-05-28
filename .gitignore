@@ -2,6 +2,9 @@
 .venv/
 .vscode/
 .idea/
+.firebase/
+.github/
+.firebaserc
 
 # Doxygen outputs
 doxygen_output/

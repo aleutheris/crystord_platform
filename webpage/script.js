@@ -2,10 +2,12 @@
   "use strict";
 
   var app = angular.module("pyApp", []);
+  var shared_url = 'https://aleutherisnl1.synology.me:5665/api/get_element_content/'
 
   app.controller("CreateElement", function ($scope, $http) {
-    const server_url = `http://aleutherisnl1.synology.me:5000`;
+    const server_url = `https://aleutherisnl1.synology.me:5665`;
     $scope.element_id = 'None'
+    $scope.share_element_content = 'None'
 
     $scope.update_element_content = function () {
       const url = `${server_url}/api/update_element_content`;
@@ -24,6 +26,7 @@
       $http.post(url, {title: $scope.element_title, labels: [$scope.element_labels]})
         .then(function(response_ce) {
           $scope.element_id = response_ce.data.result;
+          $scope.share_element_content = shared_url + $scope.element_id;
 
           $scope.update_element_content();
         }, function(error) {
@@ -33,7 +36,7 @@
   });
 
   app.controller("GetElement", function ($scope, $http) {
-    const server_url = `http://aleutherisnl1.synology.me:5000`;
+    const server_url = `https://aleutherisnl1.synology.me:5665`;
 
     $scope.get_element_content = function () {
       const url = `${server_url}/api/get_element_content/${$scope.element_id}`;
@@ -48,7 +51,7 @@
   });
 
   app.controller("UpdateElement", function ($scope, $http) {
-    const server_url = `http://aleutherisnl1.synology.me:5000`;
+    const server_url = `https://aleutherisnl1.synology.me:5665`;
 
     $scope.update_element_content = function () {
       const url = `${server_url}/api/update_element_content`;
