@@ -95,8 +95,7 @@ def main():
 
     change_date()
     run_command(["rsync", "-avz", "--delete", "-e", "ssh", "."+WEBPAGE_DIR, "nucubuntunl:" + SERVER_HOME + "/"])
-    # Reload nginx inside the docker container
-    # run_command(["ssh", "nucubuntunl", "docker", "exec", "-it", PROJECT_NAME, "nginx", "-s", "reload"])
+    run_command(["firebase", "deploy", "--only", "hosting"])
 
     if not args.silent:
         print("Deploying the container...")
