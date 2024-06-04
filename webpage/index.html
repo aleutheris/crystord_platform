@@ -1,15 +1,16 @@
 <!DOCTYPE html>
 <html ng-app="pyApp">
   <head>
+    <base href="/">
     <meta charset="utf-8" />
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular-route.min.js"></script>
+    <script type="text/javascript" src="script.js"></script>
+    <link rel="stylesheet" href="style.css">
 
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <script type="text/javascript" src="script.js"></script>
     <title>Crystord</title>
-    <link rel="stylesheet" href="style.css">
   </head>
 
   <body>
@@ -24,8 +25,8 @@
         <button ng-click="create_element()">Create Element</button><br/>
       </div>
 
-      Element ID: {{element_id}}<br/>
-      Share Element Content: {{share_element_content}}<br/>
+      ID: {{element_id}}<br/>
+      Content API URL: {{api_element_content}}<br/>
     </div>
 
     <br/><br/>
