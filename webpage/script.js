@@ -1,8 +1,12 @@
 (function () {
   "use strict";
 
-  var app = angular.module("pyApp", []);
+  var app = angular.module("pyApp", ['ngRoute']);
   var shared_url = 'https://aleutherisnl1.synology.me:5665/api/get_element_content/'
+
+  app.config(['$locationProvider', function($locationProvider) {
+    $locationProvider.html5Mode(true);
+  }]);
 
   app.controller("CreateElement", function ($scope, $http) {
     const server_url = `https://aleutherisnl1.synology.me:5665`;
@@ -63,5 +67,9 @@
           console.log(error);
         });
     };
+  });
+
+  app.controller("Element", function ($scope, $http, $location) {
+    var element_id = $location.search().element_id;
   });
 })();

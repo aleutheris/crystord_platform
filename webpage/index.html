@@ -3,15 +3,19 @@
   <head>
     <meta charset="utf-8" />
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular-route.min.js"></script>
 
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
+    <script type="text/javascript" src="script.js"></script>
     <title>Crystord</title>
     <link rel="stylesheet" href="style.css">
   </head>
 
   <body>
     <div ng-controller="CreateElement">
+      <h1>Crystord</h1>
+
       Title: <input type="text" ng-model="element_title" placeholder="Enter title here"/><br/>
       Label: <input type="text" ng-model="element_labels" placeholder="Add a label here"/><br/>
       Content: <input type="text" ng-model="element_content" placeholder="Add your Element content here"/><br/>
@@ -27,21 +31,19 @@
     <br/><br/>
 
     <div ng-controller="GetElement">
-      Element ID: <input type="text" ng-model="element_id" placeholder="Enter element ID here"/><br/>
+      Element ID: <input type="text" ng-model="element_id" placeholder="Enter element ID here" style="width: 300px;"/><br/>
 
       <div>
         <button ng-click="get_element_content()">Get Element</button><br/>
       </div>
 
       <div>{{element_content}}</div>
-
-      <script type="text/javascript" src="script.js"></script>
     </div>
 
     <br/><br/>
 
     <div ng-controller="UpdateElement">
-      Element ID: <input type="text" ng-model="element_id" placeholder="Enter element ID here"/><br/>
+      Element ID: <input type="text" ng-model="element_id" placeholder="Enter element ID here" style="width: 300px;"/><br/>
       Content: <input type="text" ng-model="element_content" placeholder="Add your Element content here"/><br/>
 
       <div>
@@ -49,9 +51,16 @@
       </div>
     </div>
 
+    <br><br><br><br><br><br><br><br><br><br>
     <div>
-      <br><br><br><br><br><br><br><br>
+      <h3>Don't worry, a good looking page will come later.</h2>
+      <img src="images/good_looking_dog.jpg" alt="Good looking dog">
+    </div>
+
+    <div>
+      <br><br><br><br><br>
       <h3>Support Crystord</h3>
+      <h4>By donating you are help me to focus on improving Crystord further, which is exactly what I want! Thank you!</h4>
       <form action="https://www.paypal.com/donate" method="post" target="_blank">
           <input type="hidden" name="hosted_button_id" value="WJCFEZSJP36EG">
           <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit" title="PayPal - The safer, easier way to pay online!" alt="Donate with PayPal button">
