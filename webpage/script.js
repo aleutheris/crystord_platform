@@ -74,12 +74,14 @@
 
     $scope.element_id = $location.search().element_id;
 
-    const url = `${server_url}/api/get_element_content/${$scope.element_id}`;
+    const url = `${server_url}/api/get_element_all_fields/${$scope.element_id}`;
     $scope.element_content_api_url = shared_url + $scope.element_id;
 
     $http.get(url)
       .then(function(response) {
-        $scope.element_content = response.data.result;
+        $scope.element_data = response.data;
+        $scope.element_title = response.data['Title'];
+        $scope.element_content = response.data['Content'];
       }, function(error) {
         console.log(error);
       });
