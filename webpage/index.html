@@ -26,7 +26,7 @@
       </div>
 
       ID: {{element_id}}<br/>
-      Content API URL: {{api_element_content}}<br/>
+      Share URL: {{element_share_url}}<br/>
     </div>
 
     <br/><br/>
@@ -35,10 +35,12 @@
       Element ID: <input type="text" ng-model="element_id" placeholder="Enter element ID here" style="width: 300px;"/><br/>
 
       <div>
-        <button ng-click="get_element_content()">Get Element</button><br/>
+        <button ng-click="get_element()">Get Element</button><br/>
       </div>
 
-      <div>{{element_content}}</div>
+      Labels: {{element_labels}}<br/>
+      Content: {{element_content}}<br/>
+      Share URL: {{element_share_url}}<br/>
     </div>
 
     <br/><br/>
