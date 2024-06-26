@@ -9,15 +9,15 @@
     $locationProvider.html5Mode(true);
   }]);
 
-  app.controller("CreateElement", function ($scope, $http) {
+  app.controller("CreateAtom", function ($scope, $http) {
     const server_url = `https://aleutherisnl1.synology.me:5665`;
-    $scope.element_id = 'None'
-    $scope.element_share_url = 'None'
+    $scope.atom_id = 'None'
+    $scope.atom_share_url = 'None'
 
-    $scope.update_element_content = function () {
+    $scope.update_atom_content = function () {
       const url = `${server_url}/api/update_element_content`;
 
-      $http.put(url, {uuid: $scope.element_id, content: $scope.element_content})
+      $http.put(url, {uuid: $scope.atom_id, content: $scope.atom_content})
         .then(function(response) {
           console.log(response);
         }, function(error) {
@@ -25,63 +25,63 @@
         });
     };
 
-    $scope.create_element = function () {
+    $scope.create_atom = function () {
       const url = `${server_url}/api/create_element`;
-      $scope.element_id = 'None'
-      $scope.element_share_url = 'None'
+      $scope.atom_id = 'None'
+      $scope.atom_share_url = 'None'
 
-      $http.post(url, {title: $scope.element_title, labels: [$scope.element_labels]})
+      $http.post(url, {title: $scope.atom_title, labels: [$scope.atom_labels]})
         .then(function(response_ce) {
-          $scope.element_id = response_ce.data.result;
-          $scope.element_share_url = share_url + $scope.element_id;
+          $scope.atom_id = response_ce.data.result;
+          $scope.atom_share_url = share_url + $scope.atom_id;
 
-          $scope.update_element_content();
+          $scope.update_atom_content();
         }, function(error) {
           console.log(error);
         });
     };
   });
 
-  app.controller("GetElement", function ($scope, $http) {
+  app.controller("GetAtom", function ($scope, $http) {
     const server_url = `https://aleutherisnl1.synology.me:5665`;
 
-    $scope.get_element = function () {
-      $scope.get_element_content();
-      $scope.list_element_labels();
+    $scope.get_atom = function () {
+      $scope.get_atom_content();
+      $scope.list_atom_labels();
     };
 
-    $scope.get_element_content = function () {
-      const url = `${server_url}/api/get_element_content/${$scope.element_id}`;
-      $scope.element_share_url = share_url + $scope.element_id;
+    $scope.get_atom_content = function () {
+      const url = `${server_url}/api/get_element_content/${$scope.atom_id}`;
+      $scope.atom_share_url = share_url + $scope.atom_id;
 
       $http.get(url)
         .then(function(response) {
-          $scope.element_content = response.data.result;
+          $scope.atom_content = response.data.result;
         }, function(error) {
           console.log(error);
         });
     };
 
-    $scope.list_element_labels = function () {
-      const url = `${server_url}/api/list_labels/${$scope.element_id}`;
-      $scope.element_share_url = share_url + $scope.element_id;
+    $scope.list_atom_labels = function () {
+      const url = `${server_url}/api/list_labels/${$scope.atom_id}`;
+      $scope.atom_share_url = share_url + $scope.atom_id;
 
       $http.get(url)
         .then(function(response) {
-          $scope.element_labels = response.data.result;
+          $scope.atom_labels = response.data.result;
         }, function(error) {
           console.log(error);
         });
     };
   });
 
-  app.controller("UpdateElement", function ($scope, $http) {
+  app.controller("UpdateAtom", function ($scope, $http) {
     const server_url = `https://aleutherisnl1.synology.me:5665`;
 
-    $scope.update_element_content = function () {
+    $scope.update_atom_content = function () {
       const url = `${server_url}/api/update_element_content`;
 
-      $http.put(url, {uuid: $scope.element_id, content: $scope.element_content})
+      $http.put(url, {uuid: $scope.atom_id, content: $scope.atom_content})
         .then(function(response) {
           console.log(response);
         }, function(error) {
@@ -90,26 +90,26 @@
     };
   });
 
-  app.controller("GetElementURL", function ($scope, $http, $location, $window) {
+  app.controller("GetAtomURL", function ($scope, $http, $location, $window) {
     const server_url = `https://aleutherisnl1.synology.me:5665`;
 
-    $scope.element_id = $location.search().element_id;
+    $scope.atom_id = $location.search().atom_id;
 
-    const url = `${server_url}/api/get_element_all_fields/${$scope.element_id}`;
-    $scope.element_content_api_url = api_url + $scope.element_id;
+    const url = `${server_url}/api/get_element_all_fields/${$scope.atom_id}`;
+    $scope.atom_content_api_url = api_url + $scope.atom_id;
 
     $http.get(url)
       .then(function(response) {
-        $scope.element_data = response.data;
-        $scope.element_title = response.data['Title'];
-        // $scope.element_labels = response.data['Labels'];
-        $scope.element_content = response.data['Content'];
+        $scope.atom_data = response.data;
+        $scope.atom_title = response.data['Title'];
+        // $scope.atom_labels = response.data['Labels'];
+        $scope.atom_content = response.data['Content'];
       }, function(error) {
         console.log(error);
       });
 
       $scope.copyToClipboard = function(textToCopy) {
-        var textArea = document.createElement("textarea");
+        var textArea = document.createAtom("textarea");
         textArea.value = textToCopy;
         document.body.appendChild(textArea);
         textArea.select();

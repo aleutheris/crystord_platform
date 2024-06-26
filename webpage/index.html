@@ -14,43 +14,43 @@
   </head>
 
   <body>
-    <div ng-controller="CreateElement">
+    <div ng-controller="CreateAtom">
       <h1>Crystord</h1>
 
-      Title: <input type="text" ng-model="element_title" placeholder="Enter title here"/><br/>
-      Label: <input type="text" ng-model="element_labels" placeholder="Add a label here"/><br/>
-      Content: <input type="text" ng-model="element_content" placeholder="Add your Element content here"/><br/>
+      Title: <input type="text" ng-model="atom_title" placeholder="Enter title here"/><br/>
+      Label: <input type="text" ng-model="atom_labels" placeholder="Add a label here"/><br/>
+      Content: <input type="text" ng-model="atom_content" placeholder="Add your Atom content here"/><br/>
 
       <div>
-        <button ng-click="create_element()">Create Element</button><br/>
+        <button ng-click="create_atom()">Create Atom</button><br/>
       </div>
 
-      ID: {{element_id}}<br/>
-      Share URL: {{element_share_url}}<br/>
+      ID: {{atom_id}}<br/>
+      Share URL: {{atom_share_url}}<br/>
     </div>
 
     <br/><br/>
 
-    <div ng-controller="GetElement">
-      Element ID: <input type="text" ng-model="element_id" placeholder="Enter element ID here" style="width: 300px;"/><br/>
+    <div ng-controller="GetAtom">
+      Atom ID: <input type="text" ng-model="atom_id" placeholder="Enter atom ID here" style="width: 300px;"/><br/>
 
       <div>
-        <button ng-click="get_element()">Get Element</button><br/>
+        <button ng-click="get_atom()">Get Atom</button><br/>
       </div>
 
-      Labels: {{element_labels}}<br/>
-      Content: {{element_content}}<br/>
-      Share URL: {{element_share_url}}<br/>
+      Labels: {{atom_labels}}<br/>
+      Content: {{atom_content}}<br/>
+      Share URL: {{atom_share_url}}<br/>
     </div>
 
     <br/><br/>
 
-    <div ng-controller="UpdateElement">
-      Element ID: <input type="text" ng-model="element_id" placeholder="Enter element ID here" style="width: 300px;"/><br/>
-      Content: <input type="text" ng-model="element_content" placeholder="Add your Element content here"/><br/>
+    <div ng-controller="UpdateAtom">
+      Atom ID: <input type="text" ng-model="atom_id" placeholder="Enter atom ID here" style="width: 300px;"/><br/>
+      Content: <input type="text" ng-model="atom_content" placeholder="Add your Atom content here"/><br/>
 
       <div>
-        <button ng-click="update_element_content()">Update Element</button><br/>
+        <button ng-click="update_atom_content()">Update Atom</button><br/>
       </div>
     </div>
 
