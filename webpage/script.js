@@ -2,8 +2,8 @@
   "use strict";
 
   var app = angular.module("pyApp", ['ngRoute']);
-  var api_url = 'https://aleutherisnl1.synology.me:5665/api/get_element_content/'
-  var share_url = 'http://crystord/element.html?element_id='
+  var api_url = 'https://aleutherisnl1.synology.me:5665/api/get_atom_content/'
+  var share_url = 'http://crystord/atom.html?atom_id='
 
   app.config(['$locationProvider', function($locationProvider) {
     $locationProvider.html5Mode(true);
@@ -15,7 +15,7 @@
     $scope.atom_share_url = 'None'
 
     $scope.update_atom_content = function () {
-      const url = `${server_url}/api/update_element_content`;
+      const url = `${server_url}/api/update_atom_content`;
 
       $http.put(url, {uuid: $scope.atom_id, content: $scope.atom_content})
         .then(function(response) {
@@ -26,7 +26,7 @@
     };
 
     $scope.create_atom = function () {
-      const url = `${server_url}/api/create_element`;
+      const url = `${server_url}/api/create_atom`;
       $scope.atom_id = 'None'
       $scope.atom_share_url = 'None'
 
@@ -51,7 +51,7 @@
     };
 
     $scope.get_atom_content = function () {
-      const url = `${server_url}/api/get_element_content/${$scope.atom_id}`;
+      const url = `${server_url}/api/get_atom_content/${$scope.atom_id}`;
       $scope.atom_share_url = share_url + $scope.atom_id;
 
       $http.get(url)
@@ -79,7 +79,7 @@
     const server_url = `https://aleutherisnl1.synology.me:5665`;
 
     $scope.update_atom_content = function () {
-      const url = `${server_url}/api/update_element_content`;
+      const url = `${server_url}/api/update_atom_content`;
 
       $http.put(url, {uuid: $scope.atom_id, content: $scope.atom_content})
         .then(function(response) {
@@ -95,7 +95,7 @@
 
     $scope.atom_id = $location.search().atom_id;
 
-    const url = `${server_url}/api/get_element_all_fields/${$scope.atom_id}`;
+    const url = `${server_url}/api/get_atom_all_fields/${$scope.atom_id}`;
     $scope.atom_content_api_url = api_url + $scope.atom_id;
 
     $http.get(url)
