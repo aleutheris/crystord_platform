@@ -63,10 +63,9 @@
     };
 
     $scope.list_atom_labels = function () {
-      const url = `${server_url}/api/list_labels/${$scope.atom_id}`;
-      $scope.atom_share_url = share_url + $scope.atom_id;
+      const url = `${server_url}/api/list_labels`;
 
-      $http.get(url)
+      $http.post(url, {uuids: [$scope.atom_id]})
         .then(function(response) {
           $scope.atom_labels = response.data.result;
         }, function(error) {
