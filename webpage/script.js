@@ -89,6 +89,17 @@
     };
   });
 
+  app.controller("AddLabelsToAtoms", function ($scope, $http) {
+    const server_url = `https://aleutherisnl1.synology.me:5665`;
+
+    $scope.AddLabelsToAtoms = function () {
+      const url = `${server_url}/api/add_labels`;
+
+      $scope.atomId = 'None'
+      $scope.atomLabels = 'None'
+    };
+  });
+
   app.controller("GetAtomURL", function ($scope, $http, $location, $window) {
     const server_url = `https://aleutherisnl1.synology.me:5665`;
 

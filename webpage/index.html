@@ -54,6 +54,17 @@
       </div>
     </div>
 
+    <br/><br/>
+
+    <div ng-controller="AddLabelsToAtoms">
+      Atom ID: <input type="text" ng-model="atomId" placeholder="Enter atom ID here" style="width: 300px;"/><br/>
+      Label: <input type="text" ng-model="atomLabels" placeholder="Add your Atom label here"/><br/>
+
+      <div>
+        <button ng-click="AddLabelsToAtoms()">Add Label to Atom</button><br/>
+      </div>
+    </div>
+
     <br><br><br><br><br><br><br><br><br><br>
     <div>
       <h3>Don't worry, a good looking page will come later.</h2>
