@@ -17,7 +17,7 @@
     $scope.update_atom_content = function () {
       const url = `${server_url}/api/update_atom_content`;
 
-      $http.put(url, {uuid: $scope.atom_id, content: $scope.atom_content})
+      $http.put(url, {atom_ids: $scope.atom_id, content: $scope.atom_content})
         .then(function(response) {
           console.log(response);
         }, function(error) {
@@ -27,8 +27,6 @@
 
     $scope.create_atom = function () {
       const url = `${server_url}/api/create_atom`;
-      $scope.atom_id = 'None'
-      $scope.atom_share_url = 'None'
 
       $http.post(url, {title: $scope.atom_title, labels: [$scope.atom_labels]})
         .then(function(response_ce) {
@@ -64,8 +62,7 @@
 
     $scope.list_atom_labels = function () {
       const url = `${server_url}/api/list_labels`;
-
-      $http.post(url, {uuids: [$scope.atom_id]})
+      $http.post(url, {atom_ids: [$scope.atom_id]})
         .then(function(response) {
           $scope.atom_labels = response.data.result;
         }, function(error) {
@@ -79,8 +76,7 @@
 
     $scope.update_atom_content = function () {
       const url = `${server_url}/api/update_atom_content`;
-
-      $http.put(url, {uuid: $scope.atom_id, content: $scope.atom_content})
+      $http.put(url, {atom_ids: $scope.atom_id, content: $scope.atom_content})
         .then(function(response) {
           console.log(response);
         }, function(error) {
@@ -93,10 +89,35 @@
     const server_url = `https://aleutherisnl1.synology.me:5665`;
 
     $scope.AddLabelsToAtoms = function () {
-      const url = `${server_url}/api/add_labels`;
+      const url = `${server_url}/api/add_labels_to_atoms`;
+      $http.post(url, {atom_ids: [$scope.atomId], labels: [$scope.atomLabels]})
+        .then(function(response) {
+          console.log(response);
+        }, function(error) {
+          console.log(error);
+        });
+    };
+  });
 
-      $scope.atomId = 'None'
-      $scope.atomLabels = 'None'
+  app.controller("RemoveLabelsFromAtoms", function ($scope, $http) {
+    const server_url = `https://aleutherisnl1.synology.me:5665`;
+
+    $scope.RemoveLabelsFromAtoms = function () {
+      const url = `${server_url}/api/remove_labels_from_atoms`;
+      const data = {atom_ids: [$scope.atomId], labels: [$scope.atomLabels]};
+      const config = {
+        headers: {
+          'Content-Type': 'application/json;charset=utf-8'
+        },
+        data: data
+      };
+
+      $http.delete(url, config)
+        .then(function(response) {
+          console.log(response);
+        }, function(error) {
+          console.log(error);
+        });
     };
   });
 
