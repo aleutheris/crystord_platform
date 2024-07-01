@@ -75,8 +75,14 @@
     const server_url = `https://aleutherisnl1.synology.me:5665`;
 
     $scope.update_atom_content = function () {
-      const url = `${server_url}/api/update_atom_content`;
-      $http.put(url, {atom_ids: $scope.atom_id, content: $scope.atom_content})
+      const url = `${server_url}/api/update_atom_scalar_fields`;
+      var fields = {
+        'Title': $scope.atom_title,
+        'Description': $scope.atom_description,
+        'Content': $scope.atom_content,
+        'Operation': $scope.atom_operation,
+      }
+      $http.put(url, {atom_ids: $scope.atom_id, fields: fields})
         .then(function(response) {
           console.log(response);
         }, function(error) {
@@ -126,14 +132,22 @@
 
     $scope.atom_id = $location.search().atom_id;
 
-    const url = `${server_url}/api/get_atom_all_fields/${$scope.atom_id}`;
+    const url_all_fields = `${server_url}/api/get_atom_all_fields/${$scope.atom_id}`;
     $scope.atom_content_api_url = api_url + $scope.atom_id;
 
-    $http.get(url)
+    const url_list_labels = `${server_url}/api/list_labels`;
+
+    $http.post(url_list_labels, {atom_ids: [$scope.atom_id]})
+      .then(function(response) {
+        $scope.atom_labels = response.data.result;
+      }, function(error) {
+        console.log(error);
+    });
+
+    $http.get(url_all_fields)
       .then(function(response) {
         $scope.atom_data = response.data;
         $scope.atom_title = response.data['Title'];
-        // $scope.atom_labels = response.data['Labels'];
         $scope.atom_content = response.data['Content'];
       }, function(error) {
         console.log(error);

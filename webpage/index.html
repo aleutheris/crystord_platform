@@ -46,8 +46,11 @@
     <br/><br/>
 
     <div ng-controller="UpdateAtom">
-      Atom ID: <input type="text" ng-model="atom_id" placeholder="Enter atom ID here" style="width: 300px;"/><br/>
-      Content: <input type="text" ng-model="atom_content" placeholder="Add your Atom content here"/><br/>
+      Atom ID:     <input type="text" ng-model="atom_id" placeholder="Enter atom ID here" style="width: 300px;"/><br/>
+      Title:       <input type="text" ng-model="atom_title" placeholder="Enter title here"/><br/>
+      Description: <input type="text" ng-model="atom_description" placeholder="Add a description here"/><br/>
+      Content:     <input type="text" ng-model="atom_content" placeholder="Add your Atom content here"/><br/>
+      Operation:   <input type="text" ng-model="atom_operation" placeholder="Add your Atom operation here"/><br/>
 
       <div>
         <button ng-click="update_atom_content()">Update Atom</button><br/>
