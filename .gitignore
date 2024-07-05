@@ -19,3 +19,4 @@ doc/.directory
 *.pyc
 *.json
 *.pkl
+node_modules
