@@ -186,6 +186,11 @@ export const navItems: INavData[] = [
     url: '/charts'
   },
   {
+    name: 'Control',
+    iconComponent: { name: 'cil-chart-pie' },
+    url: '/control'
+  },
+  {
     name: 'Icons',
     iconComponent: { name: 'cil-star' },
     url: '/icons',

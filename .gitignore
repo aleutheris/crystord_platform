@@ -1,10 +1,6 @@
 # Local environment
-.venv/
-.vscode/
-.idea/
-.firebase/
-.github/
-.firebaserc
+node_modules
+.angular
 
 # Doxygen outputs
 doxygen_output/
@@ -19,4 +15,3 @@ doc/.directory
 *.pyc
 *.json
 *.pkl
-node_modules
