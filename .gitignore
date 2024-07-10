@@ -13,5 +13,4 @@ doc/.directory
 *.xlsx
 *.txt
 *.pyc
-*.json
 *.pkl
