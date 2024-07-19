@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { DocsExampleComponent } from '@docs-components/public-api';
 import {
@@ -53,34 +54,53 @@ import { AtomService } from './atom.service';
       RouterLink,
       DropdownDividerDirective,
       FormSelectDirective,
-      ReactiveFormsModule
+      ReactiveFormsModule,
+      FormsModule
     ]
   })
 export class ControlComponent {
   atom: Atom;
+  atomId: string;
 
   constructor(private atomService: AtomService) {
+    this.atomId = '';
+
     this.atom = {
-      title: '',
-      description: '',
       labels: [],
-      content: '',
-      constants: [],
-      operations: ''
+      bonds: [],
+      properties: {
+        entries: {
+          id: '',
+          storedAt: ''
+        },
+        nuclearies: {
+          title: '',
+          description: '',
+          content: '',
+          constants: [],
+          operation: '',
+          atomType: ''
+        },
+        ionies: {}
+      }
     };
   }
 
-  // Function which makes a REST API GET Call to get all atom data
-  getAtomAll() {
-    // REST API Call
-
+  getAtomAll(atomId: string) {
+    this.atomService.getAtomAll(atomId).subscribe({
+      next: (data) => {
+        this.atom = data;
+      },
+      error: (error) => {
+        console.error('There was an error retrieving the atom data:', error);
+      }
+    });
   }
 
-  atomId: string = '801dd83d-a804-48e9-8a1a-e4cc5fa271a3';
   getAtomContent() {
     this.atomService.getAtomContent(this.atomId).subscribe({
       next: (data) => {
-        this.atom.content = data.result;
+        this.atom.properties.nuclearies.content = data.result;
       },
       error: (error) => {
         console.error('There was an error retrieving the atom data:', error);

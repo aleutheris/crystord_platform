@@ -1,6 +1,7 @@
 # Local environment
-node_modules
-.angular
+node_modules/
+.angular/
+.vscode/
 
 # Doxygen outputs
 doxygen_output/

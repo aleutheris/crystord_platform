@@ -1,8 +1,8 @@
 <c-row>
-  <c-col xs="6">
+  <c-col xs="12">
     <c-card class="mb-4">
       <c-card-header ngPreserveWhitespaces>
-        <strong>Get</strong> <small></small>
+        <strong>Atom Features</strong> <small></small>
       </c-card-header>
       <c-card-body>
         <!-- <p class="text-body-secondary small">
@@ -13,40 +13,101 @@
             <input aria-describedby="basic-addon1"
                    aria-label="id"
                    cFormControl
-                   placeholder="Write Atom's ID here."
-            />
+                   placeholder=""
+                   [(ngModel)]="atomId"/>
+            <button cButton
+              color="secondary"
+              id="button-addon2"
+              type="button"
+              variant="outline"
+              (click)="getAtomAll(atomId)">
+              Get Atom
+            </button>
+          </c-input-group>
+
+          <c-input-group class="mb-3">
+            <span cInputGroupText id="basic-addon1">Labels</span>
+            <input aria-describedby="basic-addon1"
+                   aria-label="id"
+                   cFormControl
+                   placeholder=""
+                   [(ngModel)]="atom.labels"/>
+          </c-input-group>
+
+          <c-input-group class="mb-3">
+            <span cInputGroupText id="basic-addon1">Title</span>
+            <input aria-describedby="basic-addon1"
+                   aria-label="id"
+                   cFormControl
+                   placeholder=""
+                   [(ngModel)]="atom.properties.nuclearies.title"/>
+          </c-input-group>
+
+          <c-input-group class="mb-3">
+            <span cInputGroupText id="basic-addon1">Description</span>
+            <input aria-describedby="basic-addon1"
+                   aria-label="id"
+                   cFormControl
+                   placeholder=""
+                   [(ngModel)]="atom.properties.nuclearies.description"/>
+          </c-input-group>
+
+          <c-input-group class="mb-3">
+            <span cInputGroupText id="basic-addon1">Content</span>
+            <input aria-describedby="basic-addon1"
+                   aria-label="id"
+                   cFormControl
+                   placeholder=""
+                   [(ngModel)]="atom.properties.nuclearies.content"/>
+          </c-input-group>
+
+          <c-input-group class="mb-3">
+            <span cInputGroupText id="basic-addon1">Operation</span>
+            <input aria-describedby="basic-addon1"
+                   aria-label="id"
+                   cFormControl
+                   placeholder=""
+                   [(ngModel)]="atom.properties.nuclearies.operation"/>
+          </c-input-group>
+
+          <c-input-group class="mb-3">
+            <span cInputGroupText id="basic-addon1">Constants</span>
+            <input aria-describedby="basic-addon1"
+                   aria-label="id"
+                   cFormControl
+                   placeholder=""
+                   [(ngModel)]="atom.properties.nuclearies.constants"/>
           </c-input-group>
 
           <button cButton
             color="secondary"
             id="inputGroupFileAddon03"
             type="button"
-            variant="outline"
-          >
-            Get Atom
+            variant="outline">
+            Update Atom
           </button>
       </c-card-body>
     </c-card>
   </c-col>
 </c-row>
 
-<c-row>
+<!-- <c-row>
   <c-col xs="6">
     <c-card class="mb-4">
       <c-card-header ngPreserveWhitespaces>
         <strong>Create</strong> <small></small>
       </c-card-header>
       <c-card-body>
-        <!-- <p class="text-body-secondary small">
+        <p class="text-body-secondary small">
           Control atoms menu.
-        </p> -->
+        </p>
           <c-input-group class="mb-3">
             <span cInputGroupText id="basic-addon1">Title</span>
             <input aria-describedby="basic-addon1"
                    aria-label="Title"
                    cFormControl
                    placeholder="Write Atom's title here."
-                   value="{{ atom.title }}"
+                   value="{{ atom.properties.nuclearies.title }}"
             />
           </c-input-group>
           <c-input-group class="mb-3">
@@ -55,7 +116,7 @@
                    aria-label="Description"
                    cFormControl
                    placeholder="Write Atom's description here."
-                   value="{{ atom.description }}"
+                   value="{{ atom.properties.nuclearies.description }}"
             />
           </c-input-group>
           <c-input-group class="mb-3">
@@ -73,7 +134,7 @@
                    aria-label="Content"
                    cFormControl
                    placeholder="Write Atom's content here."
-                   value="{{ atom.content }}"
+                   value="{{ atom.properties.nuclearies.content }}"
             />
           </c-input-group>
 
@@ -88,4 +149,4 @@
       </c-card-body>
     </c-card>
   </c-col>
-</c-row>
+</c-row> -->
