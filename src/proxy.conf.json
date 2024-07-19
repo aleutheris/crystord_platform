@@ -1,0 +1,6 @@
+{
+  "/api": {
+    "target": "http://crystord:5665",
+    "secure": false
+  }
+}
