@@ -59,32 +59,32 @@ import { AtomService } from './atom.service';
     ]
   })
 export class ControlComponent {
-  private atom?: Atom;
+  atom: Atom;
   atomId: string;
   newAtom: Atom;
 
   constructor(private atomService: AtomService) {
     this.atomId = '';
 
-    // this.atom = {
-    //   labels: [],
-    //   bonds: [],
-    //   properties: {
-    //     entries: {
-    //       id: '',
-    //       storedAt: ''
-    //     },
-    //     nuclearies: {
-    //       title: '',
-    //       description: '',
-    //       content: '',
-    //       constants: [],
-    //       operation: '',
-    //       atomType: ''
-    //     },
-    //     ionies: {}
-    //   }
-    // };
+    this.atom = {
+      labels: [],
+      bonds: [],
+      properties: {
+        entries: {
+          id: '',
+          storedAt: ''
+        },
+        nuclearies: {
+          title: '',
+          description: '',
+          content: '',
+          constants: [],
+          operation: '',
+          atomType: ''
+        },
+        ionies: {}
+      }
+    };
 
     this.newAtom = {
       labels: [],
@@ -110,7 +110,7 @@ export class ControlComponent {
   getAllAtomFeatures() {
     this.atomService.getAllAtomFeatures(this.atomId).subscribe({
       next: (data) => {
-        data = this.assignAtomData(data);
+        data = this.atomDataToCamelCase(data);
         this.atom = data;
       },
       error: (error) => {
@@ -119,11 +119,36 @@ export class ControlComponent {
     });
   }
 
-  assignAtomData(data: any) {
+  updateAtomNuclearies() {
+    let atomDataSnakeCase: any = this.atomDataToSnakeCase(this.atom);
+    let atom_id = this.atomId;
+    let nuclearies = atomDataSnakeCase.properties.nuclearies;
+    let sendData = {atom_id, nuclearies};
+
+    this.atomService.updateAtomNuclearies(sendData).subscribe({
+      next: (data) => {
+        console.log('Atom data updated successfully:', data);
+      },
+      error: (error) => {
+        console.error('There was an error updating the atom data:', error);
+      }
+    });
+  }
+
+  // Private methods
+  private atomDataToCamelCase(data: any) {
     data.properties.nuclearies.atomType = data.properties.nuclearies.atom_type;
     data.properties.entries.storedAt = data.properties.entries.stored_at;
     delete data.properties.nuclearies.atom_type;
     delete data.properties.entries.stored_at;
+    return data;
+  }
+
+  private atomDataToSnakeCase(data: any) {
+    data.properties.nuclearies.atom_type = data.properties.nuclearies.atomType;
+    data.properties.entries.stored_at = data.properties.entries.storedAt;
+    delete data.properties.nuclearies.atomType;
+    delete data.properties.entries.storedAt;
     return data;
   }
 }

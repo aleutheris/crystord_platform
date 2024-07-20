@@ -27,11 +27,7 @@
 
           <c-input-group class="mb-3">
             <span cInputGroupText id="basic-addon1">Stored At</span>
-            <input aria-describedby="basic-addon1"
-                   aria-label="id"
-                   cFormControl
-                   placeholder=""
-                   [(ngModel)]="atom.properties.entries.storedAt"/>
+            <span cInputGroupText id="basic-addon1">{{ atom.properties.entries.storedAt }}</span>
           </c-input-group>
 
           <c-input-group class="mb-3">
@@ -101,7 +97,8 @@
             color="secondary"
             id="inputGroupFileAddon03"
             type="button"
-            variant="outline">
+            variant="outline"
+            (click)="updateAtomNuclearies()">
             Update Atom
           </button>
       </c-card-body>
