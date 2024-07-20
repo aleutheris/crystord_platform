@@ -5,9 +5,9 @@
         <strong>Atom Features</strong> <small></small>
       </c-card-header>
       <c-card-body>
-        <!-- <p class="text-body-secondary small">
-          Create an atom.
-        </p> -->
+        <p class="text-body-secondary small">
+          Get and update your Atom.
+        </p>
           <c-input-group class="mb-3">
             <span cInputGroupText id="basic-addon1">Atom ID</span>
             <input aria-describedby="basic-addon1"
@@ -20,9 +20,18 @@
               id="button-addon2"
               type="button"
               variant="outline"
-              (click)="getAtomAll(atomId)">
+              (click)="getAllAtomFeatures()">
               Get Atom
             </button>
+          </c-input-group>
+
+          <c-input-group class="mb-3">
+            <span cInputGroupText id="basic-addon1">Stored At</span>
+            <input aria-describedby="basic-addon1"
+                   aria-label="id"
+                   cFormControl
+                   placeholder=""
+                   [(ngModel)]="atom.properties.entries.storedAt"/>
           </c-input-group>
 
           <c-input-group class="mb-3">
@@ -32,6 +41,15 @@
                    cFormControl
                    placeholder=""
                    [(ngModel)]="atom.labels"/>
+          </c-input-group>
+
+          <c-input-group class="mb-3">
+            <span cInputGroupText id="basic-addon1">Bonds</span>
+            <input aria-describedby="basic-addon1"
+                   aria-label="id"
+                   cFormControl
+                   placeholder=""
+                   [(ngModel)]="atom.bonds"/>
           </c-input-group>
 
           <c-input-group class="mb-3">

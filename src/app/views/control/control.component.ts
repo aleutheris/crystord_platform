@@ -59,13 +59,34 @@ import { AtomService } from './atom.service';
     ]
   })
 export class ControlComponent {
-  atom: Atom;
+  private atom?: Atom;
   atomId: string;
+  newAtom: Atom;
 
   constructor(private atomService: AtomService) {
     this.atomId = '';
 
-    this.atom = {
+    // this.atom = {
+    //   labels: [],
+    //   bonds: [],
+    //   properties: {
+    //     entries: {
+    //       id: '',
+    //       storedAt: ''
+    //     },
+    //     nuclearies: {
+    //       title: '',
+    //       description: '',
+    //       content: '',
+    //       constants: [],
+    //       operation: '',
+    //       atomType: ''
+    //     },
+    //     ionies: {}
+    //   }
+    // };
+
+    this.newAtom = {
       labels: [],
       bonds: [],
       properties: {
@@ -86,9 +107,10 @@ export class ControlComponent {
     };
   }
 
-  getAtomAll(atomId: string) {
-    this.atomService.getAtomAll(atomId).subscribe({
+  getAllAtomFeatures() {
+    this.atomService.getAllAtomFeatures(this.atomId).subscribe({
       next: (data) => {
+        data = this.assignAtomData(data);
         this.atom = data;
       },
       error: (error) => {
@@ -97,14 +119,11 @@ export class ControlComponent {
     });
   }
 
-  getAtomContent() {
-    this.atomService.getAtomContent(this.atomId).subscribe({
-      next: (data) => {
-        this.atom.properties.nuclearies.content = data.result;
-      },
-      error: (error) => {
-        console.error('There was an error retrieving the atom data:', error);
-      }
-    });
+  assignAtomData(data: any) {
+    data.properties.nuclearies.atomType = data.properties.nuclearies.atom_type;
+    data.properties.entries.storedAt = data.properties.entries.stored_at;
+    delete data.properties.nuclearies.atom_type;
+    delete data.properties.entries.stored_at;
+    return data;
   }
 }
