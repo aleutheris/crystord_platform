@@ -24,7 +24,7 @@ import {
   DropdownDividerDirective,
   FormSelectDirective
 } from '@coreui/angular';
-import { Atom } from './atom.model';
+import { Atom, NewAtom } from './atom.model';
 import { AtomService } from './atom.service';
 
 @Component({
@@ -60,8 +60,8 @@ import { AtomService } from './atom.service';
   })
 export class ControlComponent {
   atom: Atom;
-  atomId: string;
   newAtom: Atom;
+  atomId: string;
 
   constructor(private atomService: AtomService) {
     this.atomId = '';
@@ -71,7 +71,7 @@ export class ControlComponent {
       bonds: [],
       properties: {
         entries: {
-          id: '',
+          uuid: '',
           storedAt: ''
         },
         nuclearies: {
@@ -91,7 +91,7 @@ export class ControlComponent {
       bonds: [],
       properties: {
         entries: {
-          id: '',
+          uuid: '',
           storedAt: ''
         },
         nuclearies: {
@@ -107,8 +107,27 @@ export class ControlComponent {
     };
   }
 
+  createAtom() {
+    let tempAtom: NewAtom;
+
+    tempAtom = {
+      title: this.newAtom.properties.nuclearies.title,
+      labels: this.newAtom.labels
+    };
+
+    this.atomService.createAtom(tempAtom).subscribe({
+      next: (data) => {
+        console.log('Atom created successfully:', data);
+        this.atomId = data['result'];
+      },
+      error: (error) => {
+        console.error('There was an error creating the atom:', error);
+      }
+    });
+  }
+
   getAllAtomFeatures() {
-    this.atomService.getAllAtomFeatures(this.atomId).subscribe({
+    this.atomService.getAllAtomFeatures(this.atom.properties.entries.uuid).subscribe({
       next: (data) => {
         data = this.atomDataToCamelCase(data);
         this.atom = data;
@@ -120,10 +139,11 @@ export class ControlComponent {
   }
 
   updateAtomNuclearies() {
-    let atomDataSnakeCase: any = this.atomDataToSnakeCase(this.atom);
-    let atom_id = this.atomId;
+    let atom = JSON.parse(JSON.stringify(this.atom));
+    let atomDataSnakeCase: any = this.atomDataToSnakeCase(atom);
+    let atom_uuid = atomDataSnakeCase.properties.entries.uuid;
     let nuclearies = atomDataSnakeCase.properties.nuclearies;
-    let sendData = {atom_id, nuclearies};
+    let sendData = {atom_uuid, nuclearies};
 
     this.atomService.updateAtomNuclearies(sendData).subscribe({
       next: (data) => {

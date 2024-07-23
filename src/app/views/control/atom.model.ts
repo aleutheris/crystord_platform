@@ -11,7 +11,7 @@ export interface AtomProperties {
 };
 
 export interface AtomEntries {
-  id: string,
+  uuid: string,
   storedAt: string
 };
 
@@ -22,4 +22,9 @@ export interface AtomNuclearies {
   constants: string[],
   operation: string,
   atomType: string
+};
+
+export interface NewAtom {
+  title: string,
+  labels: string[]
 };

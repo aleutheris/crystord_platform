@@ -14,7 +14,7 @@
                    aria-label="id"
                    cFormControl
                    placeholder=""
-                   [(ngModel)]="atomId"/>
+                   [(ngModel)]="atom.properties.entries.uuid"/>
             <button cButton
               color="secondary"
               id="button-addon2"
@@ -106,8 +106,8 @@
   </c-col>
 </c-row>
 
-<!-- <c-row>
-  <c-col xs="6">
+<c-row>
+  <c-col xs="12">
     <c-card class="mb-4">
       <c-card-header ngPreserveWhitespaces>
         <strong>Create</strong> <small></small>
@@ -122,35 +122,24 @@
                    aria-label="Title"
                    cFormControl
                    placeholder="Write Atom's title here."
-                   value="{{ atom.properties.nuclearies.title }}"
-            />
-          </c-input-group>
-          <c-input-group class="mb-3">
-            <span cInputGroupText id="basic-addon1">Description</span>
-            <input aria-describedby="basic-addon1"
-                   aria-label="Description"
-                   cFormControl
-                   placeholder="Write Atom's description here."
-                   value="{{ atom.properties.nuclearies.description }}"
+                   [(ngModel)]="newAtom.properties.nuclearies.title"
             />
           </c-input-group>
           <c-input-group class="mb-3">
             <span cInputGroupText id="basic-addon1">Labels</span>
             <input aria-describedby="basic-addon1"
-                   aria-label="Labels"
-                   cFormControl
-                   placeholder="Write Atom's labels here."
-                   value="{{ atom.labels }}"
+              aria-label="Labels"
+              cFormControl
+              placeholder="Write Atom's labels here."
+              [(ngModel)]="newAtom.labels"
+              [ngModelOptions]="{ standalone: true }"
+              (ngModelChange)="newAtom.labels = $event.split(',')"
             />
           </c-input-group>
+
           <c-input-group class="mb-3">
-            <span cInputGroupText id="basic-addon1">Content</span>
-            <input aria-describedby="basic-addon1"
-                   aria-label="Content"
-                   cFormControl
-                   placeholder="Write Atom's content here."
-                   value="{{ atom.properties.nuclearies.content }}"
-            />
+            <span cInputGroupText id="basic-addon1">Atom ID</span>
+            <span cInputGroupText id="basic-addon1">{{ this.atomId }}</span>
           </c-input-group>
 
           <button cButton
@@ -158,10 +147,10 @@
             id="inputGroupFileAddon03"
             type="button"
             variant="outline"
-            (click)="getAtomContent()">
+            (click)="createAtom()">
             Create Atom
           </button>
       </c-card-body>
     </c-card>
   </c-col>
-</c-row> -->
+</c-row>

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
 
 
 @Injectable({
@@ -9,6 +9,18 @@ import { catchError } from 'rxjs/operators';
 })
 export class AtomService {
   constructor(private http: HttpClient) { }
+
+  createAtom(data: any): Observable<any> {
+    return this.http.post(`/api/create_atom`, data).pipe(
+      catchError(error => {
+        console.error('An error occurred while creating atom', error);
+        return throwError(() => new Error('An error occurred while creating atom'));
+      }),
+      map((response: any) => {
+        return response;
+      })
+    );
+  }
 
   getAllAtomFeatures(data: any): Observable<any> {
     return this.http.get(`/api/get_atom_all_features/${data}`).pipe(
