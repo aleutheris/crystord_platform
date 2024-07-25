@@ -1,5 +1,6 @@
 # Local environment
 node_modules/
+dist/
 .angular/
 .vscode/
 

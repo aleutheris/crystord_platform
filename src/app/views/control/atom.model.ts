@@ -28,3 +28,9 @@ export interface NewAtom {
   title: string,
   labels: string[]
 };
+
+export interface SearchData {
+  labels: string[],
+  bonds: string[],
+  properties: string[]
+}

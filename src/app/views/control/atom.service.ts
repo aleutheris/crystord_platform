@@ -39,4 +39,13 @@ export class AtomService {
       })
     );
   }
+
+  searchAtoms(data: any): Observable<any> {
+    return this.http.post(`/api/search_atoms`, data).pipe(
+      catchError(error => {
+        console.error('An error occurred while searching atoms', error);
+        return throwError(() => new Error('An error occurred while searching atoms'));
+      })
+    );
+  }
 }

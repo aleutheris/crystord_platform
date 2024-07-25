@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormsModule } from '@angular/forms';
@@ -22,10 +23,12 @@ import {
   DropdownMenuDirective,
   DropdownItemDirective,
   DropdownDividerDirective,
-  FormSelectDirective
+  FormSelectDirective,
+  TableDirective,
 } from '@coreui/angular';
-import { Atom, NewAtom } from './atom.model';
+import { Atom, NewAtom, SearchData } from './atom.model';
 import { AtomService } from './atom.service';
+import { at } from 'lodash-es';
 
 @Component({
     selector: 'app-control',
@@ -33,6 +36,7 @@ import { AtomService } from './atom.service';
     styleUrls: ['./control.component.scss'],
     standalone: true,
     imports: [
+      CommonModule,
       RowComponent,
       ColComponent,
       TextColorDirective,
@@ -55,16 +59,21 @@ import { AtomService } from './atom.service';
       DropdownDividerDirective,
       FormSelectDirective,
       ReactiveFormsModule,
-      FormsModule
+      FormsModule,
+      TableDirective
     ]
   })
 export class ControlComponent {
   atom: Atom;
   newAtom: Atom;
   atomId: string;
+  searchText: string;
+  searchTable: Atom[];
 
   constructor(private atomService: AtomService) {
     this.atomId = '';
+    this.searchText = 'labels=';
+    this.searchTable = [];
 
     this.atom = {
       labels: [],
@@ -126,8 +135,8 @@ export class ControlComponent {
     });
   }
 
-  getAllAtomFeatures() {
-    this.atomService.getAllAtomFeatures(this.atom.properties.entries.uuid).subscribe({
+  getAllAtomFeatures(atom: Atom) {
+    this.atomService.getAllAtomFeatures(atom.properties.entries.uuid).subscribe({
       next: (data) => {
         data = this.atomDataToCamelCase(data);
         this.atom = data;
@@ -155,6 +164,18 @@ export class ControlComponent {
     });
   }
 
+  searchAtoms() {
+    this.atomService.searchAtoms(this.parseSearchText()).subscribe({
+      next: (data) => {
+        let atomData = this.atomsDataToCamelCase(data['result']);
+        this.searchTable = atomData;
+      },
+      error: (error) => {
+        console.error('There was an error searching for atoms:', error);
+      }
+    });
+  }
+
   // Private methods
   private atomDataToCamelCase(data: any) {
     data.properties.nuclearies.atomType = data.properties.nuclearies.atom_type;
@@ -170,5 +191,23 @@ export class ControlComponent {
     delete data.properties.nuclearies.atomType;
     delete data.properties.entries.storedAt;
     return data;
+  }
+
+  private atomsDataToCamelCase(data: any) {
+    data.forEach((atom: any) => {
+      atom.properties.nuclearies.atomType = atom.properties.nuclearies.atom_type;
+      atom.properties.entries.storedAt = atom.properties.entries.stored_at;
+      delete atom.properties.nuclearies.atom_type;
+      delete atom.properties.entries.stored_at;
+    });
+    return data;
+  }
+
+  private parseSearchText() {
+    return {
+      labels: this.searchText.split('=')[1].split(',')
+      // bonds: [],
+      // properties: []
+    };
   }
 }
