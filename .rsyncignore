@@ -1,0 +1,14 @@
+.angular
+.git/
+.vscode/
+doc/
+node_modules/
+
+.gitignore
+.rsyncignore
+build.sh
+CHANGELOG.md
+deploy.py
+docs.html
+LICENSE
+README.md

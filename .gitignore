@@ -16,3 +16,4 @@ doc/.directory
 *.txt
 *.pyc
 *.pkl
+modified_date.json

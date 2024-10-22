@@ -1,13 +1,14 @@
-FROM node:18-alpine
+FROM node:20-alpine
 
 WORKDIR /app
-COPY angular.json karma.conf.js package*.json tsconfig*.json ./
 
+COPY package*.json ./
+
+RUN npm install -g @angular/cli --unsafe-perm
 RUN npm install
-RUN npm install @coreui/angular @coreui/icons-angular @coreui/coreui
 
 COPY . .
 
-EXPOSE 80
+EXPOSE 4201
 
 CMD ["npm", "start"]

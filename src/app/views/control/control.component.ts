@@ -204,10 +204,21 @@ export class ControlComponent {
   }
 
   private parseSearchText() {
-    return {
-      labels: this.searchText.split('=')[1].split(',')
-      // bonds: [],
-      // properties: []
-    };
+    const searchText = this.searchText;
+    const result: { labels: string[], bonds: string[] } = { labels: [], bonds: [] };
+
+    const pairs = searchText.split(' ');
+
+    pairs.forEach(pair => {
+      const [key, value] = pair.split('=');
+
+      if (key === 'labels') {
+        result.labels = value ? value.split(',') : [];
+      } else if (key === 'bonds') {
+        result.bonds = value ? value.split(',') : [];
+      }
+    });
+
+    return result;
   }
 }

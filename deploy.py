@@ -5,10 +5,11 @@ import json
 from datetime import datetime
 
 SERVER_ADDRESS = "nucubuntunl"
-SERVER_PORT_OUT = "80"
-SERVER_PORT_IN = "80"
-SERVER_HOME = "/home/ample/webpage"
-WEBPAGE_DIR = "/src"
+SERVER_PORT_OUT = "4201"
+SERVER_PORT_IN = "4201"
+SERVER_HOME = "/home/ample/http"
+APP_DIR = "/app"
+PRESERVED_FOLDER = "/node_modules"
 JSON_FILE_PATH = 'modified_date.json'
 DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
 PROJECT_NAME = "crystord_web"
@@ -94,8 +95,7 @@ def main():
     args = parser.parse_args()
 
     change_date()
-    run_command(["rsync", "-avz", "--delete", "-e", "ssh", "."+WEBPAGE_DIR, "nucubuntunl:" + SERVER_HOME + "/"])
-    # run_command(["firebase", "deploy", "--only", "hosting"])
+    run_command(["rsync", "-avz", "--exclude-from", ".rsyncignore", "--delete", "ssh", "./", "nucubuntunl:" + SERVER_HOME + "/"])
 
     if not args.silent:
         print("Deploying the container...")
@@ -131,7 +131,8 @@ def main():
 
         run_command(["ssh", "nucubuntunl", "docker", "load", "-i", "/home/ample/" + PROJECT_NAME + ".tar"])
 
-        run_command(["ssh", "nucubuntunl", "sudo", "docker", "run", "--name", PROJECT_NAME, "-d", "-p", SERVER_PORT_OUT+":"+SERVER_PORT_IN, "-v", SERVER_HOME+WEBPAGE_DIR+":"+WEBPAGE_DIR, TAG])
+        run_command(["ssh", "nucubuntunl", "sudo", "docker", "run", "--name", PROJECT_NAME, "-d", "-p",
+                     SERVER_PORT_OUT+":"+SERVER_PORT_IN, "-v", SERVER_HOME+":"+APP_DIR, "-v", APP_DIR+PRESERVED_FOLDER, TAG])
 
         run_command(["ssh", "nucubuntunl", "docker", "network", "connect", DOCKER_NETWORK, PROJECT_NAME])
 
