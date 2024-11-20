@@ -12,9 +12,6 @@ import { RowComponent, ColComponent, TextColorDirective, CardComponent, CardHead
     imports: [RowComponent, ColComponent, TextColorDirective, CardComponent, CardHeaderComponent, CardBodyComponent, DocsExampleComponent, ReactiveFormsModule, FormsModule, FormDirective, FormLabelDirective, FormControlDirective, ButtonDirective, NgStyle]
 })
 export class FinanceFormComponent {
-
   public favoriteColor = '#26ab3c';
-
   constructor() { }
-
 }

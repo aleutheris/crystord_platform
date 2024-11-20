@@ -14,10 +14,9 @@ describe('FinanceFormComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-    imports: [CardModule, GridModule, FormsModule, FormModule, ButtonModule, RouterTestingModule, FinanceFormComponent],
-    providers: [IconSetService]
-})
-      .compileComponents();
+      imports: [CardModule, GridModule, FormsModule, FormModule, ButtonModule, RouterTestingModule, FinanceFormComponent],
+      providers: [IconSetService]
+    }).compileComponents();
   });
 
   beforeEach(() => {

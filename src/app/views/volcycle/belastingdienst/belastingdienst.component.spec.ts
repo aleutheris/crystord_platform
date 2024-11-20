@@ -13,10 +13,9 @@ describe('BelastingdienstComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-    imports: [CardModule, GridModule, RouterTestingModule, BelastingdienstComponent],
-    providers: [IconSetService]
-})
-      .compileComponents();
+      imports: [CardModule, GridModule, RouterTestingModule, BelastingdienstComponent],
+      providers: [IconSetService]
+    }).compileComponents();
   });
 
   beforeEach(() => {
