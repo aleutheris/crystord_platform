@@ -4,7 +4,7 @@ export const routes: Routes = [
   {
     path: '',
     data: {
-      title: 'Forms'
+      title: 'Volcycle'
     },
     children: [
       {
@@ -14,14 +14,14 @@ export const routes: Routes = [
       },
       {
         path: 'finance-form',
-        loadComponent: () => import('./finance-form/form-controls.component').then(m => m.FormControlsComponent),
+        loadComponent: () => import('./finance-form/finance-form.component').then(m => m.FinanceFormComponent),
         data: {
           title: 'Finance Form'
         }
       },
       {
         path: 'belastingdienst',
-        loadComponent: () => import('./belastingdienst/select.component').then(m => m.SelectComponent),
+        loadComponent: () => import('./belastingdienst/belastingdienst.component').then(m => m.BelastingdienstComponent),
         data: {
           title: 'Belastingdienst'
         }

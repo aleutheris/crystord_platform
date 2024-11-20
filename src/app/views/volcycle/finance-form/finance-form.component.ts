@@ -6,12 +6,12 @@ import { RowComponent, ColComponent, TextColorDirective, CardComponent, CardHead
 
 @Component({
     selector: 'app-form-controls',
-    templateUrl: './form-controls.component.html',
-    styleUrls: ['./form-controls.component.scss'],
+    templateUrl: './finance-form.component.html',
+    styleUrls: ['./finance-form.component.scss'],
     standalone: true,
     imports: [RowComponent, ColComponent, TextColorDirective, CardComponent, CardHeaderComponent, CardBodyComponent, DocsExampleComponent, ReactiveFormsModule, FormsModule, FormDirective, FormLabelDirective, FormControlDirective, ButtonDirective, NgStyle]
 })
-export class FormControlsComponent {
+export class FinanceFormComponent {
 
   public favoriteColor = '#26ab3c';
 

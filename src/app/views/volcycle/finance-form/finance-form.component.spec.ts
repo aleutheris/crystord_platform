@@ -1,19 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { FormsModule } from '@angular/forms';
 import { RouterTestingModule } from '@angular/router/testing';
 
-import { CardModule, GridModule } from '@coreui/angular';
+import { ButtonModule, CardModule, FormModule, GridModule } from '@coreui/angular';
 import { IconSetService } from '@coreui/icons-angular';
 import { iconSubset } from '../../../icons/icon-subset';
-import { SelectComponent } from './select.component';
+import { FinanceFormComponent } from './finance-form.component';
 
-describe('SelectComponent', () => {
-  let component: SelectComponent;
-  let fixture: ComponentFixture<SelectComponent>;
+describe('FinanceFormComponent', () => {
+  let component: FinanceFormComponent;
+  let fixture: ComponentFixture<FinanceFormComponent>;
   let iconSetService: IconSetService;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-    imports: [CardModule, GridModule, RouterTestingModule, SelectComponent],
+    imports: [CardModule, GridModule, FormsModule, FormModule, ButtonModule, RouterTestingModule, FinanceFormComponent],
     providers: [IconSetService]
 })
       .compileComponents();
@@ -23,7 +24,7 @@ describe('SelectComponent', () => {
     iconSetService = TestBed.inject(IconSetService);
     iconSetService.icons = { ...iconSubset };
 
-    fixture = TestBed.createComponent(SelectComponent);
+    fixture = TestBed.createComponent(FinanceFormComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
