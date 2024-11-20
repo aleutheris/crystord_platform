@@ -95,7 +95,7 @@ def main():
     args = parser.parse_args()
 
     change_date()
-    run_command(["rsync", "-avz", "--exclude-from", ".rsyncignore", "--delete", "ssh", "./", "nucubuntunl:" + SERVER_HOME + "/"])
+    run_command(["rsync", "-avz", "--exclude-from", ".rsyncignore", "--delete", "-e", "ssh", "./", "nucubuntunl:" + SERVER_HOME + "/"])
 
     if not args.silent:
         print("Deploying the container...")
