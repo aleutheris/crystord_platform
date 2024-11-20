@@ -6,6 +6,23 @@ export const navItems: INavData[] = [
     iconComponent: { name: 'cil-chart-pie' },
     url: '/control'
   },
+  {
+    name: 'Volcycle',
+    url: '/volcycle',
+    iconComponent: { name: 'cil-notes' },
+    children: [
+      {
+        name: 'Finance Form',
+        url: '/volcycle/finance-form',
+        icon: 'nav-icon-bullet'
+      },
+      {
+        name: 'Belastingdienst',
+        url: '/volcycle/belastingdienst',
+        icon: 'nav-icon-bullet'
+      }
+    ]
+  },
   // {
   //   name: 'Dashboard',
   //   url: '/dashboard',
