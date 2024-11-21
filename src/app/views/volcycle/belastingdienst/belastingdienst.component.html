@@ -2,7 +2,7 @@
   <c-col xs="12">
     <c-card class="mb-4">
       <c-card-header>
-        <strong>Volcycle</strong> <small> Message</small>
+        <strong>Volcycle</strong> <small>Belastingaangifte per kwartaal</small>
       </c-card-header>
       <c-card-body>
         <select aria-label="Default select example" cSelect>
@@ -11,6 +11,14 @@
           <option value="2">2024</option>
           <option value="3">2025</option>
         </select>
+        <button cButton
+          color="secondary"
+          id="button-addon2"
+          type="button"
+          variant="outline"
+          (click)="getBelastingTable()">
+          Get Table
+        </button>
         <table [hover]="true" cTable>
           <thead>
             <tr>
@@ -23,37 +31,13 @@
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>Row 1, Cell 1</td>
-              <td>Row 1, Cell 2</td>
-              <td>Row 1, Cell 3</td>
-              <td>Row 1, Cell 4</td>
-              <td>Row 1, Cell 5</td>
-              <td>Row 1, Cell 6</td>
-            </tr>
-            <tr>
-              <td>Row 2, Cell 1</td>
-              <td>Row 2, Cell 2</td>
-              <td>Row 2, Cell 3</td>
-              <td>Row 2, Cell 4</td>
-              <td>Row 2, Cell 5</td>
-              <td>Row 2, Cell 6</td>
-            </tr>
-            <tr>
-              <td>Row 3, Cell 1</td>
-              <td>Row 3, Cell 2</td>
-              <td>Row 3, Cell 3</td>
-              <td>Row 3, Cell 4</td>
-              <td>Row 3, Cell 5</td>
-              <td>Row 3, Cell 6</td>
-            </tr>
-            <tr>
-              <td>Row 4, Cell 1</td>
-              <td>Row 4, Cell 2</td>
-              <td>Row 4, Cell 3</td>
-              <td>Row 4, Cell 4</td>
-              <td>Row 4, Cell 5</td>
-              <td>Row 4, Cell 6</td>
+            <tr *ngFor="let belastingElement of belastingTable">
+              <td>{{ belastingElement.Kwartaal }}</td>
+              <td>{{ belastingElement.Begindatum }}</td>
+              <td>{{ belastingElement.Einddatum }}</td>
+              <td>{{ belastingElement.Omzet }}</td>
+              <td>{{ belastingElement.Ontvangen }}</td>
+              <td>{{ belastingElement.Voorbelasting }}</td>
             </tr>
           </tbody>
         </table>

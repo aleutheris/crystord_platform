@@ -14,18 +14,18 @@
         />
         <table [hover]="true" cTable>
           <thead>
-          <tr>
-            <th scope="col">Title</th>
-            <th scope="col">Content</th>
-            <th scope="col">Stored At</th>
-          </tr>
+            <tr>
+              <th scope="col">Title</th>
+              <th scope="col">Content</th>
+              <th scope="col">Stored At</th>
+            </tr>
           </thead>
           <tbody>
-          <tr *ngFor="let atom of searchTable" (click)="getAllAtomFeatures(atom)">
-            <td>{{ atom.properties.nuclearies.title }}</td>
-            <td>{{ atom.properties.nuclearies.content }}</td>
-            <td>{{ atom.properties.entries.storedAt }}</td>
-          </tr>
+            <tr *ngFor="let atom of searchTable" (click)="getAllAtomFeatures(atom)">
+              <td>{{ atom.properties.nuclearies.title }}</td>
+              <td>{{ atom.properties.nuclearies.content }}</td>
+              <td>{{ atom.properties.entries.storedAt }}</td>
+            </tr>
           </tbody>
         </table>
       </c-card-body>
