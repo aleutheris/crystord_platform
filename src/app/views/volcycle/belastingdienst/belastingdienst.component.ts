@@ -54,7 +54,7 @@ export class BelastingdienstComponent {
   }
 
   getBelastingTable() {
-    let query: {query: string} = {query: 'belasting'};
+    let query: {labels: string[]} = {labels: ['belasting']};
     this.belastingService.getBelastingTable(query).subscribe({
       next: (data) => {
         // let belastingData = this.atomsDataToCamelCase(data['result']);
