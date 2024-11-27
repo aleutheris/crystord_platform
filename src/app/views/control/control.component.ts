@@ -139,6 +139,7 @@ export class ControlComponent {
     this.atomService.getAllAtomFeatures(atom.properties.entries.uuid).subscribe({
       next: (data) => {
         data = this.atomDataToCamelCase(data);
+        data = this.convertAtomContentToString(data);
         this.atom = data;
       },
       error: (error) => {
@@ -153,6 +154,7 @@ export class ControlComponent {
     let atom_uuid = atomDataSnakeCase.properties.entries.uuid;
     let nuclearies = atomDataSnakeCase.properties.nuclearies;
     let sendData = {atom_uuid, nuclearies};
+    sendData.nuclearies.content = this.parseValue(sendData.nuclearies.content);
 
     this.atomService.updateAtomNuclearies(sendData).subscribe({
       next: (data) => {
@@ -168,6 +170,7 @@ export class ControlComponent {
     this.atomService.searchAtoms(this.parseSearchText()).subscribe({
       next: (data) => {
         let atomData = this.atomsDataToCamelCase(data['result']);
+        atomData = this.atomsDataContentToString(atomData);
         this.searchTable = atomData;
       },
       error: (error) => {
@@ -201,6 +204,26 @@ export class ControlComponent {
       delete atom.properties.entries.stored_at;
     });
     return data;
+  }
+
+  private atomsDataContentToString(data: any) {
+    data.forEach((atom: any) => {
+      atom = this.convertAtomContentToString(atom);
+    });
+    return data;
+  }
+
+  private convertAtomContentToString(atom: Atom) {
+    if (typeof atom.properties.nuclearies.content !== 'string') {
+      atom.properties.nuclearies.content = JSON.stringify(atom.properties.nuclearies.content);
+    }
+    return atom;
+  }
+
+  private parseValue(value: any) {
+    if (typeof value === 'string') {
+      return JSON.parse(value);
+    }
   }
 
   private parseSearchText() {
