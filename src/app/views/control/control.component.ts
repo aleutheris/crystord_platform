@@ -149,12 +149,15 @@ export class ControlComponent {
   }
 
   updateAtomNuclearies() {
+    let PROPERTY_UUID = 'uuid';
     let atom = JSON.parse(JSON.stringify(this.atom));
     let atomDataSnakeCase: any = this.atomDataToSnakeCase(atom);
     let atom_uuid = atomDataSnakeCase.properties.entries.uuid;
     let nuclearies = atomDataSnakeCase.properties.nuclearies;
-    let sendData = {atom_uuid, nuclearies};
-    sendData.nuclearies.content = this.parseValue(sendData.nuclearies.content);
+    nuclearies[PROPERTY_UUID] = atom_uuid;
+    nuclearies.content = this.parseValue(nuclearies.content);
+
+    let sendData = {'atoms_nuclearies': [nuclearies]};
 
     this.atomService.updateAtomNuclearies(sendData).subscribe({
       next: (data) => {

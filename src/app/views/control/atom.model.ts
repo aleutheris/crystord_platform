@@ -1,3 +1,5 @@
+let PROPERTY_UUID = "uuid"
+
 export interface Atom {
   labels: string[],
   bonds: string[],

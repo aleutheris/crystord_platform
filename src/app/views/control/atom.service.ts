@@ -32,7 +32,7 @@ export class AtomService {
   }
 
   updateAtomNuclearies(data: any): Observable<any> {
-    return this.http.put(`/api/update_atom_scalar_nuclearies`, data).pipe(
+    return this.http.put(`/api/update_atoms_scalar_nuclearies`, data).pipe(
       catchError(error => {
         console.error('An error occurred while updating atom content', error);
         return throwError(() => new Error('An error occurred while updating atom content'));
