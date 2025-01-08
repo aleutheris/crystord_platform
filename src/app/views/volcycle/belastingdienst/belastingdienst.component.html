@@ -2,6 +2,40 @@
   <c-col xs="12">
     <c-card class="mb-4">
       <c-card-header>
+        <strong>Volcycle</strong> <small>Financial Data</small>
+      </c-card-header>
+      <c-card-body>
+        <button cButton
+          color="secondary"
+          id="button-addon2"
+          type="button"
+          variant="outline"
+          (click)="getPreBelastingTable()">
+          Get Table
+        </button>
+        <table [hover]="true" cTable>
+          <thead>
+            <tr>
+              <th>Datum</th>
+              <th>Omzet over kwartaal</th>
+              <th>Ontvangen hoog omzetbelasting over kwartall</th>
+              <th>Voorbelasting over kwartaal</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let e of preBelastingTable">
+              <td>{{ e[0] }}</td>
+              <td>{{ e[1] }}</td>
+              <td>{{ e[2] }}</td>
+              <td>{{ e[3] }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </c-card-body>
+    </c-card>
+
+    <!-- <c-card class="mb-4">
+      <c-card-header>
         <strong>Volcycle</strong> <small>Belastingaangifte per kwartaal</small>
       </c-card-header>
       <c-card-body>
@@ -42,7 +76,7 @@
           </tbody>
         </table>
       </c-card-body>
-    </c-card>
+    </c-card> -->
   </c-col>
 </c-row>
 

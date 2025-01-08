@@ -18,4 +18,13 @@ export class BelastingService {
       })
     );
   }
+
+  getPreBelastingTable(data: any): Observable<any> {
+    return this.http.post(`/api/readouts`, data).pipe(
+      catchError(error => {
+        console.error('An error occurred while get prebelasting readouts', error);
+        return throwError(() => new Error('An error occurred while get prebelasting readouts'));
+      })
+    );
+  }
 }

@@ -40,8 +40,10 @@ import { BelastingService } from './belasting.service';
 export class BelastingdienstComponent {
   belastingElement: BelastingElement;
   belastingTable: BelastingElement[];
+  preBelastingTable: [];
 
   constructor(private belastingService: BelastingService) {
+    this.preBelastingTable = [];
     this.belastingTable = [];
     this.belastingElement = {
       Kwartaal: '',
@@ -60,6 +62,18 @@ export class BelastingdienstComponent {
         // let belastingData = this.atomsDataToCamelCase(data['result']);
         // this.belastingTable = belastingData;
         this.belastingTable = data['result'];
+      },
+      error: (error) => {
+        console.error('There was an error searching for belasting:', error);
+      }
+    });
+  }
+
+  getPreBelastingTable() {
+    let query: {readout: string} = {readout: 'get_prebelastingdienst_table'};
+    this.belastingService.getPreBelastingTable(query).subscribe({
+      next: (data) => {
+        this.preBelastingTable = data['result'];
       },
       error: (error) => {
         console.error('There was an error searching for belasting:', error);
