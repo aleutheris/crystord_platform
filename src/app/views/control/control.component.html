@@ -24,7 +24,7 @@
             <tr *ngFor="let atom of searchTable" (click)="getAllAtomFeatures(atom)">
               <td>{{ atom.properties.nuclearies.title }}</td>
               <td>{{ atom.properties.nuclearies.content }}</td>
-              <td>{{ atom.properties.entries.storedAt }}</td>
+              <!-- <td>{{ atom.properties.shellies.storedAt }}</td> -->
             </tr>
           </tbody>
         </table>
@@ -47,7 +47,7 @@
                    aria-label="id"
                    cFormControl
                    placeholder=""
-                   [(ngModel)]="atom.properties.entries.uuid"/>
+                   [(ngModel)]="atom.properties.shellies.uuid"/>
             <button cButton
               color="secondary"
               id="button-addon2"
@@ -60,7 +60,7 @@
 
           <c-input-group class="mb-3">
             <span cInputGroupText id="basic-addon1">Stored At</span>
-            <span cInputGroupText id="basic-addon1">{{ atom.properties.entries.storedAt }}</span>
+            <span cInputGroupText id="basic-addon1">{{ atom.properties.shellies.changeHistory }}</span>
           </c-input-group>
 
           <c-input-group class="mb-3">

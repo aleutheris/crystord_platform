@@ -7,14 +7,14 @@ export interface Atom {
 };
 
 export interface AtomProperties {
-  entries: AtomEntries,
+  shellies: AtomShellies,
   nuclearies: AtomNuclearies,
   ionies: {}
 };
 
-export interface AtomEntries {
+export interface AtomShellies {
   uuid: string,
-  storedAt: string
+  changeHistory: []
 };
 
 export interface AtomNuclearies {

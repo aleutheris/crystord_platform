@@ -79,9 +79,9 @@ export class ControlComponent {
       labels: [],
       bonds: [],
       properties: {
-        entries: {
+        shellies: {
           uuid: '',
-          storedAt: ''
+          changeHistory: []
         },
         nuclearies: {
           title: '',
@@ -99,9 +99,9 @@ export class ControlComponent {
       labels: [],
       bonds: [],
       properties: {
-        entries: {
+        shellies: {
           uuid: '',
-          storedAt: ''
+          changeHistory: []
         },
         nuclearies: {
           title: '',
@@ -136,11 +136,31 @@ export class ControlComponent {
   }
 
   getAllAtomFeatures(atom: Atom) {
-    this.atomService.getAllAtomFeatures(atom.properties.entries.uuid).subscribe({
+    let rq: {
+      readout: string,
+      args: {
+        properties: {
+          shellies: {
+            uuid: string
+          }
+        }
+      }
+    } = {
+      readout: 'retrieve_node_features',
+      args: {
+        properties: {
+          shellies: {
+            uuid: atom.properties.shellies.uuid
+          }
+        }
+      }
+    };
+
+    this.atomService.getAllAtomFeatures(rq).subscribe({
       next: (data) => {
-        data = this.atomDataToCamelCase(data);
-        data = this.convertAtomContentToString(data);
-        this.atom = data;
+        data['result'] = this.atomDataToCamelCase(data['result']);
+        data['result'] = this.convertAtomContentToString(data['result']);
+        this.atom = data['result'];
       },
       error: (error) => {
         console.error('There was an error retrieving the atom data:', error);
@@ -152,7 +172,7 @@ export class ControlComponent {
     let PROPERTY_UUID = 'uuid';
     let atom = JSON.parse(JSON.stringify(this.atom));
     let atomDataSnakeCase: any = this.atomDataToSnakeCase(atom);
-    let atom_uuid = atomDataSnakeCase.properties.entries.uuid;
+    let atom_uuid = atomDataSnakeCase.properties.shellies.uuid;
     let nuclearies = atomDataSnakeCase.properties.nuclearies;
     nuclearies[PROPERTY_UUID] = atom_uuid;
     nuclearies.content = this.parseValue(nuclearies.content);
@@ -184,27 +204,27 @@ export class ControlComponent {
 
   // Private methods
   private atomDataToCamelCase(data: any) {
-    data.properties.nuclearies.atomType = data.properties.nuclearies.atom_type;
-    data.properties.entries.storedAt = data.properties.entries.stored_at;
-    delete data.properties.nuclearies.atom_type;
-    delete data.properties.entries.stored_at;
+    // data.properties.nuclearies.atomType = data.properties.nuclearies.atom_type;
+    data.properties.shellies.changeHistory = data.properties.shellies.change_history;
+    // delete data.properties.nuclearies.atom_type;
+    delete data.properties.shellies.change_history;
     return data;
   }
 
   private atomDataToSnakeCase(data: any) {
-    data.properties.nuclearies.atom_type = data.properties.nuclearies.atomType;
-    data.properties.entries.stored_at = data.properties.entries.storedAt;
-    delete data.properties.nuclearies.atomType;
-    delete data.properties.entries.storedAt;
+    // data.properties.nuclearies.atom_type = data.properties.nuclearies.atomType;
+    data.properties.shellies.change_history = data.properties.shellies.changeHistory;
+    // delete data.properties.nuclearies.atomType;
+    delete data.properties.shellies.changeHistory;
     return data;
   }
 
   private atomsDataToCamelCase(data: any) {
     data.forEach((atom: any) => {
-      atom.properties.nuclearies.atomType = atom.properties.nuclearies.atom_type;
-      atom.properties.entries.storedAt = atom.properties.entries.stored_at;
-      delete atom.properties.nuclearies.atom_type;
-      delete atom.properties.entries.stored_at;
+      // atom.properties.nuclearies.atomType = atom.properties.nuclearies.atom_type;
+      atom.properties.shellies.changeHistory = atom.properties.shellies.change_history;
+      // delete atom.properties.nuclearies.atom_type;
+      delete atom.properties.shellies.change_history;
     });
     return data;
   }

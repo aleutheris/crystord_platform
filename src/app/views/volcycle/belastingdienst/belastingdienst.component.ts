@@ -39,7 +39,7 @@ import { BelastingService } from './belasting.service';
 })
 export class BelastingdienstComponent {
   belastingElement: BelastingElement;
-  belastingTable: BelastingElement[];
+  belastingTable: [];
   preBelastingTable: [];
 
   constructor(private belastingService: BelastingService) {
@@ -56,11 +56,9 @@ export class BelastingdienstComponent {
   }
 
   getBelastingTable() {
-    let query: {labels: string[]} = {labels: ['belasting']};
-    this.belastingService.getBelastingTable(query).subscribe({
+    let query: {readout: string} = {readout: 'get_belastingdienst_table'};
+    this.belastingService.getPreBelastingTable(query).subscribe({
       next: (data) => {
-        // let belastingData = this.atomsDataToCamelCase(data['result']);
-        // this.belastingTable = belastingData;
         this.belastingTable = data['result'];
       },
       error: (error) => {
@@ -84,26 +82,26 @@ export class BelastingdienstComponent {
   // Private methods
   // private atomDataToCamelCase(data: any) {
   //   data.properties.nuclearies.atomType = data.properties.nuclearies.atom_type;
-  //   data.properties.entries.storedAt = data.properties.entries.stored_at;
+  //   data.properties.shellies.storedAt = data.properties.shellies.stored_at;
   //   delete data.properties.nuclearies.atom_type;
-  //   delete data.properties.entries.stored_at;
+  //   delete data.properties.shellies.stored_at;
   //   return data;
   // }
 
   // private atomDataToSnakeCase(data: any) {
   //   data.properties.nuclearies.atom_type = data.properties.nuclearies.atomType;
-  //   data.properties.entries.stored_at = data.properties.entries.storedAt;
+  //   data.properties.shellies.stored_at = data.properties.shellies.storedAt;
   //   delete data.properties.nuclearies.atomType;
-  //   delete data.properties.entries.storedAt;
+  //   delete data.properties.shellies.storedAt;
   //   return data;
   // }
 
   // private atomsDataToCamelCase(data: any) {
   //   data.forEach((atom: any) => {
   //     atom.properties.nuclearies.atomType = atom.properties.nuclearies.atom_type;
-  //     atom.properties.entries.storedAt = atom.properties.entries.stored_at;
+  //     atom.properties.shellies.storedAt = atom.properties.shellies.stored_at;
   //     delete atom.properties.nuclearies.atom_type;
-  //     delete atom.properties.entries.stored_at;
+  //     delete atom.properties.shellies.stored_at;
   //   });
   //   return data;
   // }

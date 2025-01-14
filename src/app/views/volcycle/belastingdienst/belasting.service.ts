@@ -11,7 +11,7 @@ export class BelastingService {
   constructor(private http: HttpClient) { }
 
   getBelastingTable(data: any): Observable<any> {
-    return this.http.post(`/api/search`, data).pipe(
+    return this.http.post(`/api/readouts`, data).pipe(
       catchError(error => {
         console.error('An error occurred while searching belasting', error);
         return throwError(() => new Error('An error occurred while searching belasting'));
