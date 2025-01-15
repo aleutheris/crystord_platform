@@ -1,8 +1,15 @@
 export interface BelastingElement {
-  Kwartaal: string,
-  Begindatum: string,
-  Einddatum: string,
-  Omzet: string,
-  Ontvangen: string,
-  Voorbelasting: string,
+  kwartaal: string,
+  begindatum: string,
+  einddatum: string,
+  omzet: string,
+  ontvangen: string,
+  voorbelasting: string,
+};
+
+export interface PreBelastingElement {
+  datum: string,
+  omzet: string,
+  ontvangen: string,
+  voorbelasting: string,
 };

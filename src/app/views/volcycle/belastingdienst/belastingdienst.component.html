@@ -57,6 +57,14 @@
           (click)="getPreBelastingTable()">
           Get Table
         </button>
+        <button cButton
+          color="secondary"
+          id="button-addon2"
+          type="button"
+          variant="outline"
+          (click)="updatePreBelastingTable()">
+          Update Table
+        </button>
         <table [hover]="true" cTable>
           <thead>
             <tr>
@@ -68,10 +76,10 @@
           </thead>
           <tbody>
             <tr *ngFor="let e of preBelastingTable">
-              <td>{{ e[0] }}</td>
-              <td>{{ e[1] }}</td>
-              <td>{{ e[2] }}</td>
-              <td>{{ e[3] }}</td>
+              <td>{{ e.datum }}</td>
+              <td><input aria-describedby="inputGroup-sizing-sm" cFormControl [(ngModel)]="e.omzet"/></td>
+              <td><input aria-describedby="inputGroup-sizing-sm" cFormControl [(ngModel)]="e.ontvangen"/></td>
+              <td><input aria-describedby="inputGroup-sizing-sm" cFormControl [(ngModel)]="e.voorbelasting"/></td>
             </tr>
           </tbody>
         </table>

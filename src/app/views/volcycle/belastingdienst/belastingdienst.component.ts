@@ -15,6 +15,7 @@ import {
   TableDirective
 } from '@coreui/angular';
 import { BelastingElement } from './belasting.model';
+import { PreBelastingElement } from './belasting.model';
 import { BelastingService } from './belasting.service';
 
 @Component({
@@ -38,21 +39,12 @@ import { BelastingService } from './belasting.service';
       TableDirective]
 })
 export class BelastingdienstComponent {
-  belastingElement: BelastingElement;
   belastingTable: [];
-  preBelastingTable: [];
+  preBelastingTable: PreBelastingElement[];
 
   constructor(private belastingService: BelastingService) {
-    this.preBelastingTable = [];
     this.belastingTable = [];
-    this.belastingElement = {
-      Kwartaal: '',
-      Begindatum: '',
-      Einddatum: '',
-      Omzet: '',
-      Ontvangen: '',
-      Voorbelasting: ''
-    };
+    this.preBelastingTable = [];
   }
 
   getBelastingTable() {
@@ -72,6 +64,25 @@ export class BelastingdienstComponent {
     this.belastingService.getPreBelastingTable(query).subscribe({
       next: (data) => {
         this.preBelastingTable = data['result'];
+      },
+      error: (error) => {
+        console.error('There was an error searching for belasting:', error);
+      }
+    });
+  }
+
+  updatePreBelastingTable() {
+    let rq: {
+      readout: string,
+      args: PreBelastingElement[]
+    } = {
+      readout: 'update_prebelastingdienst_table',
+      args: this.preBelastingTable
+    };
+
+    this.belastingService.updatePreBelastingTable(rq).subscribe({
+      next: (data) => {
+        console.log('Update PreBelastingTable performed successfully:', data);
       },
       error: (error) => {
         console.error('There was an error searching for belasting:', error);
