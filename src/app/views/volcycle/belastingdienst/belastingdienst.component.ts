@@ -72,11 +72,21 @@ export class BelastingdienstComponent {
   }
 
   updatePreBelastingTable() {
+    // for (let i = 0; i < this.preBelastingTable.length; i++) {
+    //   if (typeof this.preBelastingTable[i].omzet === 'string') {
+    //     this.preBelastingTable[i].omzet = parseFloat(this.preBelastingTable[i].omzet);
+    //   }
+    //   if (typeof this.preBelastingTable[i].ontvangen === 'string') {
+    //   }
+    //   if (typeof this.preBelastingTable[i].voorbelasting === 'string') {
+    //   }
+    // }
+
     let rq: {
       readout: string,
       args: PreBelastingElement[]
     } = {
-      readout: 'update_prebelastingdienst_table',
+      readout: 'update_prebelastingdienst',
       args: this.preBelastingTable
     };
 
