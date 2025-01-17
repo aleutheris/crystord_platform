@@ -139,18 +139,22 @@ export class ControlComponent {
     let rq: {
       readout: string,
       args: {
-        properties: {
-          shellies: {
-            uuid: string
+        selector: {
+          properties: {
+            shellies: {
+              uuid: string
+            }
           }
         }
       }
     } = {
       readout: 'retrieve_node_features',
       args: {
-        properties: {
-          shellies: {
-            uuid: atom.properties.shellies.uuid
+        selector: {
+          properties: {
+            shellies: {
+              uuid: atom.properties.shellies.uuid
+            }
           }
         }
       }

@@ -49,7 +49,7 @@ export class BelastingdienstComponent {
 
   getBelastingTable() {
     let query: {readout: string} = {readout: 'get_belastingdienst_table'};
-    this.belastingService.getPreBelastingTable(query).subscribe({
+    this.belastingService.getBelastingTable(query).subscribe({
       next: (data) => {
         this.belastingTable = data['result'];
       },
@@ -72,22 +72,16 @@ export class BelastingdienstComponent {
   }
 
   updatePreBelastingTable() {
-    // for (let i = 0; i < this.preBelastingTable.length; i++) {
-    //   if (typeof this.preBelastingTable[i].omzet === 'string') {
-    //     this.preBelastingTable[i].omzet = parseFloat(this.preBelastingTable[i].omzet);
-    //   }
-    //   if (typeof this.preBelastingTable[i].ontvangen === 'string') {
-    //   }
-    //   if (typeof this.preBelastingTable[i].voorbelasting === 'string') {
-    //   }
-    // }
-
     let rq: {
-      readout: string,
-      args: PreBelastingElement[]
+      modification: string,
+      args: {
+        inputs: PreBelastingElement[]
+      }
     } = {
-      readout: 'update_prebelastingdienst',
-      args: this.preBelastingTable
+      modification: 'update_prebelastingdienst',
+      args: {
+        inputs: this.preBelastingTable
+      }
     };
 
     this.belastingService.updatePreBelastingTable(rq).subscribe({
