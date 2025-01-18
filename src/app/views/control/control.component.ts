@@ -140,9 +140,11 @@ export class ControlComponent {
       readout: string,
       args: {
         selector: {
-          properties: {
-            shellies: {
-              uuid: string
+          features: {
+            properties: {
+              shellies: {
+                uuid: string
+              }
             }
           }
         }
@@ -151,9 +153,11 @@ export class ControlComponent {
       readout: 'retrieve_node_features',
       args: {
         selector: {
-          properties: {
-            shellies: {
-              uuid: atom.properties.shellies.uuid
+          features: {
+            properties: {
+              shellies: {
+                uuid: atom.properties.shellies.uuid
+              }
             }
           }
         }
@@ -172,18 +176,58 @@ export class ControlComponent {
     });
   }
 
-  updateAtomNuclearies() {
-    let PROPERTY_UUID = 'uuid';
-    let atom = JSON.parse(JSON.stringify(this.atom));
-    let atomDataSnakeCase: any = this.atomDataToSnakeCase(atom);
-    let atom_uuid = atomDataSnakeCase.properties.shellies.uuid;
-    let nuclearies = atomDataSnakeCase.properties.nuclearies;
-    nuclearies[PROPERTY_UUID] = atom_uuid;
-    nuclearies.content = this.parseValue(nuclearies.content);
+  updateAtomFeatures() {
+    let mq: {
+      modification: string,
+      args: {
+        selector: {
+          features: {
+            properties: {
+              shellies: {
+                uuid: string
+              }
+            }
+          }
+        },
+        inputs: {
+          features: {
+            labels: string[],
+            properties: {
+              nuclearies: any
+            }
+          }
+        }
+      }
+    } = {
+      modification: 'update_node_features',
+      args: {
+        selector: {
+          features: {
+            properties: {
+              shellies: {
+                uuid: this.atom.properties.shellies.uuid
+              }
+            }
+          }
+        },
+        inputs: {
+          features: {
+            labels: this.atom.labels,
+            properties: {
+              nuclearies: {
+                // title: this.atom.properties.nuclearies.title,
+                // description: this.atom.properties.nuclearies.description,
+                content: this.parseValue(this.atom.properties.nuclearies.content),
+                // constants: this.atom.properties.nuclearies.constants,
+                // operation: this.atom.properties.nuclearies.operation
+              }
+            }
+          }
+        }
+      }
+    };
 
-    let sendData = {'atoms_nuclearies': [nuclearies]};
-
-    this.atomService.updateAtomNuclearies(sendData).subscribe({
+    this.atomService.updateAtomFeatures(mq).subscribe({
       next: (data) => {
         console.log('Atom data updated successfully:', data);
       },
