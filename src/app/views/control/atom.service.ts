@@ -10,19 +10,7 @@ import { catchError, map } from 'rxjs/operators';
 export class AtomService {
   constructor(private http: HttpClient) { }
 
-  createAtom(data: any): Observable<any> {
-    return this.http.post(`/api/create_atom`, data).pipe(
-      catchError(error => {
-        console.error('An error occurred while creating atom', error);
-        return throwError(() => new Error('An error occurred while creating atom'));
-      }),
-      map((response: any) => {
-        return response;
-      })
-    );
-  }
-
-  getAllAtomFeatures(data: any): Observable<any> {
+  retrieveAtomsFeatures(data: any): Observable<any> {
     return this.http.post(`/api/readouts`, data).pipe(
       catchError(error => {
         console.error('An error occurred while fetching atom content', error);
@@ -31,20 +19,11 @@ export class AtomService {
     );
   }
 
-  updateAtomFeatures(data: any): Observable<any> {
+  updateAtomsFeatures(data: any): Observable<any> {
     return this.http.post(`/api/modifications`, data).pipe(
       catchError(error => {
         console.error('An error occurred while updating atom content', error);
         return throwError(() => new Error('An error occurred while updating atom content'));
-      })
-    );
-  }
-
-  searchAtoms(data: any): Observable<any> {
-    return this.http.post(`/api/search_atoms`, data).pipe(
-      catchError(error => {
-        console.error('An error occurred while searching atoms', error);
-        return throwError(() => new Error('An error occurred while searching atoms'));
       })
     );
   }

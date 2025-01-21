@@ -124,7 +124,7 @@ export class ControlComponent {
       labels: this.newAtom.labels
     };
 
-    this.atomService.createAtom(tempAtom).subscribe({
+    this.atomService.updateAtomsFeatures(tempAtom).subscribe({
       next: (data) => {
         console.log('Atom created successfully:', data);
         this.atomId = data['result'];
@@ -135,7 +135,7 @@ export class ControlComponent {
     });
   }
 
-  getAllAtomFeatures(atom: Atom) {
+  retrieveAtomFeatures(atom: Atom) {
     let rq: {
       readout: string,
       args: {
@@ -164,7 +164,7 @@ export class ControlComponent {
       }
     };
 
-    this.atomService.getAllAtomFeatures(rq).subscribe({
+    this.atomService.retrieveAtomsFeatures(rq).subscribe({
       next: (data) => {
         data['result'] = this.atomDataToCamelCase(data['result']);
         data['result'] = this.convertAtomContentToString(data['result']);
@@ -215,11 +215,11 @@ export class ControlComponent {
             labels: this.atom.labels,
             properties: {
               nuclearies: {
-                // title: this.atom.properties.nuclearies.title,
-                // description: this.atom.properties.nuclearies.description,
+                title: this.atom.properties.nuclearies.title,
+                description: this.atom.properties.nuclearies.description,
                 content: this.parseValue(this.atom.properties.nuclearies.content),
-                // constants: this.atom.properties.nuclearies.constants,
-                // operation: this.atom.properties.nuclearies.operation
+                constants: this.atom.properties.nuclearies.constants,
+                operation: this.atom.properties.nuclearies.operation
               }
             }
           }
@@ -227,7 +227,7 @@ export class ControlComponent {
       }
     };
 
-    this.atomService.updateAtomFeatures(mq).subscribe({
+    this.atomService.updateAtomsFeatures(mq).subscribe({
       next: (data) => {
         console.log('Atom data updated successfully:', data);
       },
@@ -237,8 +237,8 @@ export class ControlComponent {
     });
   }
 
-  searchAtoms() {
-    this.atomService.searchAtoms(this.parseSearchText()).subscribe({
+  retrieveAtomsFeatures() {
+    this.atomService.retrieveAtomsFeatures(this.parseSearchText()).subscribe({
       next: (data) => {
         let atomData = this.atomsDataToCamelCase(data['result']);
         atomData = this.atomsDataContentToString(atomData);
@@ -299,7 +299,51 @@ export class ControlComponent {
 
   private parseSearchText() {
     const searchText = this.searchText;
-    const result: { labels: string[], bonds: string[] } = { labels: [], bonds: [] };
+    const result: {
+      readout: string,
+      args: {
+        selector: {
+          features: {
+            bonds: string[]
+            labels: string[],
+            properties: {
+              shellies: {
+                uuid: string
+              },
+              nuclearies: {
+                title: string,
+                description: string,
+                content: number,
+                constants: string[],
+                operation: string
+              }
+            }
+          }
+        }
+      }
+    } = {
+      readout: 'retrieve_nodes_features',
+      args: {
+        selector: {
+          features: {
+            bonds: [],
+            labels: [],
+            properties: {
+              shellies: {
+                uuid: ''
+              },
+              nuclearies: {
+                title: '',
+                description: '',
+                content: 0.0,
+                constants: [],
+                operation: ''
+              }
+            }
+          }
+        }
+      }
+    };
 
     const pairs = searchText.split(' ');
 
@@ -307,9 +351,7 @@ export class ControlComponent {
       const [key, value] = pair.split('=');
 
       if (key === 'labels') {
-        result.labels = value ? value.split(',') : [];
-      } else if (key === 'bonds') {
-        result.bonds = value ? value.split(',') : [];
+        result.args.selector.features.labels = value ? value.split(',') : [];
       }
     });
 
