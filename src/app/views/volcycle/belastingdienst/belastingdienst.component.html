@@ -5,20 +5,12 @@
         <strong>Volcycle</strong> <small>Belastingaangifte per kwartaal</small>
       </c-card-header>
       <c-card-body>
-        <select aria-label="Default select example" cSelect>
-          <option>Choose year</option>
-          <option value="1">2023</option>
-          <option value="2">2024</option>
-          <option value="3">2025</option>
+        <select aria-label="Default select example" cSelect (change)="getBelastingTable()">
+          <option value="">Choose year</option>
+          <option value="2023">2023</option>
+          <option value="2024">2024</option>
+          <option value="2025">2025</option>
         </select>
-        <button cButton
-          color="secondary"
-          id="button-addon2"
-          type="button"
-          variant="outline"
-          (click)="getBelastingTable()">
-          Get Table
-        </button>
         <table [hover]="true" cTable>
           <thead>
             <tr>
@@ -49,6 +41,22 @@
         <strong>Volcycle</strong> <small>Financial Data</small>
       </c-card-header>
       <c-card-body>
+        <c-input-group class="mb-3">
+          <button cButton
+                  color="secondary"
+                  id="inputGroupFileAddon03"
+                  type="button"
+                  variant="outline"
+                  (click)="uploadFile()">
+            Upload
+          </button>
+          <input aria-describedby="inputGroupFileAddon03"
+                 aria-label="Upload"
+                 cFormControl
+                 id="inputGroupFile03"
+                 type="file"
+                 (change)="onFileSelected($event)"/>
+        </c-input-group>
         <button cButton
           color="secondary"
           id="button-addon2"
@@ -56,14 +64,6 @@
           variant="outline"
           (click)="getPreBelastingTable()">
           Get Table
-        </button>
-        <button cButton
-          color="secondary"
-          id="button-addon2"
-          type="button"
-          variant="outline"
-          (click)="updatePreBelastingTable()">
-          Update Table
         </button>
         <table [hover]="true" cTable>
           <thead>
@@ -77,9 +77,9 @@
           <tbody>
             <tr *ngFor="let e of preBelastingTable">
               <td>{{ e.datum }}</td>
-              <td><input aria-describedby="inputGroup-sizing-sm" cFormControl [(ngModel)]="e.omzet"/></td>
-              <td><input aria-describedby="inputGroup-sizing-sm" cFormControl [(ngModel)]="e.ontvangen"/></td>
-              <td><input aria-describedby="inputGroup-sizing-sm" cFormControl [(ngModel)]="e.voorbelasting"/></td>
+              <td>{{ e.omzet }}</td>
+              <td>{{ e.ontvangen }}</td>
+              <td>{{ e.voorbelasting }}</td>
             </tr>
           </tbody>
         </table>

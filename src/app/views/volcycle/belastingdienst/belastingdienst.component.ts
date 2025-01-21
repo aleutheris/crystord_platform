@@ -12,7 +12,12 @@ import {
   CardHeaderComponent,
   CardBodyComponent,
   FormSelectDirective,
-  TableDirective
+  InputGroupComponent,
+  InputGroupTextDirective,
+  FormControlDirective,
+  FormCheckInputDirective,
+  ButtonDirective,
+  TableDirective,
 } from '@coreui/angular';
 import { BelastingElement } from './belasting.model';
 import { PreBelastingElement } from './belasting.model';
@@ -36,15 +41,60 @@ import { BelastingService } from './belasting.service';
       FormSelectDirective,
       ReactiveFormsModule,
       FormsModule,
+      InputGroupComponent,
+      InputGroupTextDirective,
+      FormControlDirective,
+      FormCheckInputDirective,
+      ButtonDirective,
       TableDirective]
 })
 export class BelastingdienstComponent {
   belastingTable: [];
   preBelastingTable: PreBelastingElement[];
+  fileToUpload: File | null;
 
   constructor(private belastingService: BelastingService) {
     this.belastingTable = [];
     this.preBelastingTable = [];
+    this.fileToUpload = null;
+  }
+
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      this.fileToUpload = input.files[0];
+    }
+  }
+
+  uploadFile(): void {
+    if (!this.fileToUpload) {
+      alert('Please select a file before uploading.');
+      return;
+    }
+
+    const reader = new FileReader();
+
+    reader.onload = (event) => {
+      const text = event.target?.result as string;
+      this.parseCsv(text);
+      this.updatePreBelastingTable();
+    };
+
+    reader.readAsText(this.fileToUpload);
+  }
+
+  private parseCsv(csvText: string): void {
+    const lines = csvText.split('\n');
+    const result: Array<{ datum: string, omzet: string, ontvangen: string, voorbelasting: string }> = [];
+
+    for (let i = 1; i < lines.length; i++) {
+      const line = lines[i].trim();
+      if (!line) continue;
+      const [datum, omzet, ontvangen, voorbelasting] = line.split(',');
+      result.push({ datum: datum.trim(), omzet: omzet.trim(), ontvangen: ontvangen.trim(), voorbelasting: voorbelasting.trim() });
+    }
+
+    this.preBelastingTable = result;
   }
 
   getBelastingTable() {
@@ -78,7 +128,7 @@ export class BelastingdienstComponent {
         inputs: PreBelastingElement[]
       }
     } = {
-      modification: 'update_prebelastingdienst',
+      modification: 'create_prebelastingdienst',
       args: {
         inputs: this.preBelastingTable
       }
