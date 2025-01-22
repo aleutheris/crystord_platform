@@ -36,4 +36,22 @@ export class BelastingService {
       })
     );
   }
+
+  updateFindataTable(data: any): Observable<any> {
+    return this.http.post(`/api/modifications`, data).pipe(
+      catchError(error => {
+        console.error('An error occurred while updating findata readouts', error);
+        return throwError(() => new Error('An error occurred while updating findata readouts'));
+      })
+    );
+  }
+
+  getFindataTable(data: any): Observable<any> {
+    return this.http.post(`/api/readouts`, data).pipe(
+      catchError(error => {
+        console.error('An error occurred while get findata readouts', error);
+        return throwError(() => new Error('An error occurred while get findata readouts'));
+      })
+    );
+  }
 }

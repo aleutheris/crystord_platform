@@ -62,24 +62,22 @@
           id="button-addon2"
           type="button"
           variant="outline"
-          (click)="getPreBelastingTable()">
+          (click)="getFindataTable()">
           Get Table
         </button>
         <table [hover]="true" cTable>
           <thead>
             <tr>
               <th>Datum</th>
-              <th>Omzet over kwartaal</th>
-              <th>Ontvangen hoog omzetbelasting over kwartall</th>
-              <th>Voorbelasting over kwartaal</th>
+              <th>Bedrag</th>
+              <th>BTW-Tarief</th>
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let e of preBelastingTable">
+            <tr *ngFor="let e of findataTable">
               <td>{{ e.datum }}</td>
-              <td>{{ e.omzet }}</td>
-              <td>{{ e.ontvangen }}</td>
-              <td>{{ e.voorbelasting }}</td>
+              <td>{{ e.bedrag }}</td>
+              <td>{{ e.btwtarief }}</td>
             </tr>
           </tbody>
         </table>

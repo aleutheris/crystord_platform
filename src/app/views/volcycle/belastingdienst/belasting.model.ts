@@ -13,3 +13,9 @@ export interface PreBelastingElement {
   ontvangen: string,
   voorbelasting: string,
 };
+
+export interface FindataElement {
+  datum: string,
+  bedrag: string,
+  btwtarief: string,
+};

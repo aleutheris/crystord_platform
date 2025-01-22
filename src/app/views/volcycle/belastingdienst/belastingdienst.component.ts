@@ -21,6 +21,7 @@ import {
 } from '@coreui/angular';
 import { BelastingElement } from './belasting.model';
 import { PreBelastingElement } from './belasting.model';
+import { FindataElement } from './belasting.model';
 import { BelastingService } from './belasting.service';
 
 @Component({
@@ -51,11 +52,13 @@ import { BelastingService } from './belasting.service';
 export class BelastingdienstComponent {
   belastingTable: [];
   preBelastingTable: PreBelastingElement[];
+  findataTable: FindataElement[];
   fileToUpload: File | null;
 
   constructor(private belastingService: BelastingService) {
     this.belastingTable = [];
     this.preBelastingTable = [];
+    this.findataTable = [];
     this.fileToUpload = null;
   }
 
@@ -77,7 +80,7 @@ export class BelastingdienstComponent {
     reader.onload = (event) => {
       const text = event.target?.result as string;
       this.parseCsv(text);
-      this.updatePreBelastingTable();
+      this.updateFindataTable();
     };
 
     reader.readAsText(this.fileToUpload);
@@ -85,16 +88,16 @@ export class BelastingdienstComponent {
 
   private parseCsv(csvText: string): void {
     const lines = csvText.split('\n');
-    const result: Array<{ datum: string, omzet: string, ontvangen: string, voorbelasting: string }> = [];
+    const result: Array<FindataElement> = [];
 
     for (let i = 1; i < lines.length; i++) {
       const line = lines[i].trim();
       if (!line) continue;
-      const [datum, omzet, ontvangen, voorbelasting] = line.split(',');
-      result.push({ datum: datum.trim(), omzet: omzet.trim(), ontvangen: ontvangen.trim(), voorbelasting: voorbelasting.trim() });
+      const [datum, bedrag, btwtarief] = line.split(',');
+      result.push({ datum: datum.trim(), bedrag: bedrag.trim(), btwtarief: btwtarief.trim() });
     }
 
-    this.preBelastingTable = result;
+    this.findataTable = result;
   }
 
   getBelastingTable() {
@@ -121,25 +124,37 @@ export class BelastingdienstComponent {
     });
   }
 
-  updatePreBelastingTable() {
+  updateFindataTable() {
     let rq: {
       modification: string,
       args: {
-        inputs: PreBelastingElement[]
+        inputs: FindataElement[]
       }
     } = {
-      modification: 'create_prebelastingdienst',
+      modification: 'create_findata',
       args: {
-        inputs: this.preBelastingTable
+        inputs: this.findataTable
       }
     };
 
-    this.belastingService.updatePreBelastingTable(rq).subscribe({
+    this.belastingService.updateFindataTable(rq).subscribe({
       next: (data) => {
         console.log('Update PreBelastingTable performed successfully:', data);
       },
       error: (error) => {
         console.error('There was an error searching for belasting:', error);
+      }
+    });
+  }
+
+  getFindataTable() {
+    let query: {readout: string} = {readout: 'get_findata_table'};
+    this.belastingService.getFindataTable(query).subscribe({
+      next: (data) => {
+        this.findataTable = data['result'];
+      },
+      error: (error) => {
+        console.error('There was an error searching for findata:', error);
       }
     });
   }
