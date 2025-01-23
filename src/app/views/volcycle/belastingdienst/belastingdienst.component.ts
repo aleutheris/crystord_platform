@@ -90,11 +90,28 @@ export class BelastingdienstComponent {
     const lines = csvText.split('\n');
     const result: Array<FindataElement> = [];
 
+    const header = lines[0].trim().split(',').map(column => column.trim());
+    const columnIndices = {
+      datum: header.indexOf('Datum'),
+      bedrag: header.indexOf('Bedrag'),
+      btwtarief: header.indexOf('Btw-tarief')
+    };
+
+    if (columnIndices.datum === -1 || columnIndices.bedrag === -1 || columnIndices.btwtarief === -1) {
+      throw new Error('CSV header is missing one or more required columns: Datum, Bedrag, Btw-tarief');
+    }
+
     for (let i = 1; i < lines.length; i++) {
       const line = lines[i].trim();
       if (!line) continue;
-      const [datum, bedrag, btwtarief] = line.split(',');
-      result.push({ datum: datum.trim(), bedrag: bedrag.trim(), btwtarief: btwtarief.trim() });
+
+      const columns = line.split(',').map(column => column.trim());
+
+      const datum = columns[columnIndices.datum];
+      const bedrag = columns[columnIndices.bedrag];
+      const btwtarief = columns[columnIndices.btwtarief];
+
+      result.push({ datum, bedrag, btwtarief });
     }
 
     this.findataTable = result;

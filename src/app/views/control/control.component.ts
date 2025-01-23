@@ -66,12 +66,10 @@ import { at } from 'lodash-es';
 export class ControlComponent {
   atom: Atom;
   newAtom: Atom;
-  atomId: string;
   searchText: string;
   searchTable: Atom[];
 
   constructor(private atomService: AtomService) {
-    this.atomId = '';
     this.searchText = 'labels=';
     this.searchTable = [];
 
@@ -117,17 +115,39 @@ export class ControlComponent {
   }
 
   createAtom() {
-    let tempAtom: NewAtom;
-
-    tempAtom = {
-      title: this.newAtom.properties.nuclearies.title,
-      labels: this.newAtom.labels
+    let mq: {
+      modification: string,
+      args: {
+        inputs: {
+          features: {
+            labels: string[],
+            properties: {
+              nuclearies: {
+                title: string
+              }
+            }
+          }
+        }
+      }
+    } = {
+      modification: 'create_atom',
+      args: {
+        inputs: {
+          features: {
+            labels: this.newAtom.labels,
+            properties: {
+              nuclearies: {
+                title: this.newAtom.properties.nuclearies.title
+              }
+            }
+          }
+        }
+      }
     };
 
-    this.atomService.updateAtomsFeatures(tempAtom).subscribe({
+    this.atomService.updateAtomsFeatures(mq).subscribe({
       next: (data) => {
-        console.log('Atom created successfully:', data);
-        this.atomId = data['result'];
+        this.newAtom = data['result'];
       },
       error: (error) => {
         console.error('There was an error creating the atom:', error);

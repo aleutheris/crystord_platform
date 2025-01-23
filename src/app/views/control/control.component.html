@@ -42,7 +42,7 @@
           Get and update your Atom
         </p>
           <c-input-group class="mb-3">
-            <span cInputGroupText id="basic-addon1">Atom ID</span>
+            <span cInputGroupText id="basic-addon1">Atom UUID</span>
             <input aria-describedby="basic-addon1"
                    aria-label="id"
                    cFormControl
@@ -151,8 +151,7 @@
                     aria-label="Title"
                     cFormControl
                     placeholder="Write Atom's title here."
-                    [(ngModel)]="newAtom.properties.nuclearies.title"
-            />
+                    [(ngModel)]="newAtom.properties.nuclearies.title"/>
           </c-input-group>
           <c-input-group class="mb-3">
             <span cInputGroupText id="basic-addon1">Labels</span>
@@ -162,13 +161,12 @@
               placeholder="Write Atom's labels here."
               [(ngModel)]="newAtom.labels"
               [ngModelOptions]="{ standalone: true }"
-              (ngModelChange)="newAtom.labels = $event.split(',')"
-            />
+              (ngModelChange)="newAtom.labels = $event.split(',')"/>
           </c-input-group>
 
           <c-input-group class="mb-3">
-            <span cInputGroupText id="basic-addon1">Atom ID</span>
-            <span cInputGroupText id="basic-addon1">{{ this.atomId }}</span>
+            <span cInputGroupText id="basic-addon1">Atom UUID</span>
+            <span cInputGroupText id="basic-addon1">{{ this.newAtom.properties.shellies.uuid }}</span>
           </c-input-group>
 
           <button cButton
