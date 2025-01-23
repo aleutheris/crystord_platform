@@ -170,7 +170,7 @@ export class ControlComponent {
         }
       }
     } = {
-      readout: 'retrieve_node_features',
+      readout: 'retrieve_atom_features',
       args: {
         selector: {
           features: {
@@ -219,7 +219,7 @@ export class ControlComponent {
         }
       }
     } = {
-      modification: 'update_node_features',
+      modification: 'update_atom_features',
       args: {
         selector: {
           features: {
@@ -342,7 +342,7 @@ export class ControlComponent {
         }
       }
     } = {
-      readout: 'retrieve_nodes_features',
+      readout: 'retrieve_atoms_features',
       args: {
         selector: {
           features: {
