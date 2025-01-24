@@ -134,12 +134,21 @@
             (click)="updateAtomFeatures()">
             Update Atom
           </button>
+
+          <button cButton
+            color="secondary"
+            id="inputGroupFileAddon03"
+            type="button"
+            variant="outline"
+            (click)="destroyAtoms()">
+            Destroy Atom
+          </button>
       </c-card-body>
     </c-card>
 
     <c-card class="mb-4">
       <c-card-header ngPreserveWhitespaces>
-        <strong>Create</strong> <small></small>
+        <strong>Forming</strong> <small></small>
       </c-card-header>
       <c-card-body>
         <p class="text-body-secondary small">
@@ -174,7 +183,7 @@
             id="inputGroupFileAddon03"
             type="button"
             variant="outline"
-            (click)="createAtom()">
+            (click)="formAtoms()">
             Create Atom
           </button>
       </c-card-body>

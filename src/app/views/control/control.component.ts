@@ -114,7 +114,7 @@ export class ControlComponent {
     };
   }
 
-  createAtom() {
+  formAtoms() {
     let mq: {
       modification: string,
       args: {
@@ -128,7 +128,7 @@ export class ControlComponent {
         }
       }
     } = {
-      modification: 'create_atom',
+      modification: 'form_atoms',
       args: {
         inputs: {
           labels: this.newAtom.labels,
@@ -141,12 +141,47 @@ export class ControlComponent {
       }
     };
 
-    this.atomService.updateAtomsFeatures(mq).subscribe({
+    this.atomService.modifyAtoms(mq).subscribe({
       next: (data) => {
         this.newAtom = data['result'];
       },
       error: (error) => {
         console.error('There was an error creating the atom:', error);
+      }
+    });
+  }
+
+  destroyAtoms() {
+    let mq: {
+      modification: string,
+      args: {
+        selector: {
+          properties: {
+            shellies: {
+              uuid: string
+            }
+          }
+        }
+      }
+    } = {
+      modification: 'destroy_atoms',
+      args: {
+        selector: {
+          properties: {
+            shellies: {
+              uuid: this.atom.properties.shellies.uuid
+            }
+          }
+        }
+      }
+    };
+
+    this.atomService.modifyAtoms(mq).subscribe({
+      next: (data) => {
+        console.log('Atom data updated successfully:', data);
+      },
+      error: (error) => {
+        console.error('There was an error updating the atom data:', error);
       }
     });
   }
@@ -176,7 +211,7 @@ export class ControlComponent {
       }
     };
 
-    this.atomService.retrieveAtomsFeatures(rq).subscribe({
+    this.atomService.readAtoms(rq).subscribe({
       next: (data) => {
         data['result'] = this.atomDataToCamelCase(data['result']);
         data['result'] = this.convertAtomContentToString(data['result']);
@@ -231,7 +266,7 @@ export class ControlComponent {
       }
     };
 
-    this.atomService.updateAtomsFeatures(mq).subscribe({
+    this.atomService.modifyAtoms(mq).subscribe({
       next: (data) => {
         console.log('Atom data updated successfully:', data);
       },
@@ -242,7 +277,7 @@ export class ControlComponent {
   }
 
   retrieveAtomsFeatures() {
-    this.atomService.retrieveAtomsFeatures(this.parseSearchText()).subscribe({
+    this.atomService.readAtoms(this.parseSearchText()).subscribe({
       next: (data) => {
         let atomData = this.atomsDataToCamelCase(data['result']);
         atomData = this.atomsDataContentToString(atomData);

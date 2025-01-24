@@ -10,7 +10,7 @@ import { catchError, map } from 'rxjs/operators';
 export class AtomService {
   constructor(private http: HttpClient) { }
 
-  retrieveAtomsFeatures(data: any): Observable<any> {
+  readAtoms(data: any): Observable<any> {
     return this.http.post(`/api/readouts`, data).pipe(
       catchError(error => {
         console.error('An error occurred while fetching atom content', error);
@@ -19,7 +19,7 @@ export class AtomService {
     );
   }
 
-  updateAtomsFeatures(data: any): Observable<any> {
+  modifyAtoms(data: any): Observable<any> {
     return this.http.post(`/api/modifications`, data).pipe(
       catchError(error => {
         console.error('An error occurred while updating atom content', error);
