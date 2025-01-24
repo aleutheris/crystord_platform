@@ -119,12 +119,10 @@ export class ControlComponent {
       modification: string,
       args: {
         inputs: {
-          features: {
-            labels: string[],
-            properties: {
-              nuclearies: {
-                title: string
-              }
+          labels: string[],
+          properties: {
+            nuclearies: {
+              title: string
             }
           }
         }
@@ -133,12 +131,10 @@ export class ControlComponent {
       modification: 'create_atom',
       args: {
         inputs: {
-          features: {
-            labels: this.newAtom.labels,
-            properties: {
-              nuclearies: {
-                title: this.newAtom.properties.nuclearies.title
-              }
+          labels: this.newAtom.labels,
+          properties: {
+            nuclearies: {
+              title: this.newAtom.properties.nuclearies.title
             }
           }
         }
@@ -160,11 +156,9 @@ export class ControlComponent {
       readout: string,
       args: {
         selector: {
-          features: {
-            properties: {
-              shellies: {
-                uuid: string
-              }
+          properties: {
+            shellies: {
+              uuid: string
             }
           }
         }
@@ -173,11 +167,9 @@ export class ControlComponent {
       readout: 'retrieve_atom_features',
       args: {
         selector: {
-          features: {
-            properties: {
-              shellies: {
-                uuid: atom.properties.shellies.uuid
-              }
+          properties: {
+            shellies: {
+              uuid: atom.properties.shellies.uuid
             }
           }
         }
@@ -201,20 +193,16 @@ export class ControlComponent {
       modification: string,
       args: {
         selector: {
-          features: {
-            properties: {
-              shellies: {
-                uuid: string
-              }
+          properties: {
+            shellies: {
+              uuid: string
             }
           }
         },
         inputs: {
-          features: {
-            labels: string[],
-            properties: {
-              nuclearies: any
-            }
+          labels: string[],
+          properties: {
+            nuclearies: any
           }
         }
       }
@@ -222,25 +210,21 @@ export class ControlComponent {
       modification: 'update_atom_features',
       args: {
         selector: {
-          features: {
-            properties: {
-              shellies: {
-                uuid: this.atom.properties.shellies.uuid
-              }
+          properties: {
+            shellies: {
+              uuid: this.atom.properties.shellies.uuid
             }
           }
         },
         inputs: {
-          features: {
-            labels: this.atom.labels,
-            properties: {
-              nuclearies: {
-                title: this.atom.properties.nuclearies.title,
-                description: this.atom.properties.nuclearies.description,
-                content: this.parseValue(this.atom.properties.nuclearies.content),
-                constants: this.atom.properties.nuclearies.constants,
-                operation: this.atom.properties.nuclearies.operation
-              }
+          labels: this.atom.labels,
+          properties: {
+            nuclearies: {
+              title: this.atom.properties.nuclearies.title,
+              description: this.atom.properties.nuclearies.description,
+              content: this.parseValue(this.atom.properties.nuclearies.content),
+              constants: this.atom.properties.nuclearies.constants,
+              operation: this.atom.properties.nuclearies.operation
             }
           }
         }
@@ -323,20 +307,18 @@ export class ControlComponent {
       readout: string,
       args: {
         selector: {
-          features: {
-            bonds: string[]
-            labels: string[],
-            properties: {
-              shellies: {
-                uuid: string
-              },
-              nuclearies: {
-                title: string,
-                description: string,
-                content: number,
-                constants: string[],
-                operation: string
-              }
+          bonds: string[]
+          labels: string[],
+          properties: {
+            shellies: {
+              uuid: string
+            },
+            nuclearies: {
+              title: string,
+              description: string,
+              content: number,
+              constants: string[],
+              operation: string
             }
           }
         }
@@ -345,20 +327,18 @@ export class ControlComponent {
       readout: 'retrieve_atoms_features',
       args: {
         selector: {
-          features: {
-            bonds: [],
-            labels: [],
-            properties: {
-              shellies: {
-                uuid: ''
-              },
-              nuclearies: {
-                title: '',
-                description: '',
-                content: 0.0,
-                constants: [],
-                operation: ''
-              }
+          bonds: [],
+          labels: [],
+          properties: {
+            shellies: {
+              uuid: ''
+            },
+            nuclearies: {
+              title: '',
+              description: '',
+              content: 0.0,
+              constants: [],
+              operation: ''
             }
           }
         }
@@ -371,7 +351,7 @@ export class ControlComponent {
       const [key, value] = pair.split('=');
 
       if (key === 'labels') {
-        result.args.selector.features.labels = value ? value.split(',') : [];
+        result.args.selector.labels = value ? value.split(',') : [];
       }
     });
 
