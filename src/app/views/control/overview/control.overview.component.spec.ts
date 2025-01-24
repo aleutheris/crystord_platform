@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ControlComponent } from './control.component';
+import { ControlOverviewComponent } from './control.overview.component';
 
-describe('ControlComponent', () => {
-  let component: ControlComponent;
-  let fixture: ComponentFixture<ControlComponent>;
+describe('ControlOverviewComponent', () => {
+  let component: ControlOverviewComponent;
+  let fixture: ComponentFixture<ControlOverviewComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ControlComponent]
+      imports: [ControlOverviewComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(ControlComponent);
+    fixture = TestBed.createComponent(ControlOverviewComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

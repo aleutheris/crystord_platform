@@ -19,6 +19,10 @@ export const routes: Routes = [
         loadChildren: () => import('./views/dashboard/routes').then((m) => m.routes)
       },
       {
+        path: 'control',
+        loadChildren: () => import('./views/control/routes').then((m) => m.routes)
+      },
+      {
         path: 'volcycle',
         loadChildren: () => import('./views/volcycle/routes').then((m) => m.routes)
       },
@@ -53,10 +57,6 @@ export const routes: Routes = [
       {
         path: 'charts',
         loadChildren: () => import('./views/charts/routes').then((m) => m.routes)
-      },
-      {
-        path: 'control',
-        loadChildren: () => import('./views/control/routes').then((m) => m.routes)
       },
       {
         path: 'pages',

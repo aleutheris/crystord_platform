@@ -1,0 +1,192 @@
+<c-row>
+  <c-col xs="7">
+    <c-card class="mb-4">
+      <c-card-header>
+        <strong>Search Atoms</strong>
+      </c-card-header>
+      <c-card-body>
+        <input aria-label="default input example"
+          cFormControl
+          placeholder="Search..."
+          type="text"
+          [(ngModel)]="searchText"
+          (keyup.enter)="retrieveAtomsFeatures()"
+        />
+        <table [hover]="true" cTable>
+          <thead>
+            <tr>
+              <th scope="col">Title</th>
+              <th scope="col">Description</th>
+              <th scope="col">Content</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let atom of searchTable" (click)="retrieveAtomFeatures(atom)">
+              <td>{{ atom.properties.nuclearies.title }}</td>
+              <td>{{ atom.properties.nuclearies.description }}</td>
+              <td>{{ atom.properties.nuclearies.content }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </c-card-body>
+    </c-card>
+  </c-col>
+
+  <c-col xs="5">
+    <c-card class="mb-4">
+      <c-card-header ngPreserveWhitespaces>
+        <strong>Atom Features</strong> <small></small>
+      </c-card-header>
+      <c-card-body>
+        <p class="text-body-secondary small">
+          Get and update your Atom
+        </p>
+          <c-input-group class="mb-3">
+            <span cInputGroupText id="basic-addon1">Atom UUID</span>
+            <input aria-describedby="basic-addon1"
+                   aria-label="id"
+                   cFormControl
+                   placeholder=""
+                   [(ngModel)]="atom.properties.shellies.uuid"/>
+            <button cButton
+              color="secondary"
+              id="button-addon2"
+              type="button"
+              variant="outline"
+              (click)="retrieveAtomFeatures(atom)">
+              Get Atom
+            </button>
+          </c-input-group>
+
+          <c-input-group class="mb-3">
+            <span cInputGroupText id="basic-addon1">Stored At</span>
+            <span cInputGroupText id="basic-addon1">{{ atom.properties.shellies.changeHistory }}</span>
+          </c-input-group>
+
+          <c-input-group class="mb-3">
+            <span cInputGroupText id="basic-addon1">Labels</span>
+            <input aria-describedby="basic-addon1"
+                   aria-label="id"
+                   cFormControl
+                   placeholder=""
+                   [(ngModel)]="atom.labels"/>
+          </c-input-group>
+
+          <c-input-group class="mb-3">
+            <span cInputGroupText id="basic-addon1">Bonds</span>
+            <input aria-describedby="basic-addon1"
+                   aria-label="id"
+                   cFormControl
+                   placeholder=""
+                   [(ngModel)]="atom.bonds"/>
+          </c-input-group>
+
+          <c-input-group class="mb-3">
+            <span cInputGroupText id="basic-addon1">Title</span>
+            <input aria-describedby="basic-addon1"
+                   aria-label="id"
+                   cFormControl
+                   placeholder=""
+                   [(ngModel)]="atom.properties.nuclearies.title"/>
+          </c-input-group>
+
+          <c-input-group class="mb-3">
+            <span cInputGroupText id="basic-addon1">Description</span>
+            <input aria-describedby="basic-addon1"
+                   aria-label="id"
+                   cFormControl
+                   placeholder=""
+                   [(ngModel)]="atom.properties.nuclearies.description"/>
+          </c-input-group>
+
+          <c-input-group class="mb-3">
+            <span cInputGroupText id="basic-addon1">Content</span>
+            <input aria-describedby="basic-addon1"
+                   aria-label="id"
+                   cFormControl
+                   placeholder=""
+                   [(ngModel)]="atom.properties.nuclearies.content"/>
+          </c-input-group>
+
+          <c-input-group class="mb-3">
+            <span cInputGroupText id="basic-addon1">Operation</span>
+            <input aria-describedby="basic-addon1"
+                   aria-label="id"
+                   cFormControl
+                   placeholder=""
+                   [(ngModel)]="atom.properties.nuclearies.operation"/>
+          </c-input-group>
+
+          <c-input-group class="mb-3">
+            <span cInputGroupText id="basic-addon1">Constants</span>
+            <input aria-describedby="basic-addon1"
+                   aria-label="id"
+                   cFormControl
+                   placeholder=""
+                   [(ngModel)]="atom.properties.nuclearies.constants"/>
+          </c-input-group>
+
+          <button cButton
+            color="secondary"
+            id="inputGroupFileAddon03"
+            type="button"
+            variant="outline"
+            (click)="updateAtomFeatures()">
+            Update Atom
+          </button>
+
+          <button cButton
+            color="secondary"
+            id="inputGroupFileAddon03"
+            type="button"
+            variant="outline"
+            (click)="destroyAtoms()">
+            Destroy Atom
+          </button>
+      </c-card-body>
+    </c-card>
+
+    <c-card class="mb-4">
+      <c-card-header ngPreserveWhitespaces>
+        <strong>Forming</strong> <small></small>
+      </c-card-header>
+      <c-card-body>
+        <p class="text-body-secondary small">
+          Create an atom
+        </p>
+          <c-input-group class="mb-3">
+            <span cInputGroupText id="basic-addon1">Title</span>
+            <input aria-describedby="basic-addon1"
+                    aria-label="Title"
+                    cFormControl
+                    placeholder="Write Atom's title here."
+                    [(ngModel)]="newAtom.properties.nuclearies.title"/>
+          </c-input-group>
+          <c-input-group class="mb-3">
+            <span cInputGroupText id="basic-addon1">Labels</span>
+            <input aria-describedby="basic-addon1"
+              aria-label="Labels"
+              cFormControl
+              placeholder="Write Atom's labels here."
+              [(ngModel)]="newAtom.labels"
+              [ngModelOptions]="{ standalone: true }"
+              (ngModelChange)="newAtom.labels = $event.split(',')"/>
+          </c-input-group>
+
+          <c-input-group class="mb-3">
+            <span cInputGroupText id="basic-addon1">Atom UUID</span>
+            <span cInputGroupText id="basic-addon1">{{ this.newAtom.properties.shellies.uuid }}</span>
+          </c-input-group>
+
+          <button cButton
+            color="secondary"
+            id="inputGroupFileAddon03"
+            type="button"
+            variant="outline"
+            (click)="formAtoms()">
+            Create Atom
+          </button>
+      </c-card-body>
+    </c-card>
+  </c-col>
+</c-row>

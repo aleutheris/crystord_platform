@@ -26,14 +26,14 @@ import {
   FormSelectDirective,
   TableDirective,
 } from '@coreui/angular';
-import { Atom, NewAtom, SearchData } from './atom.model';
+import { Atom } from './atom.model';
 import { AtomService } from './atom.service';
 import { at } from 'lodash-es';
 
 @Component({
     selector: 'app-control',
-    templateUrl: './control.component.html',
-    styleUrls: ['./control.component.scss'],
+    templateUrl: './control.overview.component.html',
+    styleUrls: ['./control.overview.component.scss'],
     standalone: true,
     imports: [
       CommonModule,
@@ -63,7 +63,7 @@ import { at } from 'lodash-es';
       TableDirective
     ]
   })
-export class ControlComponent {
+export class ControlOverviewComponent {
   atom: Atom;
   newAtom: Atom;
   searchText: string;

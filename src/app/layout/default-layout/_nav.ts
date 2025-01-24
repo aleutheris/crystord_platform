@@ -2,9 +2,21 @@ import { INavData } from '@coreui/angular';
 
 export const navItems: INavData[] = [
   {
-    name: 'Control',
+    name: 'Atom Control',
+    url: '/control',
     iconComponent: { name: 'cil-chart-pie' },
-    url: '/control'
+    children: [
+      {
+        name: 'Detail',
+        url: '/control/detail',
+        icon: 'nav-icon-bullet'
+      },
+      {
+        name: 'Overview',
+        url: '/control/overview',
+        icon: 'nav-icon-bullet'
+      }
+    ]
   },
   {
     name: 'Volcycle',
