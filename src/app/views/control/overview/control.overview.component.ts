@@ -8,7 +8,6 @@ import {
   CardHeaderComponent,
   CardBodyComponent,
 } from '@coreui/angular';
-import { AtomService } from './atom.service';
 import { KonvaCanvasComponent } from '../../../konva-canvas/konva-canvas.component';
 
 @Component({
@@ -28,6 +27,6 @@ import { KonvaCanvasComponent } from '../../../konva-canvas/konva-canvas.compone
     ]
   })
 export class ControlOverviewComponent {
-  constructor(private atomService: AtomService) {
+  constructor() {
   }
 }
