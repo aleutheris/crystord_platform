@@ -4,7 +4,7 @@ export const atomBlock: ShapeDefs.AtomBlock = {
   draggable: false,
 };
 
-export const atomCicle: ShapeDefs.AtomCircle = {
+export const atomCircle: ShapeDefs.AtomCircle = {
   x: 0,
   y: 0,
   width: 100,
@@ -16,10 +16,10 @@ export const atomCicle: ShapeDefs.AtomCircle = {
   draggable: false,
 };
 
-export const atomFont: ShapeDefs.AtomFont = {
+export const atomText: ShapeDefs.AtomText = {
   x: 0,
   y: 0,
-  text: 'Hello',
+  text: '-',
   fontSize: 20,
   fontFamily: 'Arial',
   fill: 'black',
@@ -27,11 +27,3 @@ export const atomFont: ShapeDefs.AtomFont = {
   align: 'center',
   draggable: false,
 };
-
-export const updateShapeLocation = (shape: any, location: ShapeDefs.ShapeLocation): any => {
-  return { ...shape, x: location.x, y: location.y };
-}
-
-export const updateText = (shape: any, text: string): any => {
-  return { ...shape, text };
-}

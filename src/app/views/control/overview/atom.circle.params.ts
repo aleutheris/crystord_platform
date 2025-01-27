@@ -1,47 +1,27 @@
 import { Injectable } from '@angular/core';
+import { AtomCircle } from './shapes.defines';
+import * as Sparams from './shapes.parameters';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AtomCircleParams {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-  radius: number;
-  fill: string;
-  stroke: string;
-  strokeWidth: number;
-  draggable: boolean;
+  atomCircleParams: AtomCircle
 
   constructor() {
-    this.x = 0;
-    this.y = 0;
-    this.width = 100;
-    this.height = 100;
-    this.radius = 75;
-    this.fill = 'gray';
-    this.stroke = 'black';
-    this.strokeWidth = 2;
-    this.draggable = false;
+    this.atomCircleParams = Sparams.atomCircle;
   }
 
-  updateShapeLocation(location: any) {
-    this.x = location.x;
-    this.y = location.y;
+  setLocation(location: any) {
+    this.atomCircleParams.x = location.x;
+    this.atomCircleParams.y = location.y;
+  }
+
+  getLocation() {
+    return { x: this.atomCircleParams.x, y: this.atomCircleParams.y };
   }
 
   getAtomCircleParams() {
-    return {
-      x: this.x,
-      y: this.y,
-      width: this.width,
-      height: this.height,
-      radius: this.radius,
-      fill: this.fill,
-      stroke: this.stroke,
-      strokeWidth: this.strokeWidth,
-      draggable: this.draggable,
-    };
+    return this.atomCircleParams;
   }
 }

@@ -19,7 +19,7 @@ export interface AtomCircle {
   draggable: boolean;
 }
 
-export interface AtomFont {
+export interface AtomText {
   x: number;
   y: number;
   text: string;
