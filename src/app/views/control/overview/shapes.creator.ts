@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import Konva from 'konva';
+import { atomBlock } from './shapes.parameters';
 
 @Injectable({
   providedIn: 'root',
@@ -19,15 +20,7 @@ export class ShapesCreator {
     const layer = new Konva.Layer();
     stage.add(layer);
 
-    const circle1 = new Konva.Circle({
-      x: 200,
-      y: 200,
-      radius: 75,
-      fill: 'gray',
-      stroke: 'black',
-      strokeWidth: 2,
-      draggable: false,
-    });
+    const circle1 = new Konva.Circle(atomBlock);
 
     const circle2 = new Konva.Circle({
       x: 600,
