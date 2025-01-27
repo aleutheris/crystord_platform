@@ -30,3 +30,12 @@ export interface AtomText {
   align: string;
   draggable: boolean;
 }
+
+export interface AtomArrow {
+  points: number[];
+  pointerLength: number;
+  pointerWidth: number;
+  fill: string;
+  stroke: string;
+  strokeWidth: number;
+}

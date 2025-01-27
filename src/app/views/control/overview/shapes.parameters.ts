@@ -27,3 +27,12 @@ export const atomText: ShapeDefs.AtomText = {
   align: 'center',
   draggable: false,
 };
+
+export const arrow: ShapeDefs.AtomArrow = {
+  points: [0, 0, 0, 0],
+  pointerLength: 10,
+  pointerWidth: 10,
+  fill: 'black',
+  stroke: 'black',
+  strokeWidth: 2,
+};
