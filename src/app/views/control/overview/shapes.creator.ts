@@ -1,16 +1,14 @@
-import { Component, AfterViewInit } from '@angular/core';
+import { Injectable } from '@angular/core';
 import Konva from 'konva';
 
-@Component({
-  selector: 'app-konva-canvas',
-  standalone: true,
-  imports: [],
-  template: '<div id="konva-container"></div>',
-  templateUrl: './konva-canvas.component.html',
-  styleUrl: './konva-canvas.component.scss'
+@Injectable({
+  providedIn: 'root',
 })
-export class KonvaCanvasComponent implements AfterViewInit {
-  ngAfterViewInit(): void {
+export class ShapesCreator {
+  constructor() {
+  }
+
+  draw(): void {
     const stage = new Konva.Stage({
       container: 'konva-container',
       width: window.innerWidth,

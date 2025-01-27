@@ -8,7 +8,7 @@ import {
   CardHeaderComponent,
   CardBodyComponent,
 } from '@coreui/angular';
-import { KonvaCanvasComponent } from '../../../konva-canvas/konva-canvas.component';
+import { ShapesCreator } from './shapes.creator';
 
 @Component({
     selector: 'app-control',
@@ -23,10 +23,13 @@ import { KonvaCanvasComponent } from '../../../konva-canvas/konva-canvas.compone
       CardComponent,
       CardHeaderComponent,
       CardBodyComponent,
-      KonvaCanvasComponent
     ]
   })
 export class ControlOverviewComponent {
-  constructor() {
+  constructor(private shapesCreator: ShapesCreator) {
+  }
+
+  ngAfterViewInit(): void {
+    this.shapesCreator.draw();
   }
 }
