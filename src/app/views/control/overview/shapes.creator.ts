@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import Konva from 'konva';
-import { atomBlock } from './shapes.parameters';
+import * as Sdefines from './shapes.defines';
+import * as Sparams from './shapes.parameters';
 
 @Injectable({
   providedIn: 'root',
@@ -20,7 +21,7 @@ export class ShapesCreator {
     const layer = new Konva.Layer();
     stage.add(layer);
 
-    const circle1 = new Konva.Circle(atomBlock);
+    const circle1 = this.addAtomBlock(layer, { x: 200, y: 200 });
 
     const circle2 = new Konva.Circle({
       x: 600,
@@ -31,29 +32,7 @@ export class ShapesCreator {
       strokeWidth: 2,
       draggable: false,
     });
-    layer.add(circle1);
-
-    const text1 = new Konva.Text({
-      x: 50,
-      y: 190,
-      text: 'Hello',
-      fontSize: 30,
-      fontFamily: 'Arial',
-      fill: 'black',
-      width: 300,
-      align: 'center',
-      draggable: false,
-    });
     layer.add(circle2);
-
-    const group1 = new Konva.Group({
-      draggable: false,
-    });
-
-    group1.add(circle1);
-    group1.add(text1);
-
-    layer.add(group1);
 
     const arrow = new Konva.Arrow({
       points: [
@@ -97,5 +76,24 @@ export class ShapesCreator {
 
     stage.batchDraw();
     layer.batchDraw();
+  }
+
+  addAtomBlock(layer: Konva.Layer, location: Sdefines.ShapeLocation) {
+    const circleParams = Sparams.updateShapeLocation(Sparams.atomCicle, location);
+    const circleShape = new Konva.Circle(circleParams);
+    layer.add(circleShape);
+
+    const textLocation = { x: location.x - 150, y: location.y -10 };
+    const textParams = Sparams.updateShapeLocation(Sparams.atomFont, textLocation);
+    const textShape = new Konva.Text(textParams);
+
+    const atomBlock = new Konva.Group(Sparams.atomBlock);
+
+    atomBlock.add(circleShape);
+    atomBlock.add(textShape);
+
+    layer.add(atomBlock);
+
+    return circleShape;
   }
 }
