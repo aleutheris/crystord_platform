@@ -20,7 +20,7 @@ export const atomFont: ShapeDefs.AtomFont = {
   x: 0,
   y: 0,
   text: 'Hello',
-  fontSize: 30,
+  fontSize: 20,
   fontFamily: 'Arial',
   fill: 'black',
   width: 300,
@@ -30,4 +30,8 @@ export const atomFont: ShapeDefs.AtomFont = {
 
 export const updateShapeLocation = (shape: any, location: ShapeDefs.ShapeLocation): any => {
   return { ...shape, x: location.x, y: location.y };
+}
+
+export const updateText = (shape: any, text: string): any => {
+  return { ...shape, text };
 }

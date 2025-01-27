@@ -2,12 +2,13 @@ import { Injectable } from '@angular/core';
 import Konva from 'konva';
 import * as Sdefines from './shapes.defines';
 import * as Sparams from './shapes.parameters';
+import { AtomCircleParams } from './atom.circle.params';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ShapesCreator {
-  constructor() {
+  constructor(private atomCircleParams: AtomCircleParams) {
   }
 
   draw(): void {
@@ -21,18 +22,12 @@ export class ShapesCreator {
     const layer = new Konva.Layer();
     stage.add(layer);
 
-    const circle1 = this.addAtomBlock(layer, { x: 200, y: 200 });
-
-    const circle2 = new Konva.Circle({
-      x: 600,
-      y: 200,
-      radius: 75,
-      fill: 'gray',
-      stroke: 'black',
-      strokeWidth: 2,
-      draggable: false,
-    });
-    layer.add(circle2);
+    const atomsLocations = [
+      { x: 200, y: 200 },
+      { x: 600, y: 200 },
+    ];
+    const circle1 = this.addAtomBlock(layer, atomsLocations[0], 'Atom 1');
+    const circle2 = this.addAtomBlock(layer, atomsLocations[1], 'Atom 2');
 
     const arrow = new Konva.Arrow({
       points: [
@@ -78,20 +73,25 @@ export class ShapesCreator {
     layer.batchDraw();
   }
 
-  addAtomBlock(layer: Konva.Layer, location: Sdefines.ShapeLocation) {
-    const circleParams = Sparams.updateShapeLocation(Sparams.atomCicle, location);
+  addAtomBlock(layer: Konva.Layer, location: Sdefines.ShapeLocation, text: string) {
+    const atomCircleParams = this.atomCircleParams.getAtomCircleParams();
+    this.atomCircleParams.updateShapeLocation(location);
+    const circleParams = this.atomCircleParams.getAtomCircleParams();
+
+    // const circleParams = Sparams.updateShapeLocation(Sparams.atomCicle, location);
     const circleShape = new Konva.Circle(circleParams);
-    layer.add(circleShape);
 
     const textLocation = { x: location.x - 150, y: location.y -10 };
-    const textParams = Sparams.updateShapeLocation(Sparams.atomFont, textLocation);
-    const textShape = new Konva.Text(textParams);
+    let textParams1 = Sparams.updateText(Sparams.atomFont, text);
+    let textParams2 = Sparams.updateShapeLocation(textParams1, textLocation);
+    const textShape = new Konva.Text(textParams2);
 
     const atomBlock = new Konva.Group(Sparams.atomBlock);
 
     atomBlock.add(circleShape);
     atomBlock.add(textShape);
 
+    layer.add(circleShape);
     layer.add(atomBlock);
 
     return circleShape;
