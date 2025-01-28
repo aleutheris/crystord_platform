@@ -11,23 +11,22 @@ import {
 import { ShapesCreator } from './shapes.creator';
 
 
-interface InputElement {
-  nodeName: string;
+type Location = { x: number; y: number };
+type NodeEntry = { loc: Location; text: string };
+type ArrowEntry = { locOrig: Location; locDest: Location; name: string };
+type DiagramFormat = { nodesEntries: NodeEntry[]; arrowsEntries: ArrowEntry[] };
+
+type InputElement = {
+  name: string;
   id: string;
-  connection: string[];
-}
+  connections: { id: string; name: string }[];
+};
 
-interface PositionalAdjustments {
-  distanceBetweenConnections: number;
-  distanceBetweenPeers: number;
-}
-
-interface TreeNode {
-  nodeID: string;
-  refNodeName: string;
-  refNodeLocation: { x: number; y: number };
-  connections: string[];
-}
+type PositionalAdjustments = {
+  startLocation: Location;
+  distBetweenConnections: number;
+  distBetweenPeers: number;
+};
 
 @Component({
     selector: 'app-control',
@@ -60,68 +59,94 @@ export class ControlOverviewComponent {
       { locOrig: atomsLocations[1].loc, locDest: atomsLocations[2].loc, text: 'Arrow 2' },
     ];
 
-    this.shapesCreator.draw(atomsLocations, arrowsLocations);
-
-    const elements: InputElement[] = [
-      { nodeName: "Root", id: "1", connection: ["2", "3"] },
-      { nodeName: "Child 1", id: "2", connection: ["4"] },
-      { nodeName: "Child 2", id: "3", connection: [] },
-      { nodeName: "Grandchild", id: "4", connection: [] },
+    // Example usage
+    const elements = [
+      {
+        name: "Node A",
+        id: "A",
+        connections: [
+          { id: "B", name: "Arrow AB" },
+          { id: "C", name: "Arrow AC" }
+        ],
+      },
+      {
+        name: "Node B",
+        id: "B",
+        connections: [{ id: "C", name: "Arrow BC" }],
+      },
+      {
+        name: "Node C",
+        id: "C",
+        connections: [],
+      },
     ];
 
-    const adjustments: PositionalAdjustments = {
-      distanceBetweenConnections: 100,
-      distanceBetweenPeers: 50,
+    const adjustments = {
+      startLocation: { x: 0, y: 0 },
+      distBetweenConnections: 100,
+      distBetweenPeers: 200,
     };
 
-    const treeDiagram = this.generateTreeDiagram(elements, adjustments);
-    console.log(treeDiagram);
+    const diagram = this.generateTreeDiagram(elements, adjustments);
+    console.log(diagram);
+
+    this.shapesCreator.draw(atomsLocations, arrowsLocations);
   }
 
   generateTreeDiagram(
     elements: InputElement[],
     adjustments: PositionalAdjustments
-  ): TreeNode[] {
-    const elementMap: Map<string, InputElement> = new Map();
-    elements.forEach((el) => elementMap.set(el.id, el));
+  ): DiagramFormat {
+    const { startLocation, distBetweenConnections, distBetweenPeers } = adjustments;
 
-    const treeNodes: TreeNode[] = [];
-    const positions: Map<string, { x: number; y: number }> = new Map();
+    const nodesMap = new Map<string, NodeEntry>();
+    const diagram: DiagramFormat = { nodesEntries: [], arrowsEntries: [] };
 
-    function placeNode(
-      nodeId: string,
-      x: number,
-      y: number,
-      siblingIndex: number
-    ): void {
-      const element = elementMap.get(nodeId);
-      if (!element) return;
-
-      const adjustedX = x + siblingIndex * adjustments.distanceBetweenPeers;
-      const adjustedY = y;
-      positions.set(nodeId, { x: adjustedX, y: adjustedY });
-
-      treeNodes.push({
-        nodeID: element.id,
-        refNodeName: element.nodeName,
-        refNodeLocation: { x: adjustedX, y: adjustedY },
-        connections: element.connection,
-      });
-
-      const childY = adjustedY + adjustments.distanceBetweenConnections;
-      element.connection.forEach((childId, index) => {
-        placeNode(childId, adjustedX, childY, index);
-      });
+    function calculateNodePosition(
+      index: number,
+      level: number
+    ): Location {
+      return {
+        x: startLocation.x + index * distBetweenPeers,
+        y: startLocation.y + level * distBetweenConnections,
+      };
     }
 
-    const rootNodes = elements.filter((el) =>
-      !elements.some((other) => other.connection.includes(el.id))
-    );
+    elements.forEach((element, index) => {
+      if (!nodesMap.has(element.id)) {
+        const nodePosition = calculateNodePosition(index, 0);
+        const nodeEntry: NodeEntry = { loc: nodePosition, text: element.name };
+        nodesMap.set(element.id, nodeEntry);
+        diagram.nodesEntries.push(nodeEntry);
+      }
 
-    rootNodes.forEach((root, index) => {
-      placeNode(root.id, 0, 0, index);
+      const currentNodeEntry = nodesMap.get(element.id)!;
+
+      element.connections.forEach((connection, connectionIndex) => {
+        if (!nodesMap.has(connection.id)) {
+          const targetPosition = calculateNodePosition(
+            connectionIndex,
+            1
+          );
+          const targetNodeEntry: NodeEntry = {
+            loc: targetPosition,
+            text: elements.find((el) => el.id === connection.id)?.name || "",
+          };
+          nodesMap.set(connection.id, targetNodeEntry);
+          diagram.nodesEntries.push(targetNodeEntry);
+        }
+
+        const targetNodeEntry = nodesMap.get(connection.id)!;
+
+        const arrowEntry: ArrowEntry = {
+          locOrig: currentNodeEntry.loc,
+          locDest: targetNodeEntry.loc,
+          name: connection.name,
+        };
+        diagram.arrowsEntries.push(arrowEntry);
+      });
     });
 
-    return treeNodes;
+    return diagram;
   }
 }
