@@ -13,13 +13,13 @@ import { ShapesCreator } from './shapes.creator';
 
 type Location = { x: number; y: number };
 type NodeEntry = { loc: Location; text: string };
-type ArrowEntry = { locOrig: Location; locDest: Location; name: string };
+type ArrowEntry = { locOrig: Location; locDest: Location; text: string };
 type DiagramFormat = { nodesEntries: NodeEntry[]; arrowsEntries: ArrowEntry[] };
 
 type InputElement = {
-  name: string;
+  text: string;
   id: string;
-  connections: { id: string; name: string }[];
+  connections: { id: string; text: string }[];
 };
 
 type PositionalAdjustments = {
@@ -62,35 +62,48 @@ export class ControlOverviewComponent {
     // Example usage
     const elements = [
       {
-        name: "Node A",
+        text: "Node A",
         id: "A",
         connections: [
-          { id: "B", name: "Arrow AB" },
-          { id: "C", name: "Arrow AC" }
+          { id: "B", text: "Arrow AB" }
         ],
       },
       {
-        name: "Node B",
+        text: "Node B",
         id: "B",
-        connections: [{ id: "C", name: "Arrow BC" }],
+        connections: [
+          { id: "C", text: "Arrow BC" },
+          { id: "D", text: "Arrow BD" },
+          { id: "E", text: "Arrow BE" }
+        ],
       },
       {
-        name: "Node C",
+        text: "Node C",
         id: "C",
         connections: [],
       },
+      {
+        text: "Node D",
+        id: "D",
+        connections: [],
+      },
+      {
+        text: "Node E",
+        id: "E",
+        connections: [],
+      }
     ];
 
     const adjustments = {
-      startLocation: { x: 0, y: 0 },
-      distBetweenConnections: 100,
-      distBetweenPeers: 200,
+      startLocation: { x: 100, y: 100 },
+      distBetweenConnections: 300,
+      distBetweenPeers: 300,
     };
 
     const diagram = this.generateTreeDiagram(elements, adjustments);
     console.log(diagram);
 
-    this.shapesCreator.draw(atomsLocations, arrowsLocations);
+    this.shapesCreator.draw(diagram.nodesEntries, diagram.arrowsEntries);
   }
 
   generateTreeDiagram(
@@ -99,9 +112,11 @@ export class ControlOverviewComponent {
   ): DiagramFormat {
     const { startLocation, distBetweenConnections, distBetweenPeers } = adjustments;
 
-    const nodesMap = new Map<string, NodeEntry>();
+    const nodesMap = new Map<string, NodeEntry>(); // To store nodes and prevent duplicates
     const diagram: DiagramFormat = { nodesEntries: [], arrowsEntries: [] };
+    const visited = new Set<string>(); // To track visited nodes and prevent infinite recursion
 
+    // Function to calculate the position of a node based on its level and index
     function calculateNodePosition(
       index: number,
       level: number
@@ -112,39 +127,50 @@ export class ControlOverviewComponent {
       };
     }
 
-    elements.forEach((element, index) => {
+    // Helper function to traverse the nodes and determine their positions dynamically
+    function positionNode(
+      element: InputElement,
+      currentLevel: number,
+      parentIndex: number
+    ): void {
+      if (visited.has(element.id)) {
+        // If node is already visited, avoid reprocessing it
+        return;
+      }
+
+      visited.add(element.id); // Mark node as visited
+
       if (!nodesMap.has(element.id)) {
-        const nodePosition = calculateNodePosition(index, 0);
-        const nodeEntry: NodeEntry = { loc: nodePosition, text: element.name };
+        const nodePosition = calculateNodePosition(parentIndex, currentLevel);
+        const nodeEntry: NodeEntry = { loc: nodePosition, text: element.text };
         nodesMap.set(element.id, nodeEntry);
         diagram.nodesEntries.push(nodeEntry);
       }
 
       const currentNodeEntry = nodesMap.get(element.id)!;
 
+      // Add arrow entries for each connection
       element.connections.forEach((connection, connectionIndex) => {
-        if (!nodesMap.has(connection.id)) {
-          const targetPosition = calculateNodePosition(
-            connectionIndex,
-            1
-          );
-          const targetNodeEntry: NodeEntry = {
-            loc: targetPosition,
-            text: elements.find((el) => el.id === connection.id)?.name || "",
+        const targetNode = elements.find((el) => el.id === connection.id);
+        if (targetNode) {
+          // Recursively position the target node based on its level
+          positionNode(targetNode, currentLevel + 1, connectionIndex);
+
+          const targetNodeEntry = nodesMap.get(connection.id)!;
+
+          const arrowEntry: ArrowEntry = {
+            locOrig: currentNodeEntry.loc,
+            locDest: targetNodeEntry.loc,
+            text: connection.text,
           };
-          nodesMap.set(connection.id, targetNodeEntry);
-          diagram.nodesEntries.push(targetNodeEntry);
+          diagram.arrowsEntries.push(arrowEntry);
         }
-
-        const targetNodeEntry = nodesMap.get(connection.id)!;
-
-        const arrowEntry: ArrowEntry = {
-          locOrig: currentNodeEntry.loc,
-          locDest: targetNodeEntry.loc,
-          name: connection.name,
-        };
-        diagram.arrowsEntries.push(arrowEntry);
       });
+    }
+
+    // Start positioning from the root nodes (those without any parent)
+    elements.forEach((element, index) => {
+      positionNode(element, 0, index);
     });
 
     return diagram;
