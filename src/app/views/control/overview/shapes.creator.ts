@@ -2,16 +2,30 @@ import { Injectable } from '@angular/core';
 import Konva from 'konva';
 import { AtomShapeCreator } from './atom.shape.creator';
 import { AtomArrowCreator } from './atom.arrow.creator';
+import { ShapeLocation } from './shapes.defines';
 
+
+export interface AtomElement {
+  loc: ShapeLocation;
+  text: string;
+}
+
+export interface ArrowElement {
+  locOrig: ShapeLocation;
+  locDest: ShapeLocation;
+  text: string;
+}
 
 @Injectable({
   providedIn: 'root',
 })
 export class ShapesCreator {
+  scaleStep = 1.1;
+
   constructor(private atomShapeCreator: AtomShapeCreator,
               private atomArrowCreator: AtomArrowCreator) {}
 
-  draw(): void {
+  draw(atomElement: AtomElement[], arrowElement: ArrowElement[]): void {
     const layer = new Konva.Layer();
     const stage = new Konva.Stage({
       container: 'konva-container',
@@ -19,20 +33,19 @@ export class ShapesCreator {
       height: window.innerHeight,
       draggable: true
     });
+
     stage.add(layer);
-    this.configureStage(stage, 1.1);
+    this.configureStage(stage, this.scaleStep);
 
-    const atomsLocations = [
-      { x: 200, y: 200 },
-      { x: 200+400, y: 200 },
-      { x: 200+2*400, y: 200 },
-    ];
+    for (let i = 0; i < atomElement.length; i++) {
+      this.atomShapeCreator.addAtomBlock(layer, atomElement[i].loc, atomElement[i].text);
+    }
 
-    this.atomShapeCreator.addAtomBlock(layer, atomsLocations[0], 'Atom 1');
-    this.atomArrowCreator.addArrowBlock(layer, atomsLocations[0], atomsLocations[1], 'Arrow 1');
-    this.atomShapeCreator.addAtomBlock(layer, atomsLocations[1], 'Atom 2');
-    this.atomArrowCreator.addArrowBlock(layer, atomsLocations[1], atomsLocations[2], 'Arrow 2');
-    this.atomShapeCreator.addAtomBlock(layer, atomsLocations[2], 'Atom 3');
+    for (let i = 0; i < arrowElement.length; i++) {
+      this.atomArrowCreator.addArrowBlock(layer, arrowElement[i].locOrig,
+                                                 arrowElement[i].locDest,
+                                                 arrowElement[i].text);
+    }
 
     stage.batchDraw();
     layer.batchDraw();
