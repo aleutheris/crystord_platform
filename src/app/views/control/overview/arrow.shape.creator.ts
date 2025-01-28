@@ -7,7 +7,7 @@ import * as Sparams from './shapes.parameters';
 @Injectable({
   providedIn: 'root',
 })
-export class ArrowShapeCreator {
+export class ArrowShapeParams {
   arrowParams: AtomArrow;
   circleRadius = Sparams.atomCircle.radius;
 
@@ -15,22 +15,17 @@ export class ArrowShapeCreator {
     this.arrowParams = Sparams.arrow;
   }
 
-  addArrow(layer: Konva.Layer,
-           locationOrig: ShapeLocation,
-           locationDest: ShapeLocation): void {
-    this.setArrowPoints(locationOrig, locationDest);
-
-    const arrow = new Konva.Arrow(this.arrowParams);
-    layer.add(arrow);
-  }
-
-  setArrowPoints(locationOrig: ShapeLocation,
-                 locationDest: ShapeLocation): void {
+  setArrowDisplacement(locationOrig: ShapeLocation,
+                       locationDest: ShapeLocation): void {
     this.arrowParams.points = [
       locationOrig.x + this.circleRadius,
       locationOrig.y,
       locationDest.x - this.circleRadius,
       locationDest.y
     ];
+  }
+
+  getArrowShapeParams(): AtomArrow {
+    return this.arrowParams;
   }
 }

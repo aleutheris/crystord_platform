@@ -1,21 +1,47 @@
 import { Injectable } from '@angular/core';
 import Konva from 'konva';
+import * as Sparams from './shapes.parameters';
 import { ShapeLocation } from './shapes.defines';
-import { ArrowShapeCreator } from './arrow.shape.creator';
+import { ArrowShapeParams } from './arrow.shape.creator';
+import { AtomTextParams } from './atom.text.params';
 
 
 @Injectable({
   providedIn: 'root',
 })
 export class AtomArrowCreator {
-  arrowShape: ArrowShapeCreator;
+  arrowShapeParams: ArrowShapeParams;
+  arrowTextParams: AtomTextParams;
 
   constructor() {
-    this.arrowShape = new ArrowShapeCreator();
+    this.arrowShapeParams = new ArrowShapeParams();
+    this.arrowTextParams = new AtomTextParams();
   }
 
   addArrowBlock(layer: Konva.Layer,
-                locationOrig: ShapeLocation, locationDest: ShapeLocation): void {
-    this.arrowShape.addArrow(layer, locationOrig, locationDest);
+                locationOrig: ShapeLocation, locationDest: ShapeLocation,
+                text: string): void {
+    this.arrowShapeParams.setArrowDisplacement(locationOrig, locationDest);
+    const arrowParams = this.arrowShapeParams.getArrowShapeParams();
+
+    const location = {
+      x: (locationOrig.x + locationDest.x) / 2,
+      y: (locationOrig.y + locationDest.y) / 2
+    };
+    const textLocation = { x: location.x - 150, y: location.y -10 };
+    this.arrowTextParams.setLocation(textLocation);
+    this.arrowTextParams.setText(text);
+    const textParams = this.arrowTextParams.getAtomTextParams();
+
+    const arrowShape = new Konva.Arrow(arrowParams);
+    const textShape = new Konva.Text(textParams);
+
+    const arrowBlock = new Konva.Group(Sparams.arrowBlock);
+
+    arrowBlock.add(arrowShape);
+    arrowBlock.add(textShape);
+
+    layer.add(arrowShape);
+    layer.add(arrowBlock);
   }
 }

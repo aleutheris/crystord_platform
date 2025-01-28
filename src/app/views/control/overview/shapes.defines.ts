@@ -7,6 +7,10 @@ export interface AtomBlock {
   draggable: boolean;
 }
 
+export interface ArrowBlock {
+  draggable: boolean;
+}
+
 export interface AtomCircle {
   x: number;
   y: number;
@@ -38,4 +42,5 @@ export interface AtomArrow {
   fill: string;
   stroke: string;
   strokeWidth: number;
+
 }

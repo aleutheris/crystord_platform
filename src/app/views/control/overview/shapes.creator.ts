@@ -1,16 +1,14 @@
 import { Injectable } from '@angular/core';
 import Konva from 'konva';
 import { AtomShapeCreator } from './atom.shape.creator';
-import { ArrowShapeCreator } from './arrow.shape.creator';
 import { AtomArrowCreator } from './atom.arrow.creator';
+
 
 @Injectable({
   providedIn: 'root',
 })
 export class ShapesCreator {
-
   constructor(private atomShapeCreator: AtomShapeCreator,
-              private arrowShapeCreator: ArrowShapeCreator,
               private atomArrowCreator: AtomArrowCreator) {}
 
   draw(): void {
@@ -22,6 +20,7 @@ export class ShapesCreator {
       draggable: true
     });
     stage.add(layer);
+    this.configureStage(stage, 1.1);
 
     const atomsLocations = [
       { x: 200, y: 200 },
@@ -30,9 +29,7 @@ export class ShapesCreator {
 
     this.atomShapeCreator.addAtomBlock(layer, atomsLocations[0], 'Atom 1');
     this.atomShapeCreator.addAtomBlock(layer, atomsLocations[1], 'Atom 2');
-    this.atomArrowCreator.addArrowBlock(layer, atomsLocations[0], atomsLocations[1]);
-
-    this.configureStage(stage, 1.1);
+    this.atomArrowCreator.addArrowBlock(layer, atomsLocations[0], atomsLocations[1], 'Arrow 1');
 
     stage.batchDraw();
     layer.batchDraw();

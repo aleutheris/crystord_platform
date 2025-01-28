@@ -10,6 +10,7 @@ import {
 } from '@coreui/angular';
 import { ShapesCreator } from './shapes.creator';
 
+
 @Component({
     selector: 'app-control',
     templateUrl: './control.overview.component.html',
