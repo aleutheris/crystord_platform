@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import Konva from 'konva';
-import * as Sparams from './shapes.parameters';
+import { textAdjustments, arrowBlockParams } from './shapes.parameters';
 import { ShapeLocation } from './shapes.defines';
 import { ArrowShapeParams } from './arrow.shape.creator';
 import { AtomTextParams } from './atom.text.params';
@@ -26,9 +26,12 @@ export class AtomArrowCreator {
 
     const location = {
       x: (locationOrig.x + locationDest.x) / 2,
-      y: (locationOrig.y + locationDest.y) / 2
+      y: (locationOrig.y + locationDest.y) / 2 + textAdjustments.arrowTextOffsetY
     };
-    const textLocation = { x: location.x - 150, y: location.y -10 };
+    const textLocation = {
+      x: location.x - textAdjustments.textMarginX,
+      y: location.y - textAdjustments.textMarginY
+    };
     this.arrowTextParams.setLocation(textLocation);
     this.arrowTextParams.setText(text);
     const textParams = this.arrowTextParams.getAtomTextParams();
@@ -36,7 +39,7 @@ export class AtomArrowCreator {
     const arrowShape = new Konva.Arrow(arrowParams);
     const textShape = new Konva.Text(textParams);
 
-    const arrowBlock = new Konva.Group(Sparams.arrowBlock);
+    const arrowBlock = new Konva.Group(arrowBlockParams);
 
     arrowBlock.add(arrowShape);
     arrowBlock.add(textShape);

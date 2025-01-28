@@ -3,6 +3,12 @@ export interface ShapeLocation {
   y: number;
 }
 
+export interface TextAdjustments {
+  arrowTextOffsetY: number;
+  textMarginX: number;
+  textMarginY: number;
+}
+
 export interface AtomBlock {
   draggable: boolean;
 }

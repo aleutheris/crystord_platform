@@ -1,10 +1,16 @@
 import * as ShapeDefs from './shapes.defines';
 
+export const textAdjustments: ShapeDefs.TextAdjustments = {
+  arrowTextOffsetY: -20,
+  textMarginX: 150,
+  textMarginY: 10,
+}
+
 export const atomBlock: ShapeDefs.AtomBlock = {
   draggable: false,
 };
 
-export const arrowBlock: ShapeDefs.ArrowBlock = {
+export const arrowBlockParams: ShapeDefs.ArrowBlock = {
   draggable: false,
 }
 
