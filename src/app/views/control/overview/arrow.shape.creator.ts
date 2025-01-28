@@ -18,9 +18,9 @@ export class ArrowShapeParams {
   setArrowDisplacement(locationOrig: ShapeLocation,
                        locationDest: ShapeLocation): void {
     this.arrowParams.points = [
-      locationOrig.x + this.circleRadius,
+      locationOrig.x, //+ this.circleRadius,
       locationOrig.y,
-      locationDest.x - this.circleRadius,
+      locationDest.x, // - this.circleRadius,
       locationDest.y
     ];
   }

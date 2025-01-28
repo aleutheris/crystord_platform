@@ -26,6 +26,7 @@ type PositionalAdjustments = {
   startLocation: Location;
   distBetweenConnections: number;
   distBetweenPeers: number;
+  nodeRadius: number;
 };
 
 @Component({
@@ -48,17 +49,6 @@ export class ControlOverviewComponent {
   }
 
   ngAfterViewInit(): void {
-    const atomsLocations = [
-      { loc: { x: 200, y: 200 }, text: 'Atom 1' },
-      { loc: { x: 200+400, y: 200 }, text: 'Atom 2' },
-      { loc: { x: 200+2*400, y: 200 }, text: 'Atom 3' },
-    ];
-
-    const arrowsLocations = [
-      { locOrig: atomsLocations[0].loc, locDest: atomsLocations[1].loc, text: 'Arrow 1' },
-      { locOrig: atomsLocations[1].loc, locDest: atomsLocations[2].loc, text: 'Arrow 2' },
-    ];
-
     // Example usage
     const elements = [
       {
@@ -98,6 +88,7 @@ export class ControlOverviewComponent {
       startLocation: { x: 100, y: 100 },
       distBetweenConnections: 300,
       distBetweenPeers: 300,
+      nodeRadius: 75,
     };
 
     const diagram = this.generateTreeDiagram(elements, adjustments);
@@ -110,13 +101,12 @@ export class ControlOverviewComponent {
     elements: InputElement[],
     adjustments: PositionalAdjustments
   ): DiagramFormat {
-    const { startLocation, distBetweenConnections, distBetweenPeers } = adjustments;
+    const { startLocation, distBetweenConnections, distBetweenPeers, nodeRadius } = adjustments;
 
-    const nodesMap = new Map<string, NodeEntry>(); // To store nodes and prevent duplicates
+    const nodesMap = new Map<string, NodeEntry>();
     const diagram: DiagramFormat = { nodesEntries: [], arrowsEntries: [] };
-    const visited = new Set<string>(); // To track visited nodes and prevent infinite recursion
+    const visited = new Set<string>();
 
-    // Function to calculate the position of a node based on its level and index
     function calculateNodePosition(
       index: number,
       level: number
@@ -127,18 +117,16 @@ export class ControlOverviewComponent {
       };
     }
 
-    // Helper function to traverse the nodes and determine their positions dynamically
-    function positionNode(
+    const positionNode = (
       element: InputElement,
       currentLevel: number,
       parentIndex: number
-    ): void {
+    ): void => {
       if (visited.has(element.id)) {
-        // If node is already visited, avoid reprocessing it
         return;
       }
 
-      visited.add(element.id); // Mark node as visited
+      visited.add(element.id);
 
       if (!nodesMap.has(element.id)) {
         const nodePosition = calculateNodePosition(parentIndex, currentLevel);
@@ -149,18 +137,16 @@ export class ControlOverviewComponent {
 
       const currentNodeEntry = nodesMap.get(element.id)!;
 
-      // Add arrow entries for each connection
       element.connections.forEach((connection, connectionIndex) => {
         const targetNode = elements.find((el) => el.id === connection.id);
         if (targetNode) {
-          // Recursively position the target node based on its level
           positionNode(targetNode, currentLevel + 1, connectionIndex);
 
           const targetNodeEntry = nodesMap.get(connection.id)!;
 
           const arrowEntry: ArrowEntry = {
-            locOrig: currentNodeEntry.loc,
-            locDest: targetNodeEntry.loc,
+            locOrig: this.getEdgePoint(currentNodeEntry.loc, targetNodeEntry.loc, nodeRadius),
+            locDest: this.getEdgePoint(targetNodeEntry.loc, currentNodeEntry.loc, nodeRadius),
             text: connection.text,
           };
           diagram.arrowsEntries.push(arrowEntry);
@@ -168,11 +154,23 @@ export class ControlOverviewComponent {
       });
     }
 
-    // Start positioning from the root nodes (those without any parent)
     elements.forEach((element, index) => {
       positionNode(element, 0, index);
     });
 
     return diagram;
+  }
+
+  getEdgePoint(locOrig: Location, locDest: Location, radius: number): Location {
+    const x1 = locOrig.x;
+    const y1 = locOrig.y;
+    const x2 = locDest.x;
+    const y2 = locDest.y;
+    const r = radius;
+    const v = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
+    return {
+      x: x1 + r * (x2 - x1) / v,
+      y: y1 + r * (y2 - y1) / v
+    };
   }
 }
