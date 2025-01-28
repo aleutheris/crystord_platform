@@ -1,28 +1,26 @@
 import { Injectable } from '@angular/core';
 import Konva from 'konva';
-import * as Sdefines from './shapes.defines';
-import * as Sparams from './shapes.parameters';
 import { AtomShapeCreator } from './atom.shape.creator';
 import { ArrowShapeCreator } from './arrow.shape.creator';
+import { AtomArrowCreator } from './atom.arrow.creator';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ShapesCreator {
+
   constructor(private atomShapeCreator: AtomShapeCreator,
-              private arrowShapeCreator: ArrowShapeCreator
-  ) {
-  }
+              private arrowShapeCreator: ArrowShapeCreator,
+              private atomArrowCreator: AtomArrowCreator) {}
 
   draw(): void {
+    const layer = new Konva.Layer();
     const stage = new Konva.Stage({
       container: 'konva-container',
       width: window.innerWidth,
       height: window.innerHeight,
       draggable: true
     });
-
-    const layer = new Konva.Layer();
     stage.add(layer);
 
     const atomsLocations = [
@@ -32,9 +30,15 @@ export class ShapesCreator {
 
     this.atomShapeCreator.addAtomBlock(layer, atomsLocations[0], 'Atom 1');
     this.atomShapeCreator.addAtomBlock(layer, atomsLocations[1], 'Atom 2');
-    this.arrowShapeCreator.addArrow(layer, atomsLocations[0], atomsLocations[1]);
+    this.atomArrowCreator.addArrowBlock(layer, atomsLocations[0], atomsLocations[1]);
 
-    const scaleBy = 1.05;
+    this.configureStage(stage, 1.1);
+
+    stage.batchDraw();
+    layer.batchDraw();
+  }
+
+  configureStage(stage: Konva.Stage, scaleBy: number): void {
     stage.on('wheel', (e) => {
       e.evt.preventDefault();
 
@@ -58,8 +62,5 @@ export class ShapesCreator {
       stage.scale({ x: newScale, y: newScale });
       stage.position(newPos);
     });
-
-    stage.batchDraw();
-    layer.batchDraw();
   }
 }
