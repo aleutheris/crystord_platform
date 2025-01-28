@@ -24,12 +24,15 @@ export class ShapesCreator {
 
     const atomsLocations = [
       { x: 200, y: 200 },
-      { x: 600, y: 200 },
+      { x: 200+400, y: 200 },
+      { x: 200+2*400, y: 200 },
     ];
 
     this.atomShapeCreator.addAtomBlock(layer, atomsLocations[0], 'Atom 1');
-    this.atomShapeCreator.addAtomBlock(layer, atomsLocations[1], 'Atom 2');
     this.atomArrowCreator.addArrowBlock(layer, atomsLocations[0], atomsLocations[1], 'Arrow 1');
+    this.atomShapeCreator.addAtomBlock(layer, atomsLocations[1], 'Atom 2');
+    this.atomArrowCreator.addArrowBlock(layer, atomsLocations[1], atomsLocations[2], 'Arrow 2');
+    this.atomShapeCreator.addAtomBlock(layer, atomsLocations[2], 'Atom 3');
 
     stage.batchDraw();
     layer.batchDraw();
