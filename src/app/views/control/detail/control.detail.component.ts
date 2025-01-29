@@ -26,9 +26,8 @@ import {
   FormSelectDirective,
   TableDirective,
 } from '@coreui/angular';
-import { Atom } from './atom.model';
-import { AtomService } from './atom.service';
-import { at } from 'lodash-es';
+import { Atom } from '../atomhall/atom.model';
+import { AtomService } from '../atomhall/atom.service';
 
 @Component({
     selector: 'app-control',

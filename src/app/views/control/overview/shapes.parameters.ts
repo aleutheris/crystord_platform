@@ -21,7 +21,7 @@ export const atomCircle: ShapeDefs.AtomCircle = {
   height: 100,
   radius: 75,
   fill: 'gray',
-  stroke: 'black',
+  stroke: 'white',
   strokeWidth: 2,
   draggable: false,
 };
@@ -32,7 +32,7 @@ export const atomText: ShapeDefs.AtomText = {
   text: '-',
   fontSize: 20,
   fontFamily: 'Arial',
-  fill: 'black',
+  fill: 'white',
   width: 300,
   align: 'center',
   draggable: false,
@@ -42,8 +42,8 @@ export const arrow: ShapeDefs.AtomArrow = {
   points: [0, 0, 0, 0],
   pointerLength: 10,
   pointerWidth: 10,
-  fill: 'black',
-  stroke: 'black',
+  fill: 'white',
+  stroke: 'white',
   strokeWidth: 2,
 };
 
@@ -53,7 +53,7 @@ export const arrowHead: ShapeDefs.AtomText = {
   text: '-',
   fontSize: 20,
   fontFamily: 'Arial',
-  fill: 'black',
+  fill: 'white',
   width: 300,
   align: 'center',
   draggable: false,
