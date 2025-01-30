@@ -12,24 +12,24 @@
           [(ngModel)]="searchText"
           (keyup.enter)="retrieveAtomsFeatures()"/>
 
-          <table cTable>
-            <thead>
-              <tr>
-                <th scope="col">Title</th>
-                <th scope="col">Description</th>
-                <th scope="col">Content</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let atom of atomsFeatures">
-                <td>{{ atom.properties.nuclearies.title }}</td>
-                <td>{{ atom.properties.nuclearies.description }}</td>
-                <td>{{ atom.properties.nuclearies.content }}</td>
-              </tr>
-            </tbody>
-          </table>
-
         <div id="konva-container"></div>
+
+        <table cTable>
+          <thead>
+            <tr>
+              <th scope="col">Title</th>
+              <th scope="col">Description</th>
+              <th scope="col">Content</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let atom of atomsFeatures">
+              <td>{{ atom.properties.nuclearies.title }}</td>
+              <td>{{ atom.properties.nuclearies.description }}</td>
+              <td>{{ atom.properties.nuclearies.content }}</td>
+            </tr>
+          </tbody>
+        </table>
       </c-card-body>
     </c-card>
   </c-col>

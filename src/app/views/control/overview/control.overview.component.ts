@@ -1,6 +1,5 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import {
   RowComponent,
   ColComponent,
@@ -11,6 +10,7 @@ import {
   TextColorDirective,
   TableDirective,
 } from '@coreui/angular';
+import { FormsModule } from '@angular/forms';
 import { ShapesCreator } from './shapes.creator';
 import { atomCircle } from './shapes.parameters';
 import { Atom } from '../atomhall/atom.model';
@@ -67,6 +67,7 @@ export class ControlOverviewComponent {
       next: (data) => {
         let atomData = this.atomsDataToCamelCase(data['result']);
         this.atomsFeatures = this.atomsDataContentToString(atomData);
+        this.drawTree();
       },
       error: (error) => {
         console.error('There was an error searching for atoms:', error);
@@ -74,41 +75,40 @@ export class ControlOverviewComponent {
     });
   }
 
-  ngAfterViewInit(): void {
-    // Example usage
-    const elements = [
-      {
-        text: "Node A",
-        id: "A",
-        connections: [
-          { id: "B", text: "Arrow AB" }
-        ],
-      },
-      {
-        text: "Node B",
-        id: "B",
-        connections: [
-          { id: "C", text: "Arrow BC" },
-          { id: "D", text: "Arrow BD" },
-          { id: "E", text: "Arrow BE" }
-        ],
-      },
-      {
-        text: "Node C",
-        id: "C",
-        connections: [],
-      },
-      {
-        text: "Node D",
-        id: "D",
-        connections: [],
-      },
-      {
-        text: "Node E",
-        id: "E",
-        connections: [],
-      }
-    ];
+  drawTree(): void {
+    // const elements = [
+    //   {
+    //     text: "Node A",
+    //     id: "A",
+    //     connections: [
+    //       { id: "B", text: "Arrow AB" }
+    //     ],
+    //   },
+    //   {
+    //     text: "Node B",
+    //     id: "B",
+    //     connections: [
+    //       { id: "C", text: "Arrow BC" },
+    //       { id: "D", text: "Arrow BD" },
+    //       { id: "E", text: "Arrow BE" }
+    //     ],
+    //   },
+    //   {
+    //     text: "Node C",
+    //     id: "C",
+    //     connections: [],
+    //   },
+    //   {
+    //     text: "Node D",
+    //     id: "D",
+    //     connections: [],
+    //   },
+    //   {
+    //     text: "Node E",
+    //     id: "E",
+    //     connections: [],
+    //   }
+    // ];
 
     const adjustments = {
       startLocation: { x: 100, y: 100 },
@@ -116,6 +116,19 @@ export class ControlOverviewComponent {
       distBetweenPeers: 300,
       nodeRadius: atomCircle.radius,
     };
+
+    const elements: InputElement[] = [];
+
+    this.atomsFeatures.forEach((atom: Atom) => {
+      elements.push({
+        text: atom.properties.nuclearies.title,
+        id: atom.properties.shellies.uuid,
+        connections: atom.bonds.map((bond: any) => ({
+          id: bond.uuid,
+          text: bond.name
+        }))
+      });
+    });
 
     const diagram = this.generateTreeDiagram(elements, adjustments);
     this.shapesCreator.draw(diagram.nodesEntries, diagram.arrowsEntries);

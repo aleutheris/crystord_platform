@@ -1,13 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
-import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
-import { DocsExampleComponent } from '@docs-components/public-api';
 import {
   RowComponent,
   ColComponent,
-  TextColorDirective,
   CardComponent,
   CardHeaderComponent,
   CardBodyComponent,
@@ -17,15 +12,9 @@ import {
   FormLabelDirective,
   FormCheckInputDirective,
   ButtonDirective,
-  ThemeDirective,
-  DropdownComponent,
-  DropdownToggleDirective,
-  DropdownMenuDirective,
-  DropdownItemDirective,
-  DropdownDividerDirective,
-  FormSelectDirective,
   TableDirective,
 } from '@coreui/angular';
+import { FormsModule } from '@angular/forms';
 import { Atom } from '../atomhall/atom.model';
 import { AtomService } from '../atomhall/atom.service';
 
@@ -38,26 +27,15 @@ import { AtomService } from '../atomhall/atom.service';
       CommonModule,
       RowComponent,
       ColComponent,
-      TextColorDirective,
       CardComponent,
       CardHeaderComponent,
       CardBodyComponent,
-      DocsExampleComponent,
       InputGroupComponent,
       InputGroupTextDirective,
       FormControlDirective,
       FormLabelDirective,
       FormCheckInputDirective,
       ButtonDirective,
-      ThemeDirective,
-      DropdownComponent,
-      DropdownToggleDirective,
-      DropdownMenuDirective,
-      DropdownItemDirective,
-      RouterLink,
-      DropdownDividerDirective,
-      FormSelectDirective,
-      ReactiveFormsModule,
       FormsModule,
       TableDirective
     ]
@@ -212,9 +190,8 @@ export class ControlDetailComponent {
 
     this.atomService.readAtoms(rq).subscribe({
       next: (data) => {
-        data['result'] = this.atomDataToCamelCase(data['result']);
-        data['result'] = this.convertAtomContentToString(data['result']);
-        this.atom = data['result'];
+        this.atom = this.atomDataToCamelCase(data['result'][0]);
+        this.atom = this.convertAtomContentToString(this.atom);
       },
       error: (error) => {
         console.error('There was an error retrieving the atom data:', error);
