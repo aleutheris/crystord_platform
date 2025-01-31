@@ -2,9 +2,14 @@ let PROPERTY_UUID = "uuid"
 
 export interface Atom {
   labels: string[],
-  bonds: string[],
+  bonds: Bond[],
   properties: AtomProperties
 };
+
+export interface Bond {
+  uuid: string,
+  name: string,
+}
 
 export interface AtomProperties {
   shellies: AtomShellies,

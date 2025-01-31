@@ -12,28 +12,15 @@ import {
 } from '@coreui/angular';
 import { FormsModule } from '@angular/forms';
 import { ShapesCreator } from './shapes.creator';
-import { atomCircle } from './shapes.parameters';
-import { Atom } from '../atomhall/atom.model';
+import { Atom, Bond } from '../atomhall/atom.model';
 import { AtomService } from '../atomhall/atom.service';
 
 
-type Location = { x: number; y: number };
-type NodeEntry = { loc: Location; text: string };
-type ArrowEntry = { locOrig: Location; locDest: Location; text: string };
-type DiagramFormat = { nodesEntries: NodeEntry[]; arrowsEntries: ArrowEntry[] };
-
-type InputElement = {
-  text: string;
-  id: string;
-  connections: { id: string; text: string }[];
-};
-
-type PositionalAdjustments = {
-  startLocation: Location;
-  distBetweenConnections: number;
-  distBetweenPeers: number;
-  nodeRadius: number;
-};
+interface AtomNode {
+  uuid: string;
+  children: AtomNode[];
+  data: Atom;
+}
 
 @Component({
   selector: 'app-control',
@@ -55,19 +42,24 @@ type PositionalAdjustments = {
 })
 export class ControlOverviewComponent {
   searchText: string;
-  atomsFeatures: any;
+  atomsFeatures: Atom[];
 
   constructor(private shapesCreator: ShapesCreator,
               private atomService: AtomService) {
-    this.searchText = 'labels=';
+    this.searchText = '';
+    this.atomsFeatures = [];
   }
 
   retrieveAtomsFeatures() {
-    this.atomService.readAtoms(this.parseSearchText()).subscribe({
+    this.atomService.readAtoms(
+      this.parseSearchTextIntoQuery(
+        this.searchText,
+        'retrieve_atom_features')).subscribe({
+
       next: (data) => {
         let atomData = this.atomsDataToCamelCase(data['result']);
         this.atomsFeatures = this.atomsDataContentToString(atomData);
-        this.drawTree();
+        this.drawTree(this.atomsFeatures);
       },
       error: (error) => {
         console.error('There was an error searching for atoms:', error);
@@ -75,144 +67,60 @@ export class ControlOverviewComponent {
     });
   }
 
-  drawTree(): void {
-    // const elements = [
-    //   {
-    //     text: "Node A",
-    //     id: "A",
-    //     connections: [
-    //       { id: "B", text: "Arrow AB" }
-    //     ],
-    //   },
-    //   {
-    //     text: "Node B",
-    //     id: "B",
-    //     connections: [
-    //       { id: "C", text: "Arrow BC" },
-    //       { id: "D", text: "Arrow BD" },
-    //       { id: "E", text: "Arrow BE" }
-    //     ],
-    //   },
-    //   {
-    //     text: "Node C",
-    //     id: "C",
-    //     connections: [],
-    //   },
-    //   {
-    //     text: "Node D",
-    //     id: "D",
-    //     connections: [],
-    //   },
-    //   {
-    //     text: "Node E",
-    //     id: "E",
-    //     connections: [],
-    //   }
-    // ];
+  drawTree(atoms: Atom[]): void {
+    const atomTree: Record<string, AtomNode> = {};
 
-    const adjustments = {
-      startLocation: { x: 100, y: 100 },
-      distBetweenConnections: 300,
-      distBetweenPeers: 300,
-      nodeRadius: atomCircle.radius,
-    };
-
-    const elements: InputElement[] = [];
-
-    this.atomsFeatures.forEach((atom: Atom) => {
-      elements.push({
-        text: atom.properties.nuclearies.title,
-        id: atom.properties.shellies.uuid,
-        connections: atom.bonds.map((bond: any) => ({
-          id: bond.uuid,
-          text: bond.name
-        }))
-      });
-    });
-
-    const diagram = this.generateTreeDiagram(elements, adjustments);
-    this.shapesCreator.draw(diagram.nodesEntries, diagram.arrowsEntries);
-  }
-
-  // Private methods
-  generateTreeDiagram(
-    elements: InputElement[],
-    adjustments: PositionalAdjustments
-  ): DiagramFormat {
-    const { startLocation, distBetweenConnections, distBetweenPeers, nodeRadius } = adjustments;
-
-    const nodesMap = new Map<string, NodeEntry>();
-    const diagram: DiagramFormat = { nodesEntries: [], arrowsEntries: [] };
-    const visited = new Set<string>();
-
-    function calculateNodePosition(
-      index: number,
-      level: number
-    ): Location {
-      return {
-        x: startLocation.x + index * distBetweenPeers,
-        y: startLocation.y + level * distBetweenConnections,
-      };
+    function addAtomNode(atom: Atom) {
+      const uuid = atom.properties.shellies.uuid;
+      if (!atomTree[uuid]) {
+        atomTree[uuid] = { uuid, children: [], data: atom,
+        };
+      }
     }
 
-    const positionNode = (
-      element: InputElement,
-      currentLevel: number,
-      parentIndex: number
-    ): void => {
-      if (visited.has(element.id)) {
+    function addChildren(parentUuid: string, childUuids: string[]) {
+      const parentNode = atomTree[parentUuid];
+
+      if (!parentNode) {
+        console.error(`Parent node with uuid ${parentUuid} not found.`);
         return;
       }
 
-      visited.add(element.id);
+      childUuids.forEach(childUuid => {
+        let childNode = atomTree[childUuid];
 
-      if (!nodesMap.has(element.id)) {
-        const nodePosition = calculateNodePosition(parentIndex, currentLevel);
-        const nodeEntry: NodeEntry = { loc: nodePosition, text: element.text };
-        nodesMap.set(element.id, nodeEntry);
-        diagram.nodesEntries.push(nodeEntry);
-      }
+        if (!childNode) {
+          console.error(`Child node with uuid ${childUuid} not found.`);
+          return;
+        }
 
-      const currentNodeEntry = nodesMap.get(element.id)!;
-
-      element.connections.forEach((connection, connectionIndex) => {
-        const targetNode = elements.find((el) => el.id === connection.id);
-        if (targetNode) {
-          positionNode(targetNode, currentLevel + 1, connectionIndex);
-
-          const targetNodeEntry = nodesMap.get(connection.id)!;
-
-          const arrowEntry: ArrowEntry = {
-            locOrig: this.getEdgePoint(currentNodeEntry.loc, targetNodeEntry.loc, nodeRadius),
-            locDest: this.getEdgePoint(targetNodeEntry.loc, currentNodeEntry.loc, nodeRadius),
-            text: connection.text,
-          };
-          diagram.arrowsEntries.push(arrowEntry);
+        if (!parentNode.children.some(child => child.uuid === childUuid)) {
+          parentNode.children.push(childNode);
         }
       });
     }
 
-    elements.forEach((element, index) => {
-      positionNode(element, 0, index);
-    });
+    function buildHybridTree(atoms: Atom[]): string {
+      atoms.forEach(addAtomNode);
+      atoms.forEach(atom => {
+        const parentUuid = atom.properties.shellies.uuid;
+        const childUuids = atom.bonds.map(bond => bond.uuid);
+        addChildren(parentUuid, childUuids);
+      });
 
-    return diagram;
-  }
+      return atoms.length > 0 ? atoms[0].properties.shellies.uuid : '';
+    }
 
-  getEdgePoint(locOrig: Location, locDest: Location, radius: number): Location {
-    const x1 = locOrig.x;
-    const y1 = locOrig.y;
-    const x2 = locDest.x;
-    const y2 = locDest.y;
-    const r = radius;
-    const v = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
-    return {
-      x: x1 + r * (x2 - x1) / v,
-      y: y1 + r * (y2 - y1) / v
-    };
+    const rootAtomUuid = buildHybridTree(atoms);
+
+    this.shapesCreator.draw(atomTree, rootAtomUuid);
   }
 
   // Private methods
+  private getAtomByUuid(uuid: string) {
+    return this.atomsFeatures.find((atom: Atom) => atom.properties.shellies.uuid === uuid);
+  }
+
   private atomDataToCamelCase(data: any) {
     data.properties.shellies.changeHistory = data.properties.shellies.change_history;
     delete data.properties.shellies.change_history;
@@ -253,9 +161,8 @@ export class ControlOverviewComponent {
     }
   }
 
-  private parseSearchText() {
-    const searchText = this.searchText;
-    const result: {
+  private parseSearchTextIntoQuery(searchText: string, readout: string) {
+    const query: {
       readout: string,
       args: {
         selector: {
@@ -276,7 +183,7 @@ export class ControlOverviewComponent {
         }
       }
     } = {
-      readout: 'retrieve_atoms_features',
+      readout: readout,
       args: {
         selector: {
           bonds: [],
@@ -303,10 +210,14 @@ export class ControlOverviewComponent {
       const [key, value] = pair.split('=');
 
       if (key === 'labels') {
-        result.args.selector.labels = value ? value.split(',') : [];
+        query.args.selector.labels = value ? value.split(',') : [];
+      }
+
+      if (key === 'uuid') {
+        query.args.selector.properties.shellies.uuid = value;
       }
     });
 
-    return result;
+    return query;
   }
 }
