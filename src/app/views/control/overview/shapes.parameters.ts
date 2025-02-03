@@ -1,6 +1,12 @@
 import * as ShapeDefs from './shapes.defines';
 
-export const textAdjustments: ShapeDefs.TextAdjustments = {
+
+export const treeParameters: ShapeDefs.TreeParameters = {
+  minVerticalDistance: 170,
+  minHorizontalDistance: 150,
+};
+
+export const textAdjustments: ShapeDefs.TextConfigurations = {
   arrowTextOffsetY: -20,
   textMarginX: 150,
   textMarginY: 10,

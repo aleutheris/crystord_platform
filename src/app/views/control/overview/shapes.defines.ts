@@ -3,7 +3,12 @@ export interface ShapeLocation {
   y: number;
 }
 
-export interface TextAdjustments {
+export interface TreeParameters {
+  minVerticalDistance: number;
+  minHorizontalDistance: number;
+}
+
+export interface TextConfigurations {
   arrowTextOffsetY: number;
   textMarginX: number;
   textMarginY: number;

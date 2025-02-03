@@ -11,16 +11,10 @@ import {
   TableDirective,
 } from '@coreui/angular';
 import { FormsModule } from '@angular/forms';
-import { ShapesCreator } from './shapes.creator';
-import { Atom, Bond } from '../atomhall/atom.model';
+import { ShapesCreator, TreeConfiguration, NodeElement } from './shapes.creator';
+import { Atom } from '../atomhall/atom.model';
 import { AtomService } from '../atomhall/atom.service';
 
-
-interface AtomNode {
-  uuid: string;
-  children: AtomNode[];
-  data: Atom;
-}
 
 @Component({
   selector: 'app-control',
@@ -43,11 +37,19 @@ interface AtomNode {
 export class ControlOverviewComponent {
   searchText: string;
   atomsFeatures: Atom[];
+  treeConfiguration: TreeConfiguration;
 
   constructor(private shapesCreator: ShapesCreator,
               private atomService: AtomService) {
-    this.searchText = '';
+    this.searchText = 'uuid=cc249313-1d09-4614-ae53-e8d7826b0ba2';
     this.atomsFeatures = [];
+    this.treeConfiguration = {
+      marginWidth: 10,
+      marginHeight: 10,
+      width: 1250, //window.innerWidth,
+      height: 800, //window.innerHeight,
+      depthSizes: []
+    }
   }
 
   retrieveAtomsFeatures() {
@@ -68,33 +70,31 @@ export class ControlOverviewComponent {
   }
 
   drawTree(atoms: Atom[]): void {
-    const atomTree: Record<string, AtomNode> = {};
+    const atomTree: Record<string, NodeElement> = {};
+    let atomNodePositions: number[] = [0];
 
     function addAtomNode(atom: Atom) {
       const uuid = atom.properties.shellies.uuid;
-      if (!atomTree[uuid]) {
-        atomTree[uuid] = { uuid, children: [], data: atom,
-        };
+      if(!atomTree[uuid]) {
+        atomTree[uuid] = { uuid, children: [], depth: 0, position: 0, data: atom };
       }
     }
 
-    function addChildren(parentUuid: string, childUuids: string[]) {
+    function addChildren(parentUuid: string, childUuids: string[], parentDepth: number) {
       const parentNode = atomTree[parentUuid];
+      const childrenDepth = parentDepth + 1;
 
-      if (!parentNode) {
-        console.error(`Parent node with uuid ${parentUuid} not found.`);
-        return;
+      if(atomNodePositions[childrenDepth] === undefined) {
+        atomNodePositions[childrenDepth] = -1;
       }
 
       childUuids.forEach(childUuid => {
         let childNode = atomTree[childUuid];
+        childNode.depth = childrenDepth;
+        atomNodePositions[childNode.depth]++;
+        childNode.position = atomNodePositions[childNode.depth];
 
-        if (!childNode) {
-          console.error(`Child node with uuid ${childUuid} not found.`);
-          return;
-        }
-
-        if (!parentNode.children.some(child => child.uuid === childUuid)) {
+        if(!parentNode.children.some(child => child.uuid === childUuid)) {
           parentNode.children.push(childNode);
         }
       });
@@ -105,15 +105,17 @@ export class ControlOverviewComponent {
       atoms.forEach(atom => {
         const parentUuid = atom.properties.shellies.uuid;
         const childUuids = atom.bonds.map(bond => bond.uuid);
-        addChildren(parentUuid, childUuids);
+        const parentDepth = atomTree[parentUuid].depth;
+        addChildren(parentUuid, childUuids, parentDepth);
       });
 
       return atoms.length > 0 ? atoms[0].properties.shellies.uuid : '';
     }
 
-    const rootAtomUuid = buildHybridTree(atoms);
+    buildHybridTree(atoms);
+    this.treeConfiguration.depthSizes = atomNodePositions.map(position => position + 1);
 
-    this.shapesCreator.draw(atomTree, rootAtomUuid);
+    this.shapesCreator.draw(atomTree, this.treeConfiguration);
   }
 
   // Private methods
