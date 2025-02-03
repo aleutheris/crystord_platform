@@ -103,39 +103,40 @@ export class ShapesCreator {
       const loc = node.loc || { x: 0, y: 0 };
       const text = node.data.properties.nuclearies.title;
       this.atomShapeCreator.addAtomBlock(layer, loc, text);
-
-      // function drawEdges() {
-        Object.values(nodeTree).forEach((node) => {
-          Object.values(node.children).forEach((child) => {
-            const defLoc = { x: 0, y: 0 };
-            const locOrig = getEdgePoints(child.loc || defLoc, node.loc || defLoc, 75);
-            const locDest = getEdgePoints(node.loc || defLoc, child.loc || defLoc, 75);
-            this.atomArrowCreator.addArrowBlock(layer, locOrig, locDest, '');
-          });
-        });
-
-        function getEdgePoints(locOrig: ShapeLocation,
-                locDest: ShapeLocation,
-                radius: number): ShapeLocation {
-          const x1 = locOrig.x;
-          const y1 = locOrig.y;
-          const x2 = locDest.x;
-          const y2 = locDest.y;
-          const r = radius;
-          const v = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
-          return {
-            x: x1 + r * (x2 - x1) / v,
-            y: y1 + r * (y2 - y1) / v
-          };
-        }
-      // }
+      this.drawEdges(nodeTree, layer);
     });
 
     stage.batchDraw();
     layer.batchDraw();
   }
 
-  configureStage(stage: Konva.Stage, scaleBy: number): void {
+  private drawEdges(nodeTree: Record<string, NodeElement>, layer: Konva.Layer): void {
+    Object.values(nodeTree).forEach((node) => {
+      Object.values(node.children).forEach((child) => {
+        const defLoc = { x: 0, y: 0 };
+        const locOrig = this.getEdgePoints(child.loc || defLoc, node.loc || defLoc, 75);
+        const locDest = this.getEdgePoints(node.loc || defLoc, child.loc || defLoc, 75);
+        this.atomArrowCreator.addArrowBlock(layer, locOrig, locDest, '');
+      });
+    });
+  }
+
+  private getEdgePoints(locOrig: ShapeLocation,
+          locDest: ShapeLocation,
+          radius: number): ShapeLocation {
+    const x1 = locOrig.x;
+    const y1 = locOrig.y;
+    const x2 = locDest.x;
+    const y2 = locDest.y;
+    const r = radius;
+    const v = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
+    return {
+      x: x1 + r * (x2 - x1) / v,
+      y: y1 + r * (y2 - y1) / v
+    };
+  }
+
+  private configureStage(stage: Konva.Stage, scaleBy: number): void {
     stage.on('wheel', (e) => {
       e.evt.preventDefault();
 
