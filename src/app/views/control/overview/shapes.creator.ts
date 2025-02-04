@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import Konva from 'konva';
+import { hierarchy, tree } from 'd3-hierarchy';
 import { AtomShapeCreator } from './atom.shape.creator';
 import { AtomArrowCreator } from './atom.arrow.creator';
 import { treeParameters } from './shapes.parameters';
@@ -44,48 +45,48 @@ export class ShapesCreator {
   constructor(private atomShapeCreator: AtomShapeCreator,
               private atomArrowCreator: AtomArrowCreator) {}
   draw(nodeTree: any, treeConfiguration: TreeConfiguration): void {
-    this.getShapesLocations(nodeTree, treeConfiguration);
+    // this.getShapesLocations(nodeTree, treeConfiguration);
+    this.getHierarchyTree(nodeTree, nodeTree[Object.keys(nodeTree)[0]]);
     this.drawTree(nodeTree, treeConfiguration);
   }
 
-  getShapesLocations(nodeTree: Record<string, NodeElement>,
-                     treeConfiguration: TreeConfiguration): Record<string, NodeElement> {
-    const width = treeConfiguration.width;
-    const height = treeConfiguration.height;
+  // getShapesLocations(nodeTree: Record<string, NodeElement>,
+  //                    treeConfiguration: TreeConfiguration): Record<string, NodeElement> {
+  //   const width = treeConfiguration.width;
+  //   const height = treeConfiguration.height;
 
-    Object.values(nodeTree).forEach((node) => {
-      const depthSize = treeConfiguration.depthSizes[node.depth];
-      const xStep = width / depthSize;
-      const xOffset = xStep / 2;
-      const yStep = treeParameters.minVerticalDistance;
-      const yOffSet = treeConfiguration.marginHeight + 75;
+  //   Object.values(nodeTree).forEach((node) => {
+  //     const depthSize = treeConfiguration.depthSizes[node.depth];
+  //     const xStep = width / depthSize;
+  //     const xOffset = xStep / 2;
+  //     const yStep = treeParameters.minVerticalDistance;
+  //     const yOffSet = treeConfiguration.marginHeight + 75;
 
-      node.loc = {
-        x: node.position * xStep + xOffset,
-        y: node.depth * yStep + yOffSet
-      }
-    });
-    console.log('nodeTree', nodeTree);
-    return nodeTree;
-  }
-
-  // getHierarchyTree(nodeTree: any, rootNode: any): any {
-  //   const hierarchyTree = hierarchy(rootNode, (d: any) => d.children);
-
-  //   const treeLayout = tree()
-  //     .size([1200, 600])
-  //     .separation((a, b) => {
-  //       return a.parent == b.parent ? 3 : 4;
-  //     });
-
-  //   treeLayout(hierarchyTree);
-
-  //   hierarchyTree.descendants().forEach(node => {
-  //     nodeTree[node.data.uuid].loc = { x: node.x, y: (node.y !== undefined ? node.y : 0) + 90 };
+  //     node.loc = {
+  //       x: node.position * xStep + xOffset,
+  //       y: node.depth * yStep + yOffSet
+  //     }
   //   });
-
-  //   return hierarchyTree;
+  //   return nodeTree;
   // }
+
+  getHierarchyTree(nodeTree: any, rootNode: any): any {
+    const hierarchyTree = hierarchy(rootNode, (d: any) => d.children);
+
+    const treeLayout = tree()
+      .size([1200, 600])
+      .separation((a, b) => {
+        return a.parent == b.parent ? 3 : 4;
+      });
+
+    treeLayout(hierarchyTree);
+
+    hierarchyTree.descendants().forEach(node => {
+      nodeTree[node.data.uuid].loc = { x: node.x, y: (node.y !== undefined ? node.y : 0) + 90 };
+    });
+    console.log(hierarchyTree);
+    return hierarchyTree;
+  }
 
   drawTree(nodeTree: Record<string, NodeElement>, treeConfiguration: TreeConfiguration): void {
     const layer = new Konva.Layer();
