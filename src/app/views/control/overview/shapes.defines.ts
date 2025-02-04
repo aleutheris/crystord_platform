@@ -15,10 +15,14 @@ export interface TextConfigurations {
 }
 
 export interface AtomBlock {
+  x: number;
+  y: number;
   draggable: boolean;
 }
 
 export interface ArrowBlock {
+  x: number;
+  y: number;
   draggable: boolean;
 }
 

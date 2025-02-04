@@ -13,10 +13,14 @@ export const textAdjustments: ShapeDefs.TextConfigurations = {
 }
 
 export const atomBlock: ShapeDefs.AtomBlock = {
+  x: 0,
+  y: 0,
   draggable: false,
 };
 
 export const arrowBlockParams: ShapeDefs.ArrowBlock = {
+  x: 0,
+  y: 0,
   draggable: false,
 }
 
@@ -33,8 +37,8 @@ export const atomCircle: ShapeDefs.AtomCircle = {
 };
 
 export const atomText: ShapeDefs.AtomText = {
-  x: 0,
-  y: 0,
+  x: -150,
+  y: -10,
   text: '-',
   fontSize: 20,
   fontFamily: 'Arial',
