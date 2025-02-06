@@ -145,12 +145,29 @@ export class BelastingdienstComponent {
     let rq: {
       modification: string,
       args: {
-        inputs: FindataElement[]
+        inputs: {
+          labels: string[],
+          table: {
+            title: string,
+            index_column: string,
+            columns: string[],
+            content: FindataElement[],
+          }
+        }
       }
     } = {
-      modification: 'create_findata',
+      // modification: 'create_findata',
+      modification: 'create_table',
       args: {
-        inputs: this.findataTable
+        inputs: {
+          labels: ['findata'],
+          table: {
+            title: 'findata',
+            index_column: 'datum',
+            columns: ['bedrag', 'btwtarief'],
+            content: this.findataTable,
+          }
+        }
       }
     };
 
@@ -165,10 +182,35 @@ export class BelastingdienstComponent {
   }
 
   getFindataTable() {
-    let query: {readout: string} = {readout: 'get_findata_table'};
+    let query: {
+      readout: string,
+      args: {
+        selector: {
+          labels: string[],
+          table: {
+            title: string,
+            index_column: string,
+            columns: string[]
+          }
+        }
+      }
+    } = {
+      readout: "retrieve_table",
+      args: {
+        selector: {
+          labels: ["findata"],
+          table: {
+            title: "findata",
+            index_column: "datum",
+            columns: ["bedrag", "btwtarief"]
+          }
+        }
+      }
+    };
     this.belastingService.getFindataTable(query).subscribe({
       next: (data) => {
         this.findataTable = data['result'];
+        console.log('FindataTable:', this.findataTable);
       },
       error: (error) => {
         console.error('There was an error searching for findata:', error);

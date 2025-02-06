@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import Konva from 'konva';
 import { hierarchy, tree } from 'd3-hierarchy';
+import * as d3 from 'd3';
+import { Atom } from '../atomhall/atom.model';
 import { AtomShapeCreator } from './atom.shape.creator';
 import { AtomArrowCreator } from './atom.arrow.creator';
-import { treeParameters } from './shapes.parameters';
 import { ShapeLocation } from './shapes.defines';
 
 
@@ -29,9 +30,8 @@ export interface TreeConfiguration {
 export interface NodeElement {
   uuid: string;
   children: NodeElement[];
-  depth: number;
-  position: number;
-  loc?: ShapeLocation;
+  x?: number;
+  y?: number;
   data?: any;
 }
 
@@ -44,37 +44,72 @@ export class ShapesCreator {
 
   constructor(private atomShapeCreator: AtomShapeCreator,
               private atomArrowCreator: AtomArrowCreator) {}
-  draw(nodeTree: any, treeConfiguration: TreeConfiguration): void {
-    // this.getShapesLocations(nodeTree, treeConfiguration);
-    this.getHierarchyTree(nodeTree, nodeTree[Object.keys(nodeTree)[0]]);
-    this.drawTree(nodeTree, treeConfiguration);
+
+  create_shapes(nodes: Record<string, NodeElement>): void {
+    this.renderNodes(nodes);
   }
 
-  // getShapesLocations(nodeTree: Record<string, NodeElement>,
-  //                    treeConfiguration: TreeConfiguration): Record<string, NodeElement> {
-  //   const width = treeConfiguration.width;
-  //   const height = treeConfiguration.height;
+  create_tree(nodeTree: Record<string, NodeElement>, treeConfiguration: TreeConfiguration): void {
+    // this.getShapesLocations(nodeTree, treeConfiguration);
+    this.getHierarchyTree(nodeTree, nodeTree[Object.keys(nodeTree)[0]]);
+    this.renderTree(nodeTree, treeConfiguration);
+  }
 
-  //   Object.values(nodeTree).forEach((node) => {
-  //     const depthSize = treeConfiguration.depthSizes[node.depth];
-  //     const xStep = width / depthSize;
-  //     const xOffset = xStep / 2;
-  //     const yStep = treeParameters.minVerticalDistance;
-  //     const yOffSet = treeConfiguration.marginHeight + 75;
+  renderNodes(nodes: Record<string, NodeElement>): void {
+    const width = 1240;
+    const height = 800;
 
-  //     node.loc = {
-  //       x: node.position * xStep + xOffset,
-  //       y: node.depth * yStep + yOffSet
-  //     }
-  //   });
-  //   return nodeTree;
-  // }
+    const simulationNodes: NodeElement[] = Object.values(nodes);
+    console.log('nodes', nodes);
 
-  getHierarchyTree(nodeTree: any, rootNode: any): any {
+    const simulation = d3.forceSimulation(simulationNodes)
+      .force('x', d3.forceX(width / 2).strength(0.5))
+      .force('y', d3.forceY(height / 2).strength(0.5))
+      .force('collide', d3.forceCollide(150))
+      .force('charge', d3.forceManyBody().strength(-100));
+
+    const numTicks = 10;
+    for (let i = 0; i < numTicks; i++) {
+      simulation.tick();
+    }
+
+    simulationNodes.forEach((node) => {
+      node.x = node.x ?? 0;
+      node.y = node.y ?? 0;
+    });
+
+    simulation.stop();
+
+    const layer = new Konva.Layer();
+    const stage = new Konva.Stage({
+      container: 'konva-container',
+      width: width,
+      height: height,
+      draggable: true
+    });
+
+    stage.add(layer);
+    this.configureStage(stage, this.scaleStep);
+
+    Object.values(nodes).forEach((node) => {
+      const loc = {
+        x: node.x ?? 0,
+        y: node.y ?? 0
+      };
+      const text = node.data.properties.nuclearies.title;
+      this.atomShapeCreator.addAtomBlock(layer, loc, text);
+      // this.renderEdges(nodeTree, layer);
+    });
+
+    stage.batchDraw();
+    layer.batchDraw();
+  }
+
+  getHierarchyTree(nodeTree: Record<string, NodeElement>, rootNode: any): any {
     const hierarchyTree = hierarchy(rootNode, (d: any) => d.children);
 
     const treeLayout = tree()
-      .size([1200, 600])
+      .size([1240, 800])
       .separation((a, b) => {
         return a.parent == b.parent ? 3 : 4;
       });
@@ -82,13 +117,15 @@ export class ShapesCreator {
     treeLayout(hierarchyTree);
 
     hierarchyTree.descendants().forEach(node => {
-      nodeTree[node.data.uuid].loc = { x: node.x, y: (node.y !== undefined ? node.y : 0) + 90 };
+      nodeTree[node.data.uuid].x = node.x;
+      nodeTree[node.data.uuid].y = (node.y !== undefined ? node.y : 0) + 90
     });
-    console.log(hierarchyTree);
+
     return hierarchyTree;
   }
 
-  drawTree(nodeTree: Record<string, NodeElement>, treeConfiguration: TreeConfiguration): void {
+  renderTree(nodeTree: Record<string, NodeElement>,
+             treeConfiguration: TreeConfiguration): void {
     const layer = new Konva.Layer();
     const stage = new Konva.Stage({
       container: 'konva-container',
@@ -101,22 +138,26 @@ export class ShapesCreator {
     this.configureStage(stage, this.scaleStep);
 
     Object.values(nodeTree).forEach((node) => {
-      const loc = node.loc || { x: 0, y: 0 };
+      const loc = {
+        x: node.x ?? 0,
+        y: node.y ?? 0
+      };
       const text = node.data.properties.nuclearies.title;
       this.atomShapeCreator.addAtomBlock(layer, loc, text);
-      this.drawEdges(nodeTree, layer);
+      this.renderEdges(nodeTree, layer);
     });
 
     stage.batchDraw();
     layer.batchDraw();
   }
 
-  private drawEdges(nodeTree: Record<string, NodeElement>, layer: Konva.Layer): void {
+  private renderEdges(nodeTree: Record<string, NodeElement>, layer: Konva.Layer): void {
     Object.values(nodeTree).forEach((node) => {
       Object.values(node.children).forEach((child) => {
-        const defLoc = { x: 0, y: 0 };
-        const locOrig = this.getEdgePoints(child.loc || defLoc, node.loc || defLoc, 75);
-        const locDest = this.getEdgePoints(node.loc || defLoc, child.loc || defLoc, 75);
+        const childLoc = { x: child.x ?? 0, y: child.y ?? 0 };
+        const nodeLoc = { x: node.x ?? 0, y: node.y ?? 0 };
+        const locOrig = this.getEdgePoints(childLoc, nodeLoc, 75);
+        const locDest = this.getEdgePoints(nodeLoc, childLoc, 75);
         this.atomArrowCreator.addArrowBlock(layer, locOrig, locDest, '');
       });
     });
