@@ -7,7 +7,6 @@ import { AtomShapeCreator } from './atom.shape.creator';
 import { AtomArrowCreator } from './atom.arrow.creator';
 import { ShapeLocation } from './shapes.defines';
 
-
 export interface AtomElement {
   loc: ShapeLocation;
   text: string;
@@ -24,7 +23,6 @@ export interface TreeConfiguration {
   marginHeight: number;
   width: number;
   height: number;
-  depthSizes: number[];
 }
 
 export interface NodeElement {
@@ -59,8 +57,15 @@ export class ShapesCreator {
     const width = 1240;
     const height = 800;
 
+    const layer = new Konva.Layer();
+    const stage = new Konva.Stage({
+      container: 'konva-container',
+      width: width,
+      height: height,
+      draggable: true
+    });
+
     const simulationNodes: NodeElement[] = Object.values(nodes);
-    console.log('nodes', nodes);
 
     const simulation = d3.forceSimulation(simulationNodes)
       .force('x', d3.forceX(width / 2).strength(0.5))
@@ -72,21 +77,7 @@ export class ShapesCreator {
     for (let i = 0; i < numTicks; i++) {
       simulation.tick();
     }
-
-    simulationNodes.forEach((node) => {
-      node.x = node.x ?? 0;
-      node.y = node.y ?? 0;
-    });
-
     simulation.stop();
-
-    const layer = new Konva.Layer();
-    const stage = new Konva.Stage({
-      container: 'konva-container',
-      width: width,
-      height: height,
-      draggable: true
-    });
 
     stage.add(layer);
     this.configureStage(stage, this.scaleStep);

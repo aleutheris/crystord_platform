@@ -1,5 +1,5 @@
 <c-row>
-  <c-col xs="12">
+  <c-col xs="8">
     <c-card class="mb-4">
       <c-card-header>
         <strong>Overview</strong>
@@ -13,20 +13,31 @@
           (keyup.enter)="retrieveAtomsFeatures()"/>
 
         <div id="konva-container"></div>
+      </c-card-body>
+    </c-card>
+  </c-col>
 
+  <c-col xs="4">
+    <c-card class="mb-4">
+      <c-card-header>
+        <strong>Atoms</strong>
+      </c-card-header>
+      <c-card-body>
         <table cTable>
           <thead>
             <tr>
               <th scope="col">Title</th>
-              <th scope="col">Description</th>
               <th scope="col">Content</th>
+              <th scope="col">Operation</th>
+              <th scope="col">Bonds</th>
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let atom of atomsFeatures">
+            <tr *ngFor="let atom of atomsFeaturesTexted">
               <td>{{ atom.properties.nuclearies.title }}</td>
-              <td>{{ atom.properties.nuclearies.description }}</td>
               <td>{{ atom.properties.nuclearies.content }}</td>
+              <td>{{ atom.properties.nuclearies.operation }}</td>
+              <td>{{ atom.bonds }}</td>
             </tr>
           </tbody>
         </table>

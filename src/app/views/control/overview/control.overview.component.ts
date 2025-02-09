@@ -12,8 +12,26 @@ import {
 } from '@coreui/angular';
 import { FormsModule } from '@angular/forms';
 import { ShapesCreator, TreeConfiguration, NodeElement } from './shapes.creator';
-import { Atom } from '../atomhall/atom.model';
+import { Atom, Bond } from '../atomhall/atom.model';
 import { AtomService } from '../atomhall/atom.service';
+
+
+interface AtomTexted {
+  labels: string[],
+  bonds: string,
+  properties: {
+    shellies: {
+      uuid: string
+    },
+    nuclearies: {
+      title: string,
+      description: string,
+      content: string,
+      constants: string[],
+      operation: string
+    }
+  }
+}
 
 
 @Component({
@@ -37,18 +55,21 @@ import { AtomService } from '../atomhall/atom.service';
 export class ControlOverviewComponent {
   searchText: string;
   atomsFeatures: Atom[];
+  atomsIndexed: Record<string, NodeElement>;
+  atomsFeaturesTexted: AtomTexted[];
   treeConfiguration: TreeConfiguration;
 
   constructor(private shapesCreator: ShapesCreator,
               private atomService: AtomService) {
     this.searchText = 'labels=experiment';
     this.atomsFeatures = [];
+    this.atomsIndexed = {};
+    this.atomsFeaturesTexted = [];
     this.treeConfiguration = {
       marginWidth: 10,
       marginHeight: 10,
-      width: 1250, //window.innerWidth,
-      height: 800, //window.innerHeight,
-      depthSizes: []
+      width: 800, //window.innerWidth,
+      height: 800 //window.innerHeight,
     }
   }
 
@@ -59,10 +80,11 @@ export class ControlOverviewComponent {
         'retrieve_atoms_features')).subscribe({
 
       next: (data) => {
-        let atomData = this.atomsDataToCamelCase(data['result']);
-        this.atomsFeatures = this.atomsDataContentToString(atomData);
-        // this.drawTree(this.atomsFeatures);
-        this.drawAtoms(this.atomsFeatures);
+        this.atomsFeatures = this.atomsDataToCamelCase(data['result']);
+        this.atomsIndexed = this.getIndexedAtoms(this.atomsFeatures);
+        this.atomsFeaturesTexted = this.atomsDataContentToString(this.atomsFeatures);
+        // this.drawTree(this.atomsFeatures );
+        this.drawAtoms(this.atomsIndexed);
       },
       error: (error) => {
         console.error('There was an error searching for atoms:', error);
@@ -70,18 +92,12 @@ export class ControlOverviewComponent {
     });
   }
 
-  drawAtoms(atoms: Atom[]): void {
-    const atomIndexed: Record<string, NodeElement> = {};
-    atoms.forEach((atom: Atom) => {
-      const uuid = atom.properties.shellies.uuid;
-      atomIndexed[uuid] = { uuid, children: [], data: atom };
-    });
-    this.shapesCreator.create_shapes(atomIndexed);
+  drawAtoms(atomsIndexed: Record<string, NodeElement>): void {
+    this.shapesCreator.create_shapes(atomsIndexed);
   }
 
   drawTree(atoms: Atom[]): void {
     const atomTree: Record<string, NodeElement> = {};
-    let atomNodePositions: number[] = [0];
 
     function addAtomNode(atom: Atom) {
       const uuid = atom.properties.shellies.uuid;
@@ -114,12 +130,20 @@ export class ControlOverviewComponent {
     }
 
     buildHybridTree(atoms);
-    this.treeConfiguration.depthSizes = atomNodePositions.map(position => position + 1);
 
     this.shapesCreator.create_tree(atomTree, this.treeConfiguration);
   }
 
   // Private methods
+  private getIndexedAtoms(atoms: Atom[]) {
+    const atomIndexed: Record<string, NodeElement> = {};
+    atoms.forEach((atom: Atom) => {
+      const uuid = atom.properties.shellies.uuid;
+      atomIndexed[uuid] = { uuid, children: [], data: atom };
+    });
+    return atomIndexed;
+  }
+
   private getAtomByUuid(uuid: string) {
     return this.atomsFeatures.find((atom: Atom) => atom.properties.shellies.uuid === uuid);
   }
@@ -136,7 +160,7 @@ export class ControlOverviewComponent {
     return data;
   }
 
-  private atomsDataToCamelCase(data: any) {
+  private atomsDataToCamelCase(data: any): Atom[] {
     data.forEach((atom: any) => {
       atom.properties.shellies.changeHistory = atom.properties.shellies.change_history;
       delete atom.properties.shellies.change_history;
@@ -144,18 +168,47 @@ export class ControlOverviewComponent {
     return data;
   }
 
-  private atomsDataContentToString(data: any) {
-    data.forEach((atom: any) => {
-      atom = this.convertAtomContentToString(atom);
+  private atomsDataContentToString(data: Atom[]): AtomTexted[] {
+    let atomsTexted: AtomTexted[] = [];
+    data.forEach((atom: Atom) => {
+      atom.properties.nuclearies.content =
+        this.convertContentToString(atom.properties.nuclearies.content);
+
+      let atomTexted = {
+        labels: atom.labels,
+        bonds: this.convertBondsToString(atom.bonds),
+        properties: {
+          shellies: {
+            uuid: atom.properties.shellies.uuid
+          },
+          nuclearies: {
+            title: atom.properties.nuclearies.title,
+            description: atom.properties.nuclearies.description,
+            content: atom.properties.nuclearies.content,
+            constants: atom.properties.nuclearies.constants,
+            operation: atom.properties.nuclearies.operation
+          }
+        }
+      };
+      atomsTexted.push(atomTexted);
     });
-    return data;
+    return atomsTexted;
   }
 
-  private convertAtomContentToString(atom: Atom) {
-    if (typeof atom.properties.nuclearies.content !== 'string') {
-      atom.properties.nuclearies.content = JSON.stringify(atom.properties.nuclearies.content);
+  private convertContentToString(content: any): string {
+    let output = content;
+    if (typeof content !== 'string') {
+      output = JSON.stringify(content);
     }
-    return atom;
+    return output;
+  }
+
+  private convertBondsToString(bonds: Bond[]): string {
+    let bond_text = '';
+    bonds.forEach((bond: Bond) => {
+      bond_text += this.atomsIndexed[bond.uuid].data.properties.nuclearies.title + ' ';
+    });
+    return bond_text;
   }
 
   private parseValue(value: any) {
