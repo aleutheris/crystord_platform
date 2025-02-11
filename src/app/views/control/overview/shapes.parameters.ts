@@ -52,8 +52,8 @@ export const arrow: ShapeDefs.AtomArrow = {
   points: [0, 0, 0, 0],
   pointerLength: 10,
   pointerWidth: 10,
-  fill: 'white',
-  stroke: 'white',
+  fill: 'gray',
+  stroke: 'gray',
   strokeWidth: 2,
 };
 

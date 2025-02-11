@@ -58,102 +58,12 @@ export class ShapesCreator {
               private atomArrowCreator: AtomArrowCreator) {}
 
   createShapes(nodes: Record<string, NodeElement>): void {
-    // this.renderNodes(nodes);
-    this.renderNodesHybrid(nodes);
-
+    this.renderNodes(nodes);
   }
 
   createTree(nodeTree: Record<string, NodeElement>, treeConfiguration: TreeConfiguration): void {
     this.getHierarchyTree(nodeTree, nodeTree[Object.keys(nodeTree)[0]]);
     this.renderTree(nodeTree, treeConfiguration);
-  }
-
-  renderNodesHybrid(nodes: Record<string, NodeElement>): void {
-    const width = 800;
-    const height = 800;
-
-    const layer = new Konva.Layer();
-    const stage = new Konva.Stage({
-        container: 'konva-container',
-        width: width,
-        height: height,
-        draggable: true
-    });
-
-    // Step 1: Identify Root Nodes (Trees)
-    const nodeSet = new Set(Object.keys(nodes));
-    Object.values(nodes).forEach(node => {
-        node.children.forEach(child => nodeSet.delete(child.uuid));
-    });
-
-    const rootNodes = Array.from(nodeSet).map(uuid => nodes[uuid]);
-    const treeNodes: NodeElement[] = [];
-    const isolatedNodes: NodeElement[] = [];
-    const treePositions: TreePosition[] = [];
-
-    // Step 2: Compute Tree Layouts and Store Sizes
-    rootNodes.forEach(rootNode => {
-        const treeLayout = this.getHierarchyTree(nodes, rootNode);
-        const treeSize = treeLayout.descendants().length; // Approximate size
-        treeNodes.push(...treeLayout.descendants().map((d: { data: { uuid: string | number; }; }) => nodes[d.data.uuid]));
-        treePositions.push({ node: rootNode, size: treeSize });
-    });
-
-    // Step 3: Identify isolated nodes
-    Object.values(nodes).forEach(node => {
-        if (node.x === undefined || node.y === undefined) {
-            isolatedNodes.push(node);
-        }
-    });
-
-    // Step 4: Apply Force Layout to Trees
-    const simulation = d3.forceSimulation(treePositions)
-        .force('x', d3.forceX(width / 2).strength(0.5))
-        .force('y', d3.forceY(height / 2).strength(0.5))
-        .force('collide', d3.forceCollide(d => d.size * 10))
-        .force('charge', d3.forceManyBody().strength(-200));
-
-    const numTicks = 10;
-    for (let i = 0; i < numTicks; i++) {
-        simulation.tick();
-    }
-    simulation.stop();
-
-    // Assign the computed positions to trees
-    treePositions.forEach(tree => {
-        tree.node.x = tree.node.x ?? width / 2;
-        tree.node.y = tree.node.y ?? height / 2;
-    });
-
-    // Step 5: Apply Force Layout to Isolated Nodes
-    if (isolatedNodes.length > 0) {
-        const isolatedSimulation = d3.forceSimulation(isolatedNodes)
-            .force('x', d3.forceX(width / 2).strength(0.5))
-            .force('y', d3.forceY(height / 2).strength(0.5))
-            .force('collide', d3.forceCollide(50))
-            .force('charge', d3.forceManyBody().strength(-100));
-
-        for (let i = 0; i < numTicks; i++) {
-            isolatedSimulation.tick();
-        }
-        isolatedSimulation.stop();
-    }
-
-    // Step 6: Render Nodes
-    stage.add(layer);
-    this.configureStage(stage, this.scaleStep);
-
-    Object.values(nodes).forEach(node => {
-        const loc = {
-            x: node.x ?? 0,
-            y: node.y ?? 0
-        };
-        const text = node.data?.properties?.nuclearies?.title || "";
-        this.atomShapeCreator.addAtomBlock(layer, loc, text);
-    });
-
-    stage.batchDraw();
-    layer.batchDraw();
   }
 
   renderNodes(nodes: Record<string, NodeElement>): void {

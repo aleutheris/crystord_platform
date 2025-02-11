@@ -62,7 +62,8 @@ export class ControlOverviewComponent {
 
   constructor(private shapesCreator: ShapesCreator,
               private atomService: AtomService) {
-    this.searchText = 'uuid=cc249313-1d09-4614-ae53-e8d7826b0ba2';
+    // this.searchText = 'uuid=cc249313-1d09-4614-ae53-e8d7826b0ba2';
+    this.searchText = 'labels=experiment';
     this.searchKey = '';
     this.atomsFeatures = [];
     this.atomsIndexed = {};
@@ -81,7 +82,6 @@ export class ControlOverviewComponent {
     this.atomService.readAtoms(
       this.parseSearchTextIntoQuery(
         this.searchText, retrievalInteraction)).subscribe({
-
       next: (data) => {
         this.atomsFeatures = data['result'];
         this.handleRetrievedData();
@@ -107,58 +107,16 @@ export class ControlOverviewComponent {
   }
 
   handleRetrievedData() {
+    this.atomsIndexed = this.getIndexedAtoms(this.atomsFeatures);
     if (this.searchKey === 'labels') {
-      this.atomsIndexed = this.getIndexedAtoms(this.atomsFeatures);
-      this.atomsFeaturesTexted = this.atomsContentToString(this.atomsFeatures);
-      this.drawAtoms(this.atomsIndexed);
+      this.shapesCreator.createShapes(this.atomsIndexed);
     } else if (this.searchKey === 'uuid') {
-      this.drawTree(this.atomsFeatures);
+      this.shapesCreator.createTree(this.atomsIndexed, this.treeConfiguration);
     }
+    this.atomsFeaturesTexted = this.atomsContentToString(this.atomsFeatures);
   }
 
   // Private methods
-  drawAtoms(atomsIndexed: Record<string, NodeElement>): void {
-    this.shapesCreator.createShapes(atomsIndexed);
-  }
-
-  drawTree(atoms: Atom[]): void {
-    const atomTree: Record<string, NodeElement> = {};
-
-    function addAtomNode(atom: Atom) {
-      const uuid = atom.properties.shellies.uuid;
-      if(!atomTree[uuid]) {
-        atomTree[uuid] = { uuid, children: [], data: atom };
-      }
-    }
-
-    function addChildren(parentUuid: string, childUuids: string[]) {
-      const parentNode = atomTree[parentUuid];
-
-      childUuids.forEach(childUuid => {
-        let childNode = atomTree[childUuid];
-
-        if(!parentNode.children.some(child => child.uuid === childUuid)) {
-          parentNode.children.push(childNode);
-        }
-      });
-    }
-
-    function buildHybridTree(atoms: Atom[]): string {
-      atoms.forEach(addAtomNode);
-      atoms.forEach(atom => {
-        const parentUuid = atom.properties.shellies.uuid;
-        const childUuids = atom.bonds.map(bond => bond.uuid);
-        addChildren(parentUuid, childUuids);
-      });
-
-      return atoms.length > 0 ? atoms[0].properties.shellies.uuid : '';
-    }
-
-    buildHybridTree(atoms);
-
-    this.shapesCreator.createTree(atomTree, this.treeConfiguration);
-  }
-
   private getIndexedAtoms(atoms: Atom[]): Record<string, NodeElement> {
     const atomTree: Record<string, NodeElement> = {};
 
