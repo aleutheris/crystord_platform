@@ -67,8 +67,8 @@ export class ShapesCreator {
   }
 
   renderNodes(nodes: Record<string, NodeElement>): void {
-    const width = 800;
-    const height = 800;
+    const width = 700;
+    const height = 1000;
 
     const layer = new Konva.Layer();
     const stage = new Konva.Stage({
@@ -113,7 +113,7 @@ export class ShapesCreator {
     const hierarchyTree = hierarchy(rootNode, (d: any) => d.children);
 
     const treeLayout = tree()
-      .size([800, 800])
+      .size([700, 1000])
       .separation((a, b) => {
         return a.parent == b.parent ? 3 : 4;
       });

@@ -1,5 +1,5 @@
 <c-row>
-  <c-col xs="8">
+  <c-col xs="7">
     <c-card class="mb-4">
       <c-card-header>
         <strong>Overview</strong>
@@ -17,7 +17,7 @@
     </c-card>
   </c-col>
 
-  <c-col xs="4">
+  <c-col xs="5">
     <c-card class="mb-4">
       <c-card-header>
         <strong>Atoms</strong>
@@ -26,18 +26,36 @@
         <table cTable>
           <thead>
             <tr>
+              <th scope="col"></th>
               <th scope="col">Title</th>
-              <th scope="col">Content</th>
               <th scope="col">Operation</th>
               <th scope="col">Bonds</th>
+              <th scope="col">UUID</th>
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let atom of atomsFeaturesTexted">
+            <tr *ngFor="let atom of atomsFeaturesTexted; let i = index">
+              <td>
+                <button cButton
+                  color="secondary"
+                  id="inputGroupFileAddon03"
+                  type="button"
+                  variant="outline"
+                  (click)="updateAtomFeatures(i)">
+                  Update
+                </button>
+              </td>
               <td>{{ atom.properties.nuclearies.title }}</td>
-              <td>{{ atom.properties.nuclearies.content }}</td>
-              <td>{{ atom.properties.nuclearies.operation }}</td>
+              <td>
+                <input aria-label="default input example"
+                  cFormControl
+                  placeholder="add operation"
+                  type="text"
+                  [(ngModel)]="atom.properties.nuclearies.operation"
+                  [ngStyle]="{ 'min-width': '200px', 'max-width': '400px' }"/>
+              </td>
               <td>{{ atom.bonds }}</td>
+              <td>{{ atom.properties.shellies.uuid }}</td>
             </tr>
           </tbody>
         </table>

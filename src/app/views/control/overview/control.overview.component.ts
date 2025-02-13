@@ -8,6 +8,7 @@ import {
   CardBodyComponent,
   FormControlDirective,
   TextColorDirective,
+  ButtonDirective,
   TableDirective,
 } from '@coreui/angular';
 import { FormsModule } from '@angular/forms';
@@ -49,6 +50,7 @@ interface AtomTexted {
     FormControlDirective,
     FormsModule,
     TextColorDirective,
+    ButtonDirective,
     TableDirective
   ]
 })
@@ -71,8 +73,8 @@ export class ControlOverviewComponent {
     this.treeConfiguration = {
       marginWidth: 10,
       marginHeight: 10,
-      width: 800, //window.innerWidth,
-      height: 800 //window.innerHeight,
+      width: 700, //window.innerWidth,
+      height: 1000 //window.innerHeight,
     }
   }
 
@@ -114,6 +116,53 @@ export class ControlOverviewComponent {
       this.shapesCreator.createTree(this.atomsIndexed, this.treeConfiguration);
     }
     this.atomsFeaturesTexted = this.atomsContentToString(this.atomsFeatures);
+  }
+
+  updateAtomFeatures(index: number): void {
+    let mq: {
+      modification: string,
+      args: {
+        selector: {
+          properties: {
+            shellies: {
+              uuid: string
+            }
+          }
+        },
+        inputs: {
+          properties: {
+            nuclearies: any
+          }
+        }
+      }
+    } = {
+      modification: 'update_atom_features',
+      args: {
+        selector: {
+          properties: {
+            shellies: {
+              uuid: this.atomsFeaturesTexted[index].properties.shellies.uuid
+            }
+          }
+        },
+        inputs: {
+          properties: {
+            nuclearies: {
+              operation: this.convertOperationFromTitled(this.atomsFeaturesTexted[index].properties.nuclearies.operation)
+            }
+          }
+        }
+      }
+    };
+
+    this.atomService.modifyAtoms(mq).subscribe({
+      next: (data) => {
+        console.log('Atom data updated successfully:', data);
+      },
+      error: (error) => {
+        console.error('There was an error updating the atom data:', error);
+      }
+    });
   }
 
   // Private methods
@@ -205,6 +254,15 @@ export class ControlOverviewComponent {
       titledOperation = titledOperation.replace(bond.uuid, this.atomsIndexed[bond.uuid].data.properties.nuclearies.title);
     });
     return titledOperation;
+  }
+
+  private convertOperationFromTitled(operation: string): string {
+    let uuids = Object.keys(this.atomsIndexed);
+    let uuidOperation = operation;
+    uuids.forEach((uuid: string) => {
+      uuidOperation = uuidOperation.replace(this.atomsIndexed[uuid].data.properties.nuclearies.title, uuid);
+    });
+    return uuidOperation;
   }
 
   private parseValue(value: any) {
