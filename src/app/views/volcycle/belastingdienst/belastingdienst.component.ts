@@ -1,9 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
-import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { DocsExampleComponent } from '@docs-components/public-api';
+import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import {
   RowComponent,
   ColComponent,
@@ -11,18 +10,41 @@ import {
   CardComponent,
   CardHeaderComponent,
   CardBodyComponent,
+  ButtonGroupComponent,
+  ButtonToolbarComponent,
   FormSelectDirective,
   InputGroupComponent,
   InputGroupTextDirective,
   FormControlDirective,
-  FormCheckInputDirective,
   ButtonDirective,
   TableDirective,
+  FormCheckComponent,
+  FormCheckLabelDirective,
+  FormCheckInputDirective,
+  ThemeDirective,
+  DropdownComponent,
+  DropdownToggleDirective,
+  DropdownMenuDirective,
+  DropdownItemDirective,
+  DropdownDividerDirective
 } from '@coreui/angular';
-import { BelastingElement } from './belasting.model';
 import { PreBelastingElement } from './belasting.model';
 import { FindataElement } from './belasting.model';
 import { BelastingService } from './belasting.service';
+
+interface Table {
+  content: TableCell[][];
+  headers: Headers;
+  keys: Headers;
+}
+interface Headers {
+  index: string;
+  columns: string[];
+}
+interface TableCell {
+  name: string;
+  value: string;
+}
 
 @Component({
     selector: 'app-belastingdienst',
@@ -31,41 +53,88 @@ import { BelastingService } from './belasting.service';
     standalone: true,
     imports: [
       CommonModule,
+      RouterLink,
+      DocsExampleComponent,
+      ReactiveFormsModule,
+      FormsModule,
       RowComponent,
       ColComponent,
       TextColorDirective,
       CardComponent,
       CardHeaderComponent,
       CardBodyComponent,
-      DocsExampleComponent,
-      RouterLink,
+      ButtonGroupComponent,
+      ButtonToolbarComponent,
       FormSelectDirective,
-      ReactiveFormsModule,
-      FormsModule,
       InputGroupComponent,
       InputGroupTextDirective,
       FormControlDirective,
-      FormCheckInputDirective,
       ButtonDirective,
-      TableDirective]
+      TableDirective,
+      FormCheckComponent,
+      FormCheckLabelDirective,
+      FormCheckInputDirective,
+      ColComponent,
+      CardComponent,
+      CardBodyComponent,
+      ButtonDirective,
+      InputGroupComponent,
+      FormControlDirective,
+      ThemeDirective,
+      DropdownComponent,
+      DropdownToggleDirective,
+      DropdownMenuDirective,
+      DropdownItemDirective,
+      DropdownDividerDirective
+    ]
 })
 export class BelastingdienstComponent {
   belastingTable: [];
   preBelastingTable: PreBelastingElement[];
-  findataTable: FindataElement[];
   fileToUpload: File | null;
+  table: Table;
 
-  constructor(private belastingService: BelastingService) {
+  tableFormCheck: UntypedFormGroup;
+
+  constructor(private belastingService: BelastingService, private formBuilder: UntypedFormBuilder) {
     this.belastingTable = [];
     this.preBelastingTable = [];
-    this.findataTable = [];
     this.fileToUpload = null;
+    this.table = {
+      content: [],
+      headers: { index: '', columns: [] },
+      keys: { index: '', columns: [] }
+    };
+
+    this.tableFormCheck = this.formBuilder.group({});
+  }
+
+  setIndexColumn(event: Event) {
+    this.table.headers.index = (event.target as HTMLSelectElement).value;
+
+    const value = this.tableFormCheck.value;
+    value[this.table.headers.index] = true;
+    this.tableFormCheck.setValue(value);
+  }
+
+  setCheckBoxValue(controlName: string) {
+    const prevValue = this.tableFormCheck.get(controlName)?.value;
+    const value = this.tableFormCheck.value;
+    value[controlName] = !prevValue;
+    this.tableFormCheck.setValue(value);
   }
 
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
       this.fileToUpload = input.files[0];
+      const reader = new FileReader();
+
+      reader.onload = (event) => {
+        const text = event.target?.result as string;
+        this.parseCsv(text);
+      };
+      reader.readAsText(this.fileToUpload);
     }
   }
 
@@ -75,30 +144,43 @@ export class BelastingdienstComponent {
       return;
     }
 
-    const reader = new FileReader();
-
-    reader.onload = (event) => {
-      const text = event.target?.result as string;
-      this.parseCsv(text);
-      this.updateFindataTable();
+    const updateTableHeaders = (): void => {
+      let keys: string[] = [];
+      let headers: string[] = [];
+      Object.keys(this.tableFormCheck.controls).forEach((controlName: string) => {
+        const control = this.tableFormCheck.get(controlName) as UntypedFormControl;
+        if (control.value) {
+          keys.push(this.toValidIdentifier(controlName));
+          headers.push(controlName);
+        }
+      });
+      this.table.keys.columns = keys;
+      this.table.keys.index = this.toValidIdentifier(this.table.headers.index);
+      this.table.headers.columns = headers;
+      this.table.headers.index = this.table.headers.index;
     };
 
-    reader.readAsText(this.fileToUpload);
+    const removeUnchosenColumns = (): void => {
+      this.table.content = this.table.content.map(row => {
+        return row.filter(cell => this.table.keys.columns.includes(cell.name));
+      });
+    };
+
+    updateTableHeaders();
+    removeUnchosenColumns();
+
+    this.updateTable();
   }
 
   private parseCsv(csvText: string): void {
     const lines = csvText.split('\n');
-    const result: Array<FindataElement> = [];
+    const content: TableCell[][] = [];
 
-    const header = lines[0].trim().split(',').map(column => column.trim());
-    const columnIndices = {
-      datum: header.indexOf('Datum'),
-      bedrag: header.indexOf('Bedrag'),
-      btwtarief: header.indexOf('Btw-tarief')
-    };
+    const headers = lines[0].trim().split(',').map(column => column.trim());
+    const keys = headers.map(header => this.toValidIdentifier(header));
 
-    if (columnIndices.datum === -1 || columnIndices.bedrag === -1 || columnIndices.btwtarief === -1) {
-      throw new Error('CSV header is missing one or more required columns: Datum, Bedrag, Btw-tarief');
+    for (const column of headers) {
+      this.tableFormCheck.addControl(column, new UntypedFormControl(false));
     }
 
     for (let i = 1; i < lines.length; i++) {
@@ -107,160 +189,121 @@ export class BelastingdienstComponent {
 
       const columns = line.split(',').map(column => column.trim());
 
-      const datum = columns[columnIndices.datum];
-      const bedrag = columns[columnIndices.bedrag];
-      const btwtarief = columns[columnIndices.btwtarief];
+      const row: TableCell[] = columns.map((value, cell) => ({
+        name: this.toValidIdentifier(headers[cell]),
+        value: value
+      }));
 
-      result.push({ datum, bedrag, btwtarief });
+      content.push(row);
     }
 
-    this.findataTable = result;
+    this.table.content = content;
+    this.table.headers.columns = headers;
+    this.table.keys.columns = keys;
   }
 
-  getBelastingTable() {
-    let query: {readout: string} = {readout: 'get_belastingdienst_table'};
-    this.belastingService.getBelastingTable(query).subscribe({
-      next: (data) => {
-        this.belastingTable = data['result'];
-      },
-      error: (error) => {
-        console.error('There was an error searching for belasting:', error);
-      }
-    });
-  }
 
-  getPreBelastingTable() {
-    let query: {readout: string} = {readout: 'get_prebelastingdienst_table'};
-    this.belastingService.getPreBelastingTable(query).subscribe({
-      next: (data) => {
-        this.preBelastingTable = data['result'];
-      },
-      error: (error) => {
-        console.error('There was an error searching for belasting:', error);
-      }
-    });
-  }
+  // getBelastingTable() {
+  //   let query: {readout: string} = {readout: 'get_belastingdienst_table'};
+  //   this.belastingService.getBelastingTable(query).subscribe({
+  //     next: (data) => {
+  //       this.belastingTable = data['result'];
+  //     },
+  //     error: (error) => {
+  //       console.error('There was an error searching for belasting:', error);
+  //     }
+  //   });
+  // }
 
-  updateFindataTable() {
+  // getPreBelastingTable() {
+  //   let query: {readout: string} = {readout: 'get_prebelastingdienst_table'};
+  //   this.belastingService.getPreBelastingTable(query).subscribe({
+  //     next: (data) => {
+  //       this.preBelastingTable = data['result'];
+  //     },
+  //     error: (error) => {
+  //       console.error('There was an error searching for belasting:', error);
+  //     }
+  //   });
+  // }
+
+  updateTable() {
     let rq: {
       modification: string,
       args: {
         inputs: {
           labels: string[],
-          table: {
-            title: string,
-            index_column: string,
-            columns: string[],
-            content: FindataElement[],
-          }
+          table: Table
         }
       }
     } = {
-      // modification: 'create_findata',
       modification: 'create_table',
       args: {
         inputs: {
           labels: ['findata'],
-          table: {
-            title: 'findata',
-            index_column: 'datum',
-            columns: ['bedrag', 'btwtarief'],
-            content: this.findataTable,
-          }
+          table: this.table,
         }
       }
     };
 
-    this.belastingService.updateFindataTable(rq).subscribe({
+    this.belastingService.updateTable(rq).subscribe({
       next: (data) => {
-        console.log('Update PreBelastingTable performed successfully:', data);
+        console.log('Update table performed successfully:', data);
       },
       error: (error) => {
-        console.error('There was an error searching for belasting:', error);
+        console.error('There was an error searching for the table:', error);
       }
     });
   }
 
-  getFindataTable() {
-    let query: {
-      readout: string,
-      args: {
-        selector: {
-          labels: string[],
-          table: {
-            title: string,
-            index_column: string,
-            columns: string[]
-          }
-        }
-      }
-    } = {
-      readout: "retrieve_table",
-      args: {
-        selector: {
-          labels: ["findata"],
-          table: {
-            title: "findata",
-            index_column: "datum",
-            columns: ["bedrag", "btwtarief"]
-          }
-        }
-      }
-    };
-    this.belastingService.getFindataTable(query).subscribe({
-      next: (data) => {
-        this.findataTable = data['result'];
-        console.log('FindataTable:', this.findataTable);
-      },
-      error: (error) => {
-        console.error('There was an error searching for findata:', error);
-      }
-    });
-  }
-
-  // Private methods
-  // private atomDataToCamelCase(data: any) {
-  //   data.properties.nuclearies.atomType = data.properties.nuclearies.atom_type;
-  //   data.properties.shellies.storedAt = data.properties.shellies.stored_at;
-  //   delete data.properties.nuclearies.atom_type;
-  //   delete data.properties.shellies.stored_at;
-  //   return data;
-  // }
-
-  // private atomDataToSnakeCase(data: any) {
-  //   data.properties.nuclearies.atom_type = data.properties.nuclearies.atomType;
-  //   data.properties.shellies.stored_at = data.properties.shellies.storedAt;
-  //   delete data.properties.nuclearies.atomType;
-  //   delete data.properties.shellies.storedAt;
-  //   return data;
-  // }
-
-  // private atomsDataToCamelCase(data: any) {
-  //   data.forEach((atom: any) => {
-  //     atom.properties.nuclearies.atomType = atom.properties.nuclearies.atom_type;
-  //     atom.properties.shellies.storedAt = atom.properties.shellies.stored_at;
-  //     delete atom.properties.nuclearies.atom_type;
-  //     delete atom.properties.shellies.stored_at;
-  //   });
-  //   return data;
-  // }
-
-  // private parseSearchText() {
-  //   const searchText = this.searchText;
-  //   const result: { labels: string[], bonds: string[] } = { labels: [], bonds: [] };
-
-  //   const pairs = searchText.split(' ');
-
-  //   pairs.forEach(pair => {
-  //     const [key, value] = pair.split('=');
-
-  //     if (key === 'labels') {
-  //       result.labels = value ? value.split(',') : [];
-  //     } else if (key === 'bonds') {
-  //       result.bonds = value ? value.split(',') : [];
+  // getTable() {
+  //   let query: {
+  //     readout: string,
+  //     args: {
+  //       selector: {
+  //         labels: string[],
+  //         table: {
+  //           title: string,
+  //           index_column: string,
+  //           columns: string[]
+  //         }
+  //       }
+  //     }
+  //   } = {
+  //     readout: "retrieve_table",
+  //     args: {
+  //       selector: {
+  //         labels: ["findata"],
+  //         table: {
+  //           title: "findata",
+  //           index_column: "datum",
+  //           columns: ["bedrag", "btwtarief"]
+  //         }
+  //       }
+  //     }
+  //   };
+  //   this.belastingService.getTable(query).subscribe({
+  //     next: (data) => {
+  //       // this.table.content = data['result'];
+  //       // this.table.headers = ['Datum', 'BTW-Tarief'];
+  //       // this.table.keys = ['datum', 'btwtarief'];
+  //     },
+  //     error: (error) => {
+  //       console.error('There was an error searching for findata:', error);
   //     }
   //   });
-
-  //   return result;
   // }
+
+  private toValidIdentifier(input: string): string {
+    if (!input) return '';
+
+    let result = input.toLowerCase();
+    result = result.replace(/[^a-z0-9_]/g, '');
+
+    if (/^[0-9]/.test(result)) {
+      result = '_' + result;
+    }
+
+    return result;
+  }
 }

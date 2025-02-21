@@ -1,5 +1,5 @@
 <c-row ngPreserveWhitespaces>
-  <c-col xs="12">
+  <c-col xs="12"><!--
     <c-card class="mb-4">
       <c-card-header>
         <strong>Volcycle</strong> <small>Belastingaangifte per kwartaal</small>
@@ -34,22 +34,24 @@
           </tbody>
         </table>
       </c-card-body>
-    </c-card>
+    </c-card>-->
 
     <c-card class="mb-4">
       <c-card-header>
-        <strong>Volcycle</strong> <small>Financial Data</small>
+        <strong>Tables</strong> <small>Playground</small>
       </c-card-header>
       <c-card-body>
-        <c-input-group class="mb-3">
+        <c-input-group class="mb-3" *ngIf="fileToUpload !== null">
           <button cButton
-                  color="secondary"
-                  id="inputGroupFileAddon03"
-                  type="button"
-                  variant="outline"
-                  (click)="uploadFile()">
+            color="secondary"
+            id="inputGroupFileAddon03"
+            type="button"
+            variant="outline"
+            (click)="uploadFile()">
             Upload
           </button>
+        </c-input-group>
+        <c-input-group class="mb-3">
           <input aria-describedby="inputGroupFileAddon03"
                  aria-label="Upload"
                  cFormControl
@@ -57,27 +59,38 @@
                  type="file"
                  (change)="onFileSelected($event)"/>
         </c-input-group>
-        <button cButton
+        <!-- <button cButton
           color="secondary"
           id="button-addon2"
           type="button"
           variant="outline"
-          (click)="getFindataTable()">
+          (click)="getTable()">
           Show Table
-        </button>
+        </button> -->
+        <c-input-group class="mb-3" *ngIf="fileToUpload !== null">
+          <select aria-label="Default select example" cSelect (change)="setIndexColumn($event)">
+            <option value=""><strong>Choose Index</strong></option>
+            <option *ngFor="let column of table.headers.columns" [value]="column">{{ column }}</option>
+          </select>
+        </c-input-group>
         <table [hover]="true" cTable>
           <thead>
             <tr>
-              <th>Datum</th>
-              <th>Bedrag</th>
-              <th>BTW-Tarief</th>
+              <th *ngFor="let column of table.headers.columns">
+                <form [formGroup]="tableFormCheck">
+                  <c-button-group aria-label="Basic checkbox toggle button group" role="group">
+                    <input class="btn-check" [formControlName]="column" type="checkbox"/>
+                    <label (click)="setCheckBoxValue(column)" cButton cFormCheckLabel variant="outline">
+                      {{ column }}
+                    </label>
+                  </c-button-group>
+                </form>
+              </th>
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let e of findataTable">
-              <td>{{ e.datum }}</td>
-              <td>{{ e.bedrag }}</td>
-              <td>{{ e.btwtarief }}</td>
+            <tr *ngFor="let row of table.content">
+              <td *ngFor="let column of row">{{ column.value }}</td>
             </tr>
           </tbody>
         </table>
@@ -85,4 +98,3 @@
     </c-card>
   </c-col>
 </c-row>
-

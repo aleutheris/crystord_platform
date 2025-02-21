@@ -37,7 +37,7 @@ export class BelastingService {
     );
   }
 
-  updateFindataTable(data: any): Observable<any> {
+  updateTable(data: any): Observable<any> {
     return this.http.post(`/api/modifications`, data).pipe(
       catchError(error => {
         console.error('An error occurred while updating findata readouts', error);
@@ -46,7 +46,7 @@ export class BelastingService {
     );
   }
 
-  getFindataTable(data: any): Observable<any> {
+  getTable(data: any): Observable<any> {
     return this.http.post(`/api/readouts`, data).pipe(
       catchError(error => {
         console.error('An error occurred while get findata readouts', error);

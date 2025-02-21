@@ -307,9 +307,11 @@ export class ControlDetailComponent {
   }
 
   private parseValue(value: any) {
-    if (typeof value === 'string') {
-      return JSON.parse(value);
+    let result = '';
+    if (typeof value === 'string' && value) {
+      result = JSON.parse(value);
     }
+    return result;
   }
 
   private parseSearchText() {
