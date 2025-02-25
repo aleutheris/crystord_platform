@@ -1,0 +1,33 @@
+<c-row ngPreserveWhitespaces>
+  <c-col xs="12">
+    <c-card class="mb-4">
+      <c-card-header>
+        <strong>Search</strong> <small>Show table via search</small>
+      </c-card-header>
+      <c-card-body>
+        <c-input-group class="mb-3">
+          <input [valid]="isSearchTextValid" aria-label="default input example"
+            cFormControl
+            placeholder="Search..."
+            type="text"
+            [(ngModel)]="searchText"
+            (keyup.enter)="getTable()"/>
+        </c-input-group>
+        <table [hover]="false" cTable>
+          <thead>
+            <tr>
+              <th *ngFor="let column of table.headers.columns">
+                {{ column }}
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let row of table.content">
+              <td *ngFor="let column of row">{{ column.value }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </c-card-body>
+    </c-card>
+  </c-col>
+</c-row>

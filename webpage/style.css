@@ -1,9 +1,0 @@
-body {
-  height: 1000px; /* Fixed height, adjust as needed */
-  overflow-y: auto; /* or scroll */
-}
-
-.content {
-  /* Styles for your content */
-  margin-bottom: 50px; /* Adjust as needed to create space for bottom-div */
-}

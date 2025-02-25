@@ -19,18 +19,18 @@ export const navItems: INavData[] = [
     ]
   },
   {
-    name: 'Volcycle',
-    url: '/volcycle',
+    name: 'Tables',
+    url: '/tables',
     iconComponent: { name: 'cil-notes' },
     children: [
       {
-        name: 'Finance Form',
-        url: '/volcycle/finance-form',
+        name: 'Search',
+        url: '/tables/table-search',
         icon: 'nav-icon-bullet'
       },
       {
-        name: 'Belastingdienst',
-        url: '/volcycle/belastingdienst',
+        name: 'Upload',
+        url: '/tables/belastingdienst',
         icon: 'nav-icon-bullet'
       }
     ]
@@ -167,11 +167,11 @@ export const navItems: INavData[] = [
   //     }
   //   ]
   // },
-  {
-    name: 'Forms',
-    url: '/forms',
-    iconComponent: { name: 'cil-notes' },
-    children: [
+  // {
+  //   name: 'Forms',
+  //   url: '/forms',
+  //   iconComponent: { name: 'cil-notes' },
+  //   children: [
       // {
       //   name: 'Form Control',
       //   url: '/forms/form-control',
@@ -192,11 +192,11 @@ export const navItems: INavData[] = [
       //   url: '/forms/range',
       //   icon: 'nav-icon-bullet'
       // },
-      {
-        name: 'Input Group',
-        url: '/forms/input-group',
-        icon: 'nav-icon-bullet'
-      },
+      // {
+      //   name: 'Input Group',
+      //   url: '/forms/input-group',
+      //   icon: 'nav-icon-bullet'
+      // },
       // {
       //   name: 'Floating Labels',
       //   url: '/forms/floating-labels',
@@ -207,13 +207,13 @@ export const navItems: INavData[] = [
       //   url: '/forms/layout',
       //   icon: 'nav-icon-bullet'
       // },
-      {
-        name: 'Validation',
-        url: '/forms/validation',
-        icon: 'nav-icon-bullet'
-      }
-    ]
-  },
+  //     {
+  //       name: 'Validation',
+  //       url: '/forms/validation',
+  //       icon: 'nav-icon-bullet'
+  //     }
+  //   ]
+  // },
   // {
   //   name: 'Charts',
   //   iconComponent: { name: 'cil-chart-pie' },

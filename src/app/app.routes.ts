@@ -23,8 +23,8 @@ export const routes: Routes = [
         loadChildren: () => import('./views/control/routes').then((m) => m.routes)
       },
       {
-        path: 'volcycle',
-        loadChildren: () => import('./views/volcycle/routes').then((m) => m.routes)
+        path: 'tables',
+        loadChildren: () => import('./views/tables/routes').then((m) => m.routes)
       },
       {
         path: 'theme',

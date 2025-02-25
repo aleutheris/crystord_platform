@@ -1,20 +1,19 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormsModule } from '@angular/forms';
 import { RouterTestingModule } from '@angular/router/testing';
 
-import { ButtonModule, CardModule, FormModule, GridModule } from '@coreui/angular';
+import { CardModule, GridModule } from '@coreui/angular';
 import { IconSetService } from '@coreui/icons-angular';
 import { iconSubset } from '../../../icons/icon-subset';
-import { FinanceFormComponent } from './finance-form.component';
+import { BelastingdienstComponent } from './belastingdienst.component';
 
-describe('FinanceFormComponent', () => {
-  let component: FinanceFormComponent;
-  let fixture: ComponentFixture<FinanceFormComponent>;
+describe('BelastingdienstComponent', () => {
+  let component: BelastingdienstComponent;
+  let fixture: ComponentFixture<BelastingdienstComponent>;
   let iconSetService: IconSetService;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [CardModule, GridModule, FormsModule, FormModule, ButtonModule, RouterTestingModule, FinanceFormComponent],
+      imports: [CardModule, GridModule, RouterTestingModule, BelastingdienstComponent],
       providers: [IconSetService]
     }).compileComponents();
   });
@@ -23,7 +22,7 @@ describe('FinanceFormComponent', () => {
     iconSetService = TestBed.inject(IconSetService);
     iconSetService.icons = { ...iconSubset };
 
-    fixture = TestBed.createComponent(FinanceFormComponent);
+    fixture = TestBed.createComponent(BelastingdienstComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
