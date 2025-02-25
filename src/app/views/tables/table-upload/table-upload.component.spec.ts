@@ -4,16 +4,16 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { CardModule, GridModule } from '@coreui/angular';
 import { IconSetService } from '@coreui/icons-angular';
 import { iconSubset } from '../../../icons/icon-subset';
-import { BelastingdienstComponent } from './belastingdienst.component';
+import { TableUploadComponent } from './belastingdienst.component';
 
-describe('BelastingdienstComponent', () => {
-  let component: BelastingdienstComponent;
-  let fixture: ComponentFixture<BelastingdienstComponent>;
+describe('TableUploadComponent', () => {
+  let component: TableUploadComponent;
+  let fixture: ComponentFixture<TableUploadComponent>;
   let iconSetService: IconSetService;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [CardModule, GridModule, RouterTestingModule, BelastingdienstComponent],
+      imports: [CardModule, GridModule, RouterTestingModule, TableUploadComponent],
       providers: [IconSetService]
     }).compileComponents();
   });
@@ -22,7 +22,7 @@ describe('BelastingdienstComponent', () => {
     iconSetService = TestBed.inject(IconSetService);
     iconSetService.icons = { ...iconSubset };
 
-    fixture = TestBed.createComponent(BelastingdienstComponent);
+    fixture = TestBed.createComponent(TableUploadComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

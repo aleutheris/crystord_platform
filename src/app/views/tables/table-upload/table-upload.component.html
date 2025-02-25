@@ -2,44 +2,6 @@
   <c-col xs="12">
     <c-card class="mb-4">
       <c-card-header>
-        <strong>Tables</strong> <small>Show</small>
-      </c-card-header>
-      <c-card-body>
-        <c-input-group class="mb-3">
-          <input aria-label="default input example"
-            cFormControl
-            placeholder="Search..."
-            type="text"
-            [(ngModel)]="searchText"
-            (keyup.enter)="ignoreTemp()"/>
-        </c-input-group>
-        <button cButton
-          color="secondary"
-          id="button-addon2"
-          type="button"
-          variant="outline"
-          (click)="getTable()">
-          Show Table
-        </button>
-        <table [hover]="false" cTable>
-          <thead>
-            <tr>
-              <th *ngFor="let column of tableShow.headers.columns">
-                {{ column }}
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let row of tableShow.content">
-              <td *ngFor="let column of row">{{ column.value }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </c-card-body>
-    </c-card>
-
-    <c-card class="mb-4">
-      <c-card-header>
         <strong>Tables</strong> <small>Upload</small>
       </c-card-header>
       <c-card-body>

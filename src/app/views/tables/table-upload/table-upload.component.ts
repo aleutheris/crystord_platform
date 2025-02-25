@@ -1,36 +1,22 @@
-import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { DocsExampleComponent } from '@docs-components/public-api';
 import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import {
   RowComponent,
   ColComponent,
-  TextColorDirective,
   CardComponent,
   CardHeaderComponent,
   CardBodyComponent,
   ButtonGroupComponent,
-  ButtonToolbarComponent,
   FormSelectDirective,
-  InputGroupComponent,
-  InputGroupTextDirective,
   FormControlDirective,
+  InputGroupComponent,
   ButtonDirective,
   TableDirective,
-  FormCheckComponent,
-  FormCheckLabelDirective,
-  FormCheckInputDirective,
-  ThemeDirective,
-  DropdownComponent,
-  DropdownToggleDirective,
-  DropdownMenuDirective,
-  DropdownItemDirective,
-  DropdownDividerDirective
 } from '@coreui/angular';
-import { PreBelastingElement } from './belasting.model';
-import { FindataElement } from './belasting.model';
-import { BelastingService } from './belasting.service';
+import { ComService } from './com.service';
 
 interface Table {
   title: string;
@@ -49,50 +35,30 @@ interface TableCell {
 }
 
 @Component({
-    selector: 'app-belastingdienst',
-    templateUrl: './belastingdienst.component.html',
-    styleUrls: ['./belastingdienst.component.scss'],
+    selector: 'app-table-upload',
+    templateUrl: './table-upload.component.html',
+    styleUrls: ['./table-upload.component.scss'],
     standalone: true,
     imports: [
       CommonModule,
       RouterLink,
+      RowComponent,
       DocsExampleComponent,
       ReactiveFormsModule,
       FormsModule,
-      RowComponent,
       ColComponent,
-      TextColorDirective,
       CardComponent,
       CardHeaderComponent,
       CardBodyComponent,
       ButtonGroupComponent,
-      ButtonToolbarComponent,
       FormSelectDirective,
-      InputGroupComponent,
-      InputGroupTextDirective,
       FormControlDirective,
+      InputGroupComponent,
       ButtonDirective,
       TableDirective,
-      FormCheckComponent,
-      FormCheckLabelDirective,
-      FormCheckInputDirective,
-      ColComponent,
-      CardComponent,
-      CardBodyComponent,
-      ButtonDirective,
-      InputGroupComponent,
-      FormControlDirective,
-      ThemeDirective,
-      DropdownComponent,
-      DropdownToggleDirective,
-      DropdownMenuDirective,
-      DropdownItemDirective,
-      DropdownDividerDirective
     ]
 })
-export class BelastingdienstComponent {
-  belastingTable: [];
-  preBelastingTable: PreBelastingElement[];
+export class TableUploadComponent {
   fileToUpload: File | null;
   table: Table;
   tableShow: Table;
@@ -101,10 +67,8 @@ export class BelastingdienstComponent {
 
   tableFormCheck: UntypedFormGroup;
 
-  constructor(private belastingService: BelastingService, private formBuilder: UntypedFormBuilder) {
+  constructor(private comService: ComService, private formBuilder: UntypedFormBuilder) {
     this.searchText = '';
-    this.belastingTable = [];
-    this.preBelastingTable = [];
     this.fileToUpload = null;
     this.table = {
       title: '',
@@ -123,10 +87,6 @@ export class BelastingdienstComponent {
     this.atomUuid = '';
 
     this.tableFormCheck = this.formBuilder.group({});
-  }
-
-  ignoreTemp() {
-
   }
 
   setIndexColumn(event: Event) {
@@ -222,18 +182,6 @@ export class BelastingdienstComponent {
     this.table.keys.columns = keys;
   }
 
-  getBelastingTable() {
-    let query: {readout: string} = {readout: 'get_belastingdienst_table'};
-    this.belastingService.getBelastingTable(query).subscribe({
-      next: (data) => {
-        this.belastingTable = data['result'];
-      },
-      error: (error) => {
-        console.error('There was an error searching for belasting:', error);
-      }
-    });
-  }
-
   updateTable() {
     let rq: {
       modification: string,
@@ -253,48 +201,12 @@ export class BelastingdienstComponent {
       }
     };
 
-    this.belastingService.updateTable(rq).subscribe({
+    this.comService.updateTable(rq).subscribe({
       next: (data) => {
         this.atomUuid = data['result'];
       },
       error: (error) => {
         console.error('There was an error searching for the table:', error);
-      }
-    });
-  }
-
-  getTable() {
-    let query: {
-      readout: string,
-      args: {
-        selector: {
-          labels: string[],
-          table: {
-            keys: {
-              index_column: string
-            }
-          }
-        }
-      }
-    } = {
-      readout: "retrieve_table",
-      args: {
-        selector: {
-          labels: ["findata"],
-          table: {
-            keys: {
-              index_column: "datum"
-            }
-          }
-        }
-      }
-    };
-    this.belastingService.getTable(query).subscribe({
-      next: (data) => {
-        this.tableShow = data['result'];
-      },
-      error: (error) => {
-        console.error('There was an error searching for findata:', error);
       }
     });
   }

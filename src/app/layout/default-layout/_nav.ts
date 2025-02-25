@@ -30,7 +30,7 @@ export const navItems: INavData[] = [
       },
       {
         name: 'Upload',
-        url: '/tables/belastingdienst',
+        url: '/tables/table-upload',
         icon: 'nav-icon-bullet'
       }
     ]

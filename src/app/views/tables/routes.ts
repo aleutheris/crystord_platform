@@ -9,12 +9,12 @@ export const routes: Routes = [
     children: [
       {
         path: '',
-        redirectTo: 'belastingdienst',
+        redirectTo: 'table-upload',
         pathMatch: 'full'
       },
       {
-        path: 'belastingdienst',
-        loadComponent: () => import('./belastingdienst/belastingdienst.component').then(m => m.BelastingdienstComponent),
+        path: 'table-upload',
+        loadComponent: () => import('./table-upload/table-upload.component').then(m => m.TableUploadComponent),
         data: {
           title: 'Upload'
         }
