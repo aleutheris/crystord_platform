@@ -1,32 +1,17 @@
-import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { DocsExampleComponent } from '@docs-components/public-api';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import {
   RowComponent,
   ColComponent,
-  TextColorDirective,
   CardComponent,
   CardHeaderComponent,
   CardBodyComponent,
-  ButtonGroupComponent,
-  ButtonToolbarComponent,
-  FormSelectDirective,
   InputGroupComponent,
-  InputGroupTextDirective,
   FormControlDirective,
-  ButtonDirective,
   TableDirective,
-  FormCheckComponent,
-  FormCheckLabelDirective,
-  FormCheckInputDirective,
-  ThemeDirective,
-  DropdownComponent,
-  DropdownToggleDirective,
-  DropdownMenuDirective,
-  DropdownItemDirective,
-  DropdownDividerDirective
 } from '@coreui/angular';
 import { ComService } from './com.service';
 
@@ -59,33 +44,12 @@ interface TableCell {
       FormsModule,
       RowComponent,
       ColComponent,
-      TextColorDirective,
       CardComponent,
       CardHeaderComponent,
-      CardBodyComponent,
-      ButtonGroupComponent,
-      ButtonToolbarComponent,
-      FormSelectDirective,
-      InputGroupComponent,
-      InputGroupTextDirective,
-      FormControlDirective,
-      ButtonDirective,
       TableDirective,
-      FormCheckComponent,
-      FormCheckLabelDirective,
-      FormCheckInputDirective,
-      ColComponent,
-      CardComponent,
       CardBodyComponent,
-      ButtonDirective,
       InputGroupComponent,
       FormControlDirective,
-      ThemeDirective,
-      DropdownComponent,
-      DropdownToggleDirective,
-      DropdownMenuDirective,
-      DropdownItemDirective,
-      DropdownDividerDirective
     ]
 })
 export class BelastingdienstComponent {
@@ -103,10 +67,6 @@ export class BelastingdienstComponent {
       headers: { index: '', columns: [] },
       keys: { index: '', columns: [] }
     };
-  }
-
-  ignoreTemp() {
-
   }
 
   getTable() {
