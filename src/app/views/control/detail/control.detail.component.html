@@ -5,13 +5,14 @@
         <strong>Search Atoms</strong>
       </c-card-header>
       <c-card-body>
-        <input aria-label="default input example"
-          cFormControl
-          placeholder="Search..."
-          type="text"
-          [(ngModel)]="searchText"
-          (keyup.enter)="retrieveAtomsFeatures()"
-        />
+        <c-input-group class="mb-3">
+          <input aria-label="default input example"
+            cFormControl
+            placeholder="Search..."
+            type="text"
+            [(ngModel)]="searchText"
+            (keyup.enter)="retrieveAtomsFeatures()"/>
+        </c-input-group>
         <table [hover]="true" cTable>
           <thead>
             <tr>

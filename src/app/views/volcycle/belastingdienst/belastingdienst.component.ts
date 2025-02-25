@@ -33,6 +33,8 @@ import { FindataElement } from './belasting.model';
 import { BelastingService } from './belasting.service';
 
 interface Table {
+  title: string;
+  description: string;
   content: TableCell[][];
   headers: Headers;
   keys: Headers;
@@ -93,20 +95,38 @@ export class BelastingdienstComponent {
   preBelastingTable: PreBelastingElement[];
   fileToUpload: File | null;
   table: Table;
+  tableShow: Table;
+  atomUuid: string;
+  searchText: string;
 
   tableFormCheck: UntypedFormGroup;
 
   constructor(private belastingService: BelastingService, private formBuilder: UntypedFormBuilder) {
+    this.searchText = '';
     this.belastingTable = [];
     this.preBelastingTable = [];
     this.fileToUpload = null;
     this.table = {
+      title: '',
+      description: '',
       content: [],
       headers: { index: '', columns: [] },
       keys: { index: '', columns: [] }
     };
+    this.tableShow = {
+      title: '',
+      description: '',
+      content: [],
+      headers: { index: '', columns: [] },
+      keys: { index: '', columns: [] }
+    };
+    this.atomUuid = '';
 
     this.tableFormCheck = this.formBuilder.group({});
+  }
+
+  ignoreTemp() {
+
   }
 
   setIndexColumn(event: Event) {
@@ -202,30 +222,17 @@ export class BelastingdienstComponent {
     this.table.keys.columns = keys;
   }
 
-
-  // getBelastingTable() {
-  //   let query: {readout: string} = {readout: 'get_belastingdienst_table'};
-  //   this.belastingService.getBelastingTable(query).subscribe({
-  //     next: (data) => {
-  //       this.belastingTable = data['result'];
-  //     },
-  //     error: (error) => {
-  //       console.error('There was an error searching for belasting:', error);
-  //     }
-  //   });
-  // }
-
-  // getPreBelastingTable() {
-  //   let query: {readout: string} = {readout: 'get_prebelastingdienst_table'};
-  //   this.belastingService.getPreBelastingTable(query).subscribe({
-  //     next: (data) => {
-  //       this.preBelastingTable = data['result'];
-  //     },
-  //     error: (error) => {
-  //       console.error('There was an error searching for belasting:', error);
-  //     }
-  //   });
-  // }
+  getBelastingTable() {
+    let query: {readout: string} = {readout: 'get_belastingdienst_table'};
+    this.belastingService.getBelastingTable(query).subscribe({
+      next: (data) => {
+        this.belastingTable = data['result'];
+      },
+      error: (error) => {
+        console.error('There was an error searching for belasting:', error);
+      }
+    });
+  }
 
   updateTable() {
     let rq: {
@@ -241,14 +248,14 @@ export class BelastingdienstComponent {
       args: {
         inputs: {
           labels: ['findata'],
-          table: this.table,
+          table: this.table
         }
       }
     };
 
     this.belastingService.updateTable(rq).subscribe({
       next: (data) => {
-        console.log('Update table performed successfully:', data);
+        this.atomUuid = data['result'];
       },
       error: (error) => {
         console.error('There was an error searching for the table:', error);
@@ -256,43 +263,41 @@ export class BelastingdienstComponent {
     });
   }
 
-  // getTable() {
-  //   let query: {
-  //     readout: string,
-  //     args: {
-  //       selector: {
-  //         labels: string[],
-  //         table: {
-  //           title: string,
-  //           index_column: string,
-  //           columns: string[]
-  //         }
-  //       }
-  //     }
-  //   } = {
-  //     readout: "retrieve_table",
-  //     args: {
-  //       selector: {
-  //         labels: ["findata"],
-  //         table: {
-  //           title: "findata",
-  //           index_column: "datum",
-  //           columns: ["bedrag", "btwtarief"]
-  //         }
-  //       }
-  //     }
-  //   };
-  //   this.belastingService.getTable(query).subscribe({
-  //     next: (data) => {
-  //       // this.table.content = data['result'];
-  //       // this.table.headers = ['Datum', 'BTW-Tarief'];
-  //       // this.table.keys = ['datum', 'btwtarief'];
-  //     },
-  //     error: (error) => {
-  //       console.error('There was an error searching for findata:', error);
-  //     }
-  //   });
-  // }
+  getTable() {
+    let query: {
+      readout: string,
+      args: {
+        selector: {
+          labels: string[],
+          table: {
+            keys: {
+              index_column: string
+            }
+          }
+        }
+      }
+    } = {
+      readout: "retrieve_table",
+      args: {
+        selector: {
+          labels: ["findata"],
+          table: {
+            keys: {
+              index_column: "datum"
+            }
+          }
+        }
+      }
+    };
+    this.belastingService.getTable(query).subscribe({
+      next: (data) => {
+        this.tableShow = data['result'];
+      },
+      error: (error) => {
+        console.error('There was an error searching for findata:', error);
+      }
+    });
+  }
 
   private toValidIdentifier(input: string): string {
     if (!input) return '';

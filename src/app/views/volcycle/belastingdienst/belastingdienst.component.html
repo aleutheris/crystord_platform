@@ -1,44 +1,46 @@
 <c-row ngPreserveWhitespaces>
-  <c-col xs="12"><!--
+  <c-col xs="12">
     <c-card class="mb-4">
       <c-card-header>
-        <strong>Volcycle</strong> <small>Belastingaangifte per kwartaal</small>
+        <strong>Tables</strong> <small>Show</small>
       </c-card-header>
       <c-card-body>
-        <select aria-label="Default select example" cSelect (change)="getBelastingTable()">
-          <option value="">Choose year</option>
-          <option value="2023">2023</option>
-          <option value="2024">2024</option>
-          <option value="2025">2025</option>
-        </select>
-        <table [hover]="true" cTable>
+        <c-input-group class="mb-3">
+          <input aria-label="default input example"
+            cFormControl
+            placeholder="Search..."
+            type="text"
+            [(ngModel)]="searchText"
+            (keyup.enter)="ignoreTemp()"/>
+        </c-input-group>
+        <button cButton
+          color="secondary"
+          id="button-addon2"
+          type="button"
+          variant="outline"
+          (click)="getTable()">
+          Show Table
+        </button>
+        <table [hover]="false" cTable>
           <thead>
             <tr>
-              <th>Kwartaal</th>
-              <th>Begindatum</th>
-              <th>Einddatum</th>
-              <th>Omzet over kwartaal</th>
-              <th>Ontvangen hoog omzetbelasting over kwartall</th>
-              <th>Voorbelasting over kwartaal</th>
+              <th *ngFor="let column of tableShow.headers.columns">
+                {{ column }}
+              </th>
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let e of belastingTable">
-              <td>{{ e[0] }}</td>
-              <td>{{ e[1] }}</td>
-              <td>{{ e[2] }}</td>
-              <td>{{ e[3] }}</td>
-              <td>{{ e[4] }}</td>
-              <td>{{ e[5] }}</td>
+            <tr *ngFor="let row of tableShow.content">
+              <td *ngFor="let column of row">{{ column.value }}</td>
             </tr>
           </tbody>
         </table>
       </c-card-body>
-    </c-card>-->
+    </c-card>
 
     <c-card class="mb-4">
       <c-card-header>
-        <strong>Tables</strong> <small>Playground</small>
+        <strong>Tables</strong> <small>Upload</small>
       </c-card-header>
       <c-card-body>
         <c-input-group class="mb-3" *ngIf="fileToUpload !== null">
@@ -51,6 +53,10 @@
             Upload
           </button>
         </c-input-group>
+        <c-input-group class="mb-3" *ngIf="atomUuid !== ''">
+          <span cInputGroupText id="basic-addon1">Atom UUID</span>
+          <span cInputGroupText id="basic-addon1">{{ this.atomUuid }}</span>
+        </c-input-group>
         <c-input-group class="mb-3">
           <input aria-describedby="inputGroupFileAddon03"
                  aria-label="Upload"
@@ -59,21 +65,13 @@
                  type="file"
                  (change)="onFileSelected($event)"/>
         </c-input-group>
-        <!-- <button cButton
-          color="secondary"
-          id="button-addon2"
-          type="button"
-          variant="outline"
-          (click)="getTable()">
-          Show Table
-        </button> -->
         <c-input-group class="mb-3" *ngIf="fileToUpload !== null">
           <select aria-label="Default select example" cSelect (change)="setIndexColumn($event)">
             <option value=""><strong>Choose Index</strong></option>
             <option *ngFor="let column of table.headers.columns" [value]="column">{{ column }}</option>
           </select>
         </c-input-group>
-        <table [hover]="true" cTable>
+        <table [hover]="false" cTable>
           <thead>
             <tr>
               <th *ngFor="let column of table.headers.columns">
