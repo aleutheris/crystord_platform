@@ -52,7 +52,7 @@ interface TableCell {
       FormControlDirective,
     ]
 })
-export class BelastingdienstComponent {
+export class TableSearchComponent {
   searchText: string;
   isSearchTextValid: boolean | undefined = undefined;
   table: Table;

@@ -5,7 +5,7 @@
         <strong>Overview</strong>
       </c-card-header>
       <c-card-body>
-        <input aria-label="default input example"
+        <input [valid]="isSearchTextValid" aria-label="default input example"
           cFormControl
           placeholder="Search..."
           type="text"

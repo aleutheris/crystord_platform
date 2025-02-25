@@ -44,10 +44,12 @@ export class ControlDetailComponent {
   atom: Atom;
   newAtom: Atom;
   searchText: string;
+  isSearchTextValid: boolean | undefined = undefined;
   searchTable: Atom[];
 
   constructor(private atomService: AtomService) {
     this.searchText = 'labels=';
+    this.isSearchTextValid = undefined;
     this.searchTable = [];
 
     this.atom = {
@@ -192,9 +194,11 @@ export class ControlDetailComponent {
       next: (data) => {
         this.atom = this.atomDataToCamelCase(data['result'][0]);
         this.atom = this.convertAtomContentToString(this.atom);
+        this.isSearchTextValid = true;
       },
       error: (error) => {
         console.error('There was an error retrieving the atom data:', error);
+        this.isSearchTextValid = false;
       }
     });
   }
@@ -258,9 +262,11 @@ export class ControlDetailComponent {
         let atomData = this.atomsDataToCamelCase(data['result']);
         atomData = this.atomsDataContentToString(atomData);
         this.searchTable = atomData;
+        this.isSearchTextValid = true;
       },
       error: (error) => {
         console.error('There was an error searching for atoms:', error);
+        this.isSearchTextValid = false;
       }
     });
   }

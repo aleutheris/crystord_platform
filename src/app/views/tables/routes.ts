@@ -21,7 +21,7 @@ export const routes: Routes = [
       },
       {
         path: 'table-search',
-        loadComponent: () => import('./table-search/table-search.component').then(m => m.BelastingdienstComponent),
+        loadComponent: () => import('./table-search/table-search.component').then(m => m.TableSearchComponent),
         data: {
           title: 'Search'
         }

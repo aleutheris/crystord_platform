@@ -6,7 +6,7 @@
       </c-card-header>
       <c-card-body>
         <c-input-group class="mb-3">
-          <input aria-label="default input example"
+          <input [valid]="isSearchTextValid" aria-label="default input example"
             cFormControl
             placeholder="Search..."
             type="text"

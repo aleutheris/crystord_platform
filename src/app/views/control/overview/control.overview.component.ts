@@ -56,6 +56,7 @@ interface AtomTexted {
 })
 export class ControlOverviewComponent {
   searchText: string;
+  isSearchTextValid: boolean | undefined = undefined;
   searchKey: string;
   atomsFeatures: Atom[];
   atomsIndexed: Record<string, NodeElement>;
@@ -65,7 +66,8 @@ export class ControlOverviewComponent {
   constructor(private shapesCreator: ShapesCreator,
               private atomService: AtomService) {
     // this.searchText = 'uuid=cc249313-1d09-4614-ae53-e8d7826b0ba2';
-    this.searchText = 'labels=experiment';
+    this.searchText = 'labels=';
+    this.isSearchTextValid = undefined;
     this.searchKey = '';
     this.atomsFeatures = [];
     this.atomsIndexed = {};
@@ -87,9 +89,11 @@ export class ControlOverviewComponent {
       next: (data) => {
         this.atomsFeatures = data['result'];
         this.handleRetrievedData();
+        this.isSearchTextValid = true;
       },
       error: (error) => {
         console.error('There was an error searching for atoms:', error);
+        this.isSearchTextValid = false;
       }
     });
   }
