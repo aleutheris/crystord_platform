@@ -80,6 +80,11 @@ export class ControlOverviewComponent {
     }
   }
 
+  searchClickedAtom(atom: AtomTexted) {
+    this.searchText = 'uuid=' + atom.properties.shellies.uuid;
+    this.retrieveAtomsFeatures();
+  }
+
   retrieveAtomsFeatures() {
     this.updateSearchKey();
     const retrievalInteraction = this.chooseRetrievalInteraction();

@@ -94,6 +94,8 @@ def main():
     parser.add_argument("-c", "--container", action="store_false", dest="silent", help="Disable standard output")
     args = parser.parse_args()
 
+    run_command(["cp", "src/proxy.conf.server.json", "src/proxy.conf.json"])
+
     change_date()
     run_command(["rsync", "-avz", "--exclude-from", ".rsyncignore", "--delete", "-e", "ssh", "./", "nucubuntunl:" + SERVER_HOME + "/"])
 

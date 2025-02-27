@@ -23,7 +23,7 @@
         <strong>Atoms</strong>
       </c-card-header>
       <c-card-body [ngStyle]="{ 'white-space': 'nowrap', 'overflow': 'auto' }">
-        <table cTable>
+        <table [hover]="true" cTable>
           <thead>
             <tr>
               <th scope="col"></th>
@@ -34,7 +34,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let atom of atomsFeaturesTexted; let i = index">
+            <tr *ngFor="let atom of atomsFeaturesTexted; let i = index" (click)="searchClickedAtom(atom)">
               <td>
                 <button cButton
                   color="secondary"

@@ -10,7 +10,7 @@ import { catchError } from 'rxjs/operators';
 export class ComService {
   constructor(private http: HttpClient) { }
 
-  updateTable(data: any): Observable<any> {
+  modifyAtoms(data: any): Observable<any> {
     return this.http.post(`/api/modifications`, data).pipe(
       catchError(error => {
         console.error('An error occurred while updating findata readouts', error);
@@ -19,7 +19,7 @@ export class ComService {
     );
   }
 
-  getTable(data: any): Observable<any> {
+  readAtoms(data: any): Observable<any> {
     return this.http.post(`/api/readouts`, data).pipe(
       catchError(error => {
         console.error('An error occurred while get findata readouts', error);
