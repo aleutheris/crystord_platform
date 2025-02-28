@@ -28,7 +28,7 @@ interface AtomTexted {
       title: string,
       description: string,
       content: string,
-      constants: string[],
+      constants: string,
       operation: string
     }
   }
@@ -231,7 +231,7 @@ export class ControlOverviewComponent {
             title: atom.properties.nuclearies.title,
             description: atom.properties.nuclearies.description,
             content: atom.properties.nuclearies.content,
-            constants: atom.properties.nuclearies.constants,
+            constants: JSON.stringify(atom.properties.nuclearies.constants),
             operation: this.convertOperationToTitled(operation, atom.bonds)
           }
         }

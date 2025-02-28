@@ -55,7 +55,8 @@ interface Atom {
       title?: string;
       description?: string;
       content?: string;
-      operation?: string;
+      operation?: {};
+      constants?: {};
     };
     ionies?: {
       [key: string]: string | string[] | undefined;
@@ -132,6 +133,11 @@ export class TableSearchComponent {
     this.table.headers.index = this.table.headers.columns[this.selectedIndexColumn];
     this.table.keys.index = this.table.keys.columns[this.selectedIndexColumn];
 
+    const constants = {
+      headers: this.table.headers,
+      keys: this.table.keys
+    };
+
     let modificationQuery: Interaction = {
       modification: "form_atoms",
       args: {
@@ -141,7 +147,8 @@ export class TableSearchComponent {
             nuclearies: {
               title: this.table.title,
               description: this.table.description,
-              operation: JSON.stringify(this.tableInteraction)
+              operation: this.tableInteraction,
+              constants: constants,
             }
           }
         }

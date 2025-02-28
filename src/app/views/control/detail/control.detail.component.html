@@ -109,22 +109,26 @@
                    [(ngModel)]="atom.properties.nuclearies.content"/>
           </c-input-group>
 
-          <c-input-group class="mb-3">
+            <c-input-group class="mb-3">
             <span cInputGroupText id="basic-addon1">Operation</span>
-            <input aria-describedby="basic-addon1"
-                   aria-label="id"
-                   cFormControl
-                   placeholder=""
-                   [(ngModel)]="atom.properties.nuclearies.operation"/>
-          </c-input-group>
+            <textarea aria-describedby="basic-addon1"
+                 aria-label="id"
+                 cFormControl
+                 placeholder=""
+                 [(ngModel)]="atom.properties.nuclearies.operation"
+                 style="height: 150px;">
+            </textarea>
+            </c-input-group>
 
           <c-input-group class="mb-3">
             <span cInputGroupText id="basic-addon1">Constants</span>
-            <input aria-describedby="basic-addon1"
+            <textarea aria-describedby="basic-addon1"
                    aria-label="id"
                    cFormControl
                    placeholder=""
-                   [(ngModel)]="atom.properties.nuclearies.constants"/>
+                   [(ngModel)]="atom.properties.nuclearies.constants"
+                   style="height: 150px;">
+            </textarea>
           </c-input-group>
 
           <button cButton

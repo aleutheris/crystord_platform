@@ -27,7 +27,7 @@ export interface AtomNuclearies {
   title: string,
   description: string,
   content: string,
-  constants: string[],
+  constants: string,
   operation: string,
   atomType: string
 };

@@ -64,7 +64,7 @@ export class ControlDetailComponent {
           title: '',
           description: '',
           content: '',
-          constants: [],
+          constants: '',
           operation: '',
           atomType: ''
         },
@@ -84,7 +84,7 @@ export class ControlDetailComponent {
           title: '',
           description: '',
           content: '',
-          constants: [],
+          constants: '',
           operation: '',
           atomType: ''
         },
@@ -193,7 +193,7 @@ export class ControlDetailComponent {
     this.atomService.readAtoms(rq).subscribe({
       next: (data) => {
         this.atom = this.atomDataToCamelCase(data['result'][0]);
-        this.atom = this.convertAtomContentToString(this.atom);
+        this.atom = this.atomDataFeaturesToString(this.atom);
         this.isSearchTextValid = true;
       },
       error: (error) => {
@@ -300,15 +300,22 @@ export class ControlDetailComponent {
 
   private atomsDataContentToString(data: any) {
     data.forEach((atom: any) => {
-      atom = this.convertAtomContentToString(atom);
+      atom = this.atomDataFeaturesToString(atom);
     });
     return data;
   }
 
-  private convertAtomContentToString(atom: Atom) {
+  private atomDataFeaturesToString(atom: Atom) {
     if (typeof atom.properties.nuclearies.content !== 'string') {
-      atom.properties.nuclearies.content = JSON.stringify(atom.properties.nuclearies.content);
+      atom.properties.nuclearies.content = JSON.stringify(atom.properties.nuclearies.content, null, 2);
     }
+    if (atom.properties.nuclearies.operation) {
+      atom.properties.nuclearies.operation = JSON.stringify(atom.properties.nuclearies.operation, null, 2);
+    }
+    if (typeof atom.properties.nuclearies.constants !== 'string') {
+      atom.properties.nuclearies.constants = JSON.stringify(atom.properties.nuclearies.constants, null, 2);
+    }
+
     return atom;
   }
 
