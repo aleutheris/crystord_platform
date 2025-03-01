@@ -78,18 +78,33 @@
           </tbody>
         </table>
         <c-input-group class="mb-3">
-          <span cInputGroupText id="basic-addon1">Atom UUID</span>
-          <span cInputGroupText id="basic-addon1">{{ atom.properties?.shellies?.uuid }}</span>
+          <span cInputGroupText id="basic-addon1">Title</span>
+          <input aria-describedby="basic-addon1"
+                 aria-label="id"
+                 cFormControl
+                 placeholder=""
+                 [(ngModel)]="table.title"/>
+        </c-input-group>
+        <c-input-group class="mb-3">
+          <span cInputGroupText id="basic-addon1">Description</span>
+          <input aria-describedby="basic-addon1"
+                 aria-label="id"
+                 cFormControl
+                 placeholder=""
+                 [(ngModel)]="table.description"/>
         </c-input-group>
         <c-input-group class="mb-3">
           <button cButton
-            color="secondary"
+            color="primary"
             id="inputGroupFileAddon03"
             type="button"
             variant="outline"
             (click)="formAtom()">
             Create Atom
           </button>
+        </c-input-group>
+        <c-input-group class="mb-3">
+          <span cInputGroupText id="basic-addon1">{{ atom.properties?.shellies?.uuid }}</span>
         </c-input-group>
       </c-card-body>
     </c-card>

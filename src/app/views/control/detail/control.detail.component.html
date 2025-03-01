@@ -50,7 +50,7 @@
                    placeholder=""
                    [(ngModel)]="atom.properties.shellies.uuid"/>
             <button cButton
-              color="secondary"
+              color="primary"
               id="button-addon2"
               type="button"
               variant="outline"
@@ -109,16 +109,16 @@
                    [(ngModel)]="atom.properties.nuclearies.content"/>
           </c-input-group>
 
-            <c-input-group class="mb-3">
-            <span cInputGroupText id="basic-addon1">Operation</span>
-            <textarea aria-describedby="basic-addon1"
-                 aria-label="id"
-                 cFormControl
-                 placeholder=""
-                 [(ngModel)]="atom.properties.nuclearies.operation"
-                 style="height: 150px;">
-            </textarea>
-            </c-input-group>
+          <c-input-group class="mb-3">
+          <span cInputGroupText id="basic-addon1">Operation</span>
+          <textarea aria-describedby="basic-addon1"
+                aria-label="id"
+                cFormControl
+                placeholder=""
+                [(ngModel)]="atom.properties.nuclearies.operation"
+                style="height: 150px;">
+          </textarea>
+          </c-input-group>
 
           <c-input-group class="mb-3">
             <span cInputGroupText id="basic-addon1">Constants</span>
@@ -131,23 +131,23 @@
             </textarea>
           </c-input-group>
 
-          <button cButton
-            color="secondary"
-            id="inputGroupFileAddon03"
-            type="button"
-            variant="outline"
-            (click)="updateAtomFeatures()">
-            Update Atom
-          </button>
+          <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+            <button cButton
+              color="primary"
+              type="button"
+              variant="outline"
+              (click)="updateAtomFeatures()">
+              Update Atom
+            </button>
 
-          <button cButton
-            color="secondary"
-            id="inputGroupFileAddon03"
-            type="button"
-            variant="outline"
-            (click)="destroyAtoms()">
-            Destroy Atom
-          </button>
+            <button cButton
+              color="primary"
+              type="button"
+              variant="outline"
+              (click)="destroyAtoms()">
+              Destroy Atom
+            </button>
+          </div>
       </c-card-body>
     </c-card>
 
@@ -184,7 +184,7 @@
           </c-input-group>
 
           <button cButton
-            color="secondary"
+            color="primary"
             id="inputGroupFileAddon03"
             type="button"
             variant="outline"
