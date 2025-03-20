@@ -13,6 +13,7 @@ import {
   FormSelectDirective,
   FormControlDirective,
   InputGroupComponent,
+  InputGroupTextDirective,
   ButtonDirective,
   TableDirective,
 } from '@coreui/angular';
@@ -54,6 +55,7 @@ interface TableCell {
       FormSelectDirective,
       FormControlDirective,
       InputGroupComponent,
+      InputGroupTextDirective,
       ButtonDirective,
       TableDirective,
     ]
@@ -63,12 +65,12 @@ export class TableUploadComponent {
   table: Table;
   tableShow: Table;
   atomUuid: string;
-  searchText: string;
+  labelsText: string;
 
   tableFormCheck: UntypedFormGroup;
 
   constructor(private comService: ComService, private formBuilder: UntypedFormBuilder) {
-    this.searchText = '';
+    this.labelsText = '';
     this.fileToUpload = null;
     this.table = {
       title: '',
@@ -116,6 +118,7 @@ export class TableUploadComponent {
       };
       reader.readAsText(this.fileToUpload);
     }
+    this.labelsText = this.fileToUpload?.name.split('.')[0] || '';
   }
 
   uploadFile(): void {
@@ -195,7 +198,7 @@ export class TableUploadComponent {
       modification: 'create_table',
       args: {
         inputs: {
-          labels: ['findata'],
+          labels: [this.labelsText],
           table: this.table
         }
       }

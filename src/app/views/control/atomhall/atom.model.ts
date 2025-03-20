@@ -28,8 +28,7 @@ export interface AtomNuclearies {
   description: string,
   content: string,
   constants: string,
-  operation: string,
-  atomType: string
+  operation: string
 };
 
 export interface NewAtom {

@@ -112,7 +112,7 @@ export class ControlOverviewComponent {
     if (this.searchKey === 'labels') {
       output = 'retrieve_atoms_features';
     } else if (this.searchKey === 'uuid') {
-      output = 'retrieve_atom_features';
+      output = 'retrieve_atom_features_nested';
     }
     return output;
   }

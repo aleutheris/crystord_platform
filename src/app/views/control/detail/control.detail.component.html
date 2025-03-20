@@ -42,22 +42,22 @@
         <p class="text-body-secondary small">
           Get and update your Atom
         </p>
-          <c-input-group class="mb-3">
-            <span cInputGroupText id="basic-addon1">Atom UUID</span>
-            <input aria-describedby="basic-addon1"
-                   aria-label="id"
-                   cFormControl
-                   placeholder=""
-                   [(ngModel)]="atom.properties.shellies.uuid"/>
-            <button cButton
-              color="primary"
-              id="button-addon2"
-              type="button"
-              variant="outline"
-              (click)="retrieveAtomFeatures(atom)">
-              Get Atom
-            </button>
-          </c-input-group>
+        <c-input-group class="mb-3">
+          <span cInputGroupText id="basic-addon1">Atom UUID</span>
+          <input aria-describedby="basic-addon1"
+                  aria-label="id"
+                  cFormControl
+                  placeholder=""
+                  [(ngModel)]="atom.properties.shellies.uuid"/>
+          <button cButton
+            color="primary"
+            id="button-addon2"
+            type="button"
+            variant="outline"
+            (click)="retrieveAtomFeatures(atom)">
+            Get Atom
+          </button>
+        </c-input-group>
 
           <c-input-group class="mb-3">
             <span cInputGroupText id="basic-addon1">Stored At</span>
@@ -102,16 +102,28 @@
 
           <c-input-group class="mb-3">
             <span cInputGroupText id="basic-addon1">Content</span>
-            <input aria-describedby="basic-addon1"
+            <input aria-describedby="basic-addon1" *ngIf="!atom.properties.nuclearies.content.includes('\n')"
                    aria-label="id"
                    cFormControl
                    placeholder=""
                    [(ngModel)]="atom.properties.nuclearies.content"/>
+            <textarea aria-describedby="basic-addon1" *ngIf="atom.properties.nuclearies.content.includes('\n')"
+                   aria-label="id"
+                   cFormControl
+                   placeholder=""
+                   [(ngModel)]="atom.properties.nuclearies.content"
+                   style="height: 150px;">
+             </textarea>
           </c-input-group>
 
           <c-input-group class="mb-3">
           <span cInputGroupText id="basic-addon1">Operation</span>
-          <textarea aria-describedby="basic-addon1"
+          <input aria-describedby="basic-addon1" *ngIf="!atom.properties.nuclearies.operation.includes('\n')"
+            aria-label="id"
+            cFormControl
+            placeholder=""
+            [(ngModel)]="atom.properties.nuclearies.operation"/>
+          <textarea aria-describedby="basic-addon1" *ngIf="atom.properties.nuclearies.operation.includes('\n')"
                 aria-label="id"
                 cFormControl
                 placeholder=""
@@ -122,7 +134,12 @@
 
           <c-input-group class="mb-3">
             <span cInputGroupText id="basic-addon1">Constants</span>
-            <textarea aria-describedby="basic-addon1"
+            <input aria-describedby="basic-addon1" *ngIf="!atom.properties.nuclearies.constants.includes('\n')"
+                   aria-label="id"
+                   cFormControl
+                   placeholder=""
+                   [(ngModel)]="atom.properties.nuclearies.constants"/>
+            <textarea aria-describedby="basic-addon1" *ngIf="atom.properties.nuclearies.constants.includes('\n')"
                    aria-label="id"
                    cFormControl
                    placeholder=""

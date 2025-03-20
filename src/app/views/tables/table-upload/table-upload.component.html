@@ -28,6 +28,14 @@
                  (change)="onFileSelected($event)"/>
         </c-input-group>
         <c-input-group class="mb-3" *ngIf="fileToUpload !== null">
+          <span cInputGroupText id="basic-addon1">Labels</span>
+          <input aria-describedby="basic-addon1"
+                 aria-label="id"
+                 cFormControl
+                 placeholder=""
+                 [(ngModel)]="labelsText"/>
+        </c-input-group>
+        <c-input-group class="mb-3" *ngIf="fileToUpload !== null">
           <select aria-label="Default select example" cSelect (change)="setIndexColumn($event)">
             <option value=""><strong>Choose Index</strong></option>
             <option *ngFor="let column of table.headers.columns" [value]="column">{{ column }}</option>

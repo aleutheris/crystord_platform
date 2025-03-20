@@ -65,8 +65,7 @@ export class ControlDetailComponent {
           description: '',
           content: '',
           constants: '',
-          operation: '',
-          atomType: ''
+          operation: ''
         },
         ionies: {}
       }
@@ -85,8 +84,7 @@ export class ControlDetailComponent {
           description: '',
           content: '',
           constants: '',
-          operation: '',
-          atomType: ''
+          operation: ''
         },
         ionies: {}
       }
@@ -178,7 +176,7 @@ export class ControlDetailComponent {
         }
       }
     } = {
-      readout: 'retrieve_atom_features',
+      readout: 'retrieve_atom_features_nested',
       args: {
         selector: {
           properties: {
@@ -237,9 +235,9 @@ export class ControlDetailComponent {
             nuclearies: {
               title: this.atom.properties.nuclearies.title,
               description: this.atom.properties.nuclearies.description,
-              content: this.parseValue(this.atom.properties.nuclearies.content),
+              content: this.str2json(this.atom.properties.nuclearies.content),
               constants: this.atom.properties.nuclearies.constants,
-              operation: this.atom.properties.nuclearies.operation
+              operation: this.str2json(this.atom.properties.nuclearies.operation)
             }
           }
         }
@@ -306,22 +304,42 @@ export class ControlDetailComponent {
   }
 
   private atomDataFeaturesToString(atom: Atom) {
-    if (typeof atom.properties.nuclearies.content !== 'string') {
-      atom.properties.nuclearies.content = JSON.stringify(atom.properties.nuclearies.content, null, 2);
+    if (typeof atom.properties.nuclearies.content === 'object') {
+      if (atom.properties.nuclearies.content) {
+        atom.properties.nuclearies.content = JSON.stringify(atom.properties.nuclearies.content, null, 2);
+      } else {
+        atom.properties.nuclearies.content = '';
+      }
+    } else {
+      atom.properties.nuclearies.content = atom.properties.nuclearies.content.toString();
     }
-    if (atom.properties.nuclearies.operation) {
-      atom.properties.nuclearies.operation = JSON.stringify(atom.properties.nuclearies.operation, null, 2);
+
+    if (typeof atom.properties.nuclearies.operation === 'object') {
+      if (atom.properties.nuclearies.operation) {
+        atom.properties.nuclearies.operation = JSON.stringify(atom.properties.nuclearies.operation, null, 2);
+      } else {
+        atom.properties.nuclearies.operation = '';
+      }
+    } else {
+      atom.properties.nuclearies.operation = atom.properties.nuclearies.operation.toString();
     }
-    if (typeof atom.properties.nuclearies.constants !== 'string') {
-      atom.properties.nuclearies.constants = JSON.stringify(atom.properties.nuclearies.constants, null, 2);
+
+    if (typeof atom.properties.nuclearies.constants === 'object') {
+      if (atom.properties.nuclearies.constants) {
+        atom.properties.nuclearies.constants = JSON.stringify(atom.properties.nuclearies.constants, null, 2);
+      } else {
+        atom.properties.nuclearies.constants = '';
+      }
+    } else {
+      atom.properties.nuclearies.constants = atom.properties.nuclearies.constants.toString();
     }
 
     return atom;
   }
 
-  private parseValue(value: any) {
-    let result = '';
-    if (typeof value === 'string' && value) {
+  private str2json(value: any) {
+    let result = value;
+    if (typeof value === 'string' && (value.startsWith('{') || value.startsWith('['))) {
       result = JSON.parse(value);
     }
     return result;
@@ -332,22 +350,7 @@ export class ControlDetailComponent {
     const result: {
       readout: string,
       args: {
-        selector: {
-          bonds: string[]
-          labels: string[],
-          properties: {
-            shellies: {
-              uuid: string
-            },
-            nuclearies: {
-              title: string,
-              description: string,
-              content: number,
-              constants: string[],
-              operation: string
-            }
-          }
-        }
+        selector: Atom
       }
     } = {
       readout: 'retrieve_atoms_features',
@@ -357,15 +360,17 @@ export class ControlDetailComponent {
           labels: [],
           properties: {
             shellies: {
-              uuid: ''
+              uuid: "",
+              changeHistory: []
             },
             nuclearies: {
-              title: '',
-              description: '',
-              content: 0.0,
-              constants: [],
-              operation: ''
-            }
+              title: "",
+              description: "",
+              content: "",
+              constants: "",
+              operation: ""
+            },
+            ionies: {}
           }
         }
       }
