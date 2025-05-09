@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  crystord_web:
+    image: crystord_web
+    container_name: crystord_web
+    ports:
+      - "4201:4201"
+    volumes:
+      - /home/ample/http/crystord_web_src:/app/src
+      - node_modules:/app/node_modules
+    networks:
+      - default
+      - reverse_proxy_default
+    restart: unless-stopped
+
+volumes:
+  node_modules:
+
+networks:
+  default:
+    driver: bridge
+  reverse_proxy_default:
+    external: true

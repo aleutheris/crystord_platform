@@ -1,14 +1,19 @@
+__pycache__
 .angular
 .git/
 .vscode/
+dist/
 doc/
 node_modules/
 
+.dockerignore
 .gitignore
 .rsyncignore
 build.sh
 CHANGELOG.md
 deploy.py
+Dockerfile
+docker-compose.yml
 docs.html
 LICENSE
 README.md

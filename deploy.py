@@ -7,7 +7,7 @@ from datetime import datetime
 SERVER_ADDRESS = "nucubuntunl"
 SERVER_PORT_OUT = "4201"
 SERVER_PORT_IN = "4201"
-SERVER_HOME = "/home/ample/http"
+SERVER_HOME = "/home/ample/http/crystord_web_src"
 APP_DIR = "/app"
 PRESERVED_FOLDER = "/node_modules"
 JSON_FILE_PATH = 'modified_date.json'
@@ -97,7 +97,8 @@ def main():
     run_command(["cp", "src/proxy.conf.server.json", "src/proxy.conf.json"])
 
     change_date()
-    run_command(["rsync", "-avz", "--exclude-from", ".rsyncignore", "--delete", "-e", "ssh", "./", "nucubuntunl:" + SERVER_HOME + "/"])
+    run_command(["rsync", "-avz", "--exclude-from", ".rsyncignore", "--delete", "--chmod=D775,F775", "-e", "ssh", "src/", "nucubuntunl:" + SERVER_HOME + "/"])
+    run_command(["rsync", "-avz", "-e", "ssh", "./docker-compose.yml", "nucubuntunl:~/containers/" + PROJECT_NAME + "/"])
 
     if not args.silent:
         print("Deploying the container...")
@@ -122,21 +123,19 @@ def main():
         if server_image_ids != ['']:
             run_command(["ssh", "nucubuntunl", "docker", "rmi", "-f", TAG])
 
-        run_command(["docker", "build", "-t", TAG, "."])
+        run_command(["docker", "build", "-t", PROJECT_NAME, "."])
 
-        run_command(["docker", "tag", TAG, TAG_2])
-
-        run_command(["docker", "save", "-o", "/home/ample/" + PROJECT_NAME + ".tar", TAG])
+        run_command(["docker", "save", "-o", "/home/ample/" + PROJECT_NAME + ".tar", PROJECT_NAME])
 
         run_command(["scp", "/home/ample/" + PROJECT_NAME + ".tar", "nucubuntunl:/home/ample/"])
         run_command(["rm", "/home/ample/" + PROJECT_NAME + ".tar"])
 
         run_command(["ssh", "nucubuntunl", "docker", "load", "-i", "/home/ample/" + PROJECT_NAME + ".tar"])
 
-        run_command(["ssh", "nucubuntunl", "sudo", "docker", "run", "--name", PROJECT_NAME, "-d", "-p",
-                     SERVER_PORT_OUT+":"+SERVER_PORT_IN, "-v", SERVER_HOME+":"+APP_DIR, "-v", APP_DIR+PRESERVED_FOLDER, TAG])
+        # run_command(["ssh", "nucubuntunl", "sudo", "docker", "run", "--name", PROJECT_NAME, "-d", "-p",
+        #              SERVER_PORT_OUT+":"+SERVER_PORT_IN, "-v", SERVER_HOME+":"+APP_DIR, "-v", APP_DIR+PRESERVED_FOLDER, TAG])
 
-        run_command(["ssh", "nucubuntunl", "docker", "network", "connect", DOCKER_NETWORK, PROJECT_NAME])
+        run_command(["ssh", "nucubuntunl", "cd ~/containers/" + PROJECT_NAME + " && docker-compose", "up", "-d"])
 
         run_command(["docker", "images"])
         run_command(["ssh", "nucubuntunl", "docker", "images"])

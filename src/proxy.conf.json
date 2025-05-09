@@ -1,6 +1,6 @@
 {
   "/api": {
-    "target": "http://localhost:5665",
+    "target": "http://crystord_api:5665",
     "secure": false
   }
 }

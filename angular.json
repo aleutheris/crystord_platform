@@ -81,6 +81,7 @@
           },
           "defaultConfiguration": "development",
           "options": {
+            "allowedHosts": ["crystord"],
             "port": 4201,
             "proxyConfig": "src/proxy.conf.json"
           }
