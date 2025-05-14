@@ -4,8 +4,6 @@ services:
   crystord_web:
     image: crystord_web
     container_name: crystord_web
-    ports:
-      - "4201:4201"
     networks:
       - default
       - reverse_proxy_default

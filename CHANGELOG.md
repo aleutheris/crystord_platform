@@ -1,4 +1,4 @@
-### [coreui-free-angular-admin-template](https://coreui.io/angular/) changelog
+### [crystord](https://coreui.io/angular/) changelog
 
 ---
 
@@ -25,7 +25,7 @@
 
 #### `5.0.2`
 
-- chore(dependencies): update 
+- chore(dependencies): update
 - refactor(default-header): color modes dropdown
 
 ---
@@ -104,7 +104,7 @@ see: [Babel vulnerable to arbitrary code execution when compiling specifically c
 
 #### `4.5.25`
 
-- chore(dependencies): update 
+- chore(dependencies): update
 
 ---
 
@@ -169,7 +169,7 @@ see: [Babel vulnerable to arbitrary code execution when compiling specifically c
 
 imports update required :boom: :exclamation:
 - from `import {getStyle, ...} from '@coreui/utils/src`
-- to `import  {getStyle, ...} from '@coreui/utils` 
+- to `import  {getStyle, ...} from '@coreui/utils`
 
 ---
 
@@ -187,7 +187,7 @@ update to:
 - `TypeScript 4.8`
 - `RxJS 7.5`
 
-refactor: 
+refactor:
 - refactor(AppComponent): change selector to `app-root`
 
 ---

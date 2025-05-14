@@ -14,7 +14,7 @@ import { iconSubset } from './icons/icon-subset';
   imports: [RouterOutlet, HttpClientModule]
 })
 export class AppComponent implements OnInit {
-  title = 'CoreUI Angular Admin Template';
+  title = 'Crystord';
 
   constructor(
     private router: Router,

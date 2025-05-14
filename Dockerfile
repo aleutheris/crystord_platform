@@ -19,7 +19,7 @@ FROM node:22-slim
 
 WORKDIR /app
 
-COPY --from=builder /app/dist/coreui-free-angular-admin-template/browser ./dist
+COPY --from=builder /app/dist/crystord/browser ./dist
 
 RUN npm install -g serve
 
