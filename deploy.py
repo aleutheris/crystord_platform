@@ -4,25 +4,19 @@ import subprocess
 import json
 from datetime import datetime
 
-SERVER_ADDRESS = "nucubuntunl"
+# SERVER_ADDRESS = "nucubuntunl"
+SERVER_ADDRESS = "aleuhouse"
 SERVER_PORT_OUT = "4201"
 SERVER_PORT_IN = "4201"
 SERVER_HOME = "/home/ample/http/crystord_web_src"
+LOCAL_HOME_DIR = "/home/ample"
+SERVER_HOME_DIR = "/home/aleutheris"
 APP_DIR = "/app"
 PRESERVED_FOLDER = "/node_modules"
-JSON_FILE_PATH = 'modified_date.json'
 DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
 PROJECT_NAME = "crystord_web"
 TAG = PROJECT_NAME + ":latest"
-TAG_2 = PROJECT_NAME + ":v1.0"
 DOCKER_NETWORK = "crystord_net"
-
-
-def change_date():
-    data = {'date': datetime.now().strftime(DATE_FORMAT)}
-
-    with open(JSON_FILE_PATH, 'w') as file:
-        json.dump(data, file, indent=4)
 
 
 def run_command(command):
@@ -96,9 +90,8 @@ def main():
 
     run_command(["cp", "src/proxy.conf.server.json", "src/proxy.conf.json"])
 
-    change_date()
-    run_command(["rsync", "-avz", "--exclude-from", ".rsyncignore", "--delete", "--chmod=D775,F775", "-e", "ssh", "src/", "nucubuntunl:" + SERVER_HOME + "/"])
-    run_command(["rsync", "-avz", "-e", "ssh", "./docker-compose.yml", "nucubuntunl:~/containers/" + PROJECT_NAME + "/"])
+    # run_command(["rsync", "-avz", "--exclude-from", ".rsyncignore", "--delete", "--chmod=D775,F775", "-e", "ssh", "src/", SERVER_ADDRESS + ":" + SERVER_HOME + "/"])
+    run_command(["rsync", "-avz", "-e", "ssh", "./docker-compose.yml", SERVER_ADDRESS + ":~/containers/" + PROJECT_NAME + "/"])
 
     if not args.silent:
         print("Deploying the container...")
@@ -111,34 +104,34 @@ def main():
         if local_container_ids != ['']:
             run_command(["docker", "stop"] + local_container_ids)
         if server_container_ids != ['']:
-            run_command(["ssh", "nucubuntunl", "docker", "stop"] + server_container_ids)
+            run_command(["ssh", SERVER_ADDRESS, "docker", "stop"] + server_container_ids)
 
         if local_container_ids != ['']:
             run_command(["docker", "rm"] + local_container_ids)
         if server_container_ids != ['']:
-            run_command(["ssh", "nucubuntunl", "docker", "rm"] + server_container_ids)
+            run_command(["ssh", SERVER_ADDRESS, "docker", "rm"] + server_container_ids)
 
         if local_image_ids != ['']:
             run_command(["docker", "rmi", "-f"] + local_image_ids)
         if server_image_ids != ['']:
-            run_command(["ssh", "nucubuntunl", "docker", "rmi", "-f", TAG])
+            run_command(["ssh", SERVER_ADDRESS, "docker", "rmi", "-f", TAG])
 
         run_command(["docker", "build", "-t", PROJECT_NAME, "."])
 
-        run_command(["docker", "save", "-o", "/home/ample/" + PROJECT_NAME + ".tar", PROJECT_NAME])
+        run_command(["docker", "save", "-o", LOCAL_HOME_DIR +"/"+ PROJECT_NAME + ".tar", PROJECT_NAME])
 
-        run_command(["scp", "/home/ample/" + PROJECT_NAME + ".tar", "nucubuntunl:/home/ample/"])
-        run_command(["rm", "/home/ample/" + PROJECT_NAME + ".tar"])
+        run_command(["scp", LOCAL_HOME_DIR +"/"+ PROJECT_NAME + ".tar", SERVER_ADDRESS + ":" + SERVER_HOME_DIR])
+        run_command(["rm", LOCAL_HOME_DIR +"/"+ PROJECT_NAME + ".tar"])
 
-        run_command(["ssh", "nucubuntunl", "docker", "load", "-i", "/home/ample/" + PROJECT_NAME + ".tar"])
+        run_command(["ssh", SERVER_ADDRESS, "docker", "load", "-i", SERVER_HOME_DIR +"/"+ PROJECT_NAME + ".tar"])
 
-        # run_command(["ssh", "nucubuntunl", "sudo", "docker", "run", "--name", PROJECT_NAME, "-d", "-p",
+        # run_command(["ssh", SERVER_ADDRESS, "sudo", "docker", "run", "--name", PROJECT_NAME, "-d", "-p",
         #              SERVER_PORT_OUT+":"+SERVER_PORT_IN, "-v", SERVER_HOME+":"+APP_DIR, "-v", APP_DIR+PRESERVED_FOLDER, TAG])
 
-        run_command(["ssh", "nucubuntunl", "cd ~/containers/" + PROJECT_NAME + " && docker-compose", "up", "-d"])
+        run_command(["ssh", SERVER_ADDRESS, "cd ~/containers/" + PROJECT_NAME + " && docker-compose", "up", "-d"])
 
         run_command(["docker", "images"])
-        run_command(["ssh", "nucubuntunl", "docker", "images"])
+        run_command(["ssh", SERVER_ADDRESS, "docker", "images"])
 
 
 if __name__ == "__main__":
