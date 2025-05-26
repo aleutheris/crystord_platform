@@ -9,7 +9,7 @@ COPY angular.json ./
 COPY karma.conf.js ./
 COPY tsconfig* ./
 
-RUN npm install -g @angular/cli --unsafe-perm
+RUN npm install -g @angular/cli
 RUN npm install
 
 RUN ng build --configuration=production

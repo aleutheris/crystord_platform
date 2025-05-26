@@ -4,13 +4,16 @@ services:
   crystord_web:
     image: crystord_web
     container_name: crystord_web
+    labels:
+      - traefik.enable=true
+      - traefik.http.services.crystord.loadbalancer.server.port=4201
+      - traefik.http.routers.crystord.rule=Host(`crystord.aleutheris.com`)
+      - traefik.http.routers.crystord.tls=true
+      - traefik.http.routers.crystord.tls.certresolver=le
     networks:
-      - default
       - reverse_proxy_default
     restart: unless-stopped
 
 networks:
-  default:
-    driver: bridge
   reverse_proxy_default:
     external: true
