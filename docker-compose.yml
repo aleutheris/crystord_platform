@@ -1,19 +1,25 @@
-version: '3.8'
+# docker-compose.yml of crystord_web
 
 services:
   crystord_web:
-    image: crystord_web
+    image: crystord_web:prod
+    # image: crystord_web:dev
     container_name: crystord_web
     labels:
       - traefik.enable=true
+      - traefik.http.routers.crystord.rule=Host(`crystord.com`)
       - traefik.http.services.crystord.loadbalancer.server.port=4201
-      - traefik.http.routers.crystord.rule=Host(`crystord.aleutheris.com`)
       - traefik.http.routers.crystord.tls=true
       - traefik.http.routers.crystord.tls.certresolver=le
     networks:
+      - crystord_net
       - reverse_proxy_default
     restart: unless-stopped
+    ports:
+      - "4201:4201"
 
 networks:
+  crystord_net:
+    external: true
   reverse_proxy_default:
     external: true

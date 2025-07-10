@@ -3,18 +3,18 @@ import argparse
 import subprocess
 from datetime import datetime
 
-# SERVER_ADDRESS = "nucubuntunl"
 SERVER_ADDRESS = "aleuhouse"
+# SERVER_ADDRESS = "nucubuntunl"
 SERVER_PORT_OUT = "4201"
 SERVER_PORT_IN = "4201"
-SERVER_HOME = "/home/ample/http/crystord_web_src"
 LOCAL_HOME_DIR = "/home/ample"
 SERVER_HOME_DIR = "/home/aleutheris"
+# SERVER_HOME_DIR = "/home/ample"
 APP_DIR = "/app"
 PRESERVED_FOLDER = "/node_modules"
 DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
 PROJECT_NAME = "crystord_web"
-TAG = PROJECT_NAME + ":latest"
+TAG = PROJECT_NAME + ":prod"
 DOCKER_NETWORK = "crystord_net"
 
 
@@ -89,7 +89,6 @@ def main():
 
     run_command(["cp", "src/proxy.conf.server.json", "src/proxy.conf.json"])
 
-    # run_command(["rsync", "-avz", "--exclude-from", ".rsyncignore", "--delete", "--chmod=D775,F775", "-e", "ssh", "src/", SERVER_ADDRESS + ":" + SERVER_HOME + "/"])
     run_command(["rsync", "-avz", "-e", "ssh", "./docker-compose.yml", SERVER_ADDRESS + ":~/containers/" + PROJECT_NAME + "/"])
 
     if not args.silent:
@@ -115,7 +114,9 @@ def main():
         if server_image_ids != ['']:
             run_command(["ssh", SERVER_ADDRESS, "docker", "rmi", "-f", TAG])
 
-        run_command(["docker", "build", "-t", PROJECT_NAME, "."])
+
+        run_command(["docker", "build", "--target", "prod", "-t", TAG, "."])
+        # run_command(["docker", "build", "--target", "dev", "-t", PROJECT_NAME + ":dev", "."])
 
         run_command(["docker", "save", "-o", LOCAL_HOME_DIR +"/"+ PROJECT_NAME + ".tar", PROJECT_NAME])
 
@@ -123,9 +124,6 @@ def main():
         run_command(["rm", LOCAL_HOME_DIR +"/"+ PROJECT_NAME + ".tar"])
 
         run_command(["ssh", SERVER_ADDRESS, "docker", "load", "-i", SERVER_HOME_DIR +"/"+ PROJECT_NAME + ".tar"])
-
-        # run_command(["ssh", SERVER_ADDRESS, "sudo", "docker", "run", "--name", PROJECT_NAME, "-d", "-p",
-        #              SERVER_PORT_OUT+":"+SERVER_PORT_IN, "-v", SERVER_HOME+":"+APP_DIR, "-v", APP_DIR+PRESERVED_FOLDER, TAG])
 
         run_command(["ssh", SERVER_ADDRESS, "cd ~/containers/" + PROJECT_NAME + " && docker-compose", "up", "-d"])
 
