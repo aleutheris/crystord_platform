@@ -65,6 +65,13 @@ export const routes: Routes = [
     ]
   },
   {
+    path: 'privacy/gaddon',
+    loadComponent: () => import('./views/privacy/gaddon/gaddon.component').then(m => m.GaddonComponent),
+    data: {
+      title: 'Gaddon'
+    }
+  },
+  {
     path: '404',
     loadComponent: () => import('./views/pages/page404/page404.component').then(m => m.Page404Component),
     data: {
@@ -92,5 +99,5 @@ export const routes: Routes = [
       title: 'Register Page'
     }
   },
-  { path: '**', redirectTo: 'dashboard' }
+  { path: '**', redirectTo: '404' }
 ];

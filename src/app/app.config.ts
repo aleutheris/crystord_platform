@@ -4,7 +4,6 @@ import { provideAnimations } from '@angular/platform-browser/animations';
 import {
   provideRouter,
   withEnabledBlockingInitialNavigation,
-  withHashLocation,
   withInMemoryScrolling,
   withRouterConfig,
   withViewTransitions
@@ -25,8 +24,7 @@ export const appConfig: ApplicationConfig = {
         anchorScrolling: 'enabled'
       }),
       withEnabledBlockingInitialNavigation(),
-      withViewTransitions(),
-      withHashLocation()
+      withViewTransitions()
     ),
     importProvidersFrom(SidebarModule, DropdownModule),
     IconSetService,
