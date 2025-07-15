@@ -1,4 +1,5 @@
 import { Component, computed, DestroyRef, inject, Input } from '@angular/core';
+import { Router } from '@angular/router';
 import {
   AvatarComponent,
   BadgeComponent,
@@ -27,6 +28,7 @@ import { ActivatedRoute, RouterLink, RouterLinkActive } from '@angular/router';
 import { IconDirective } from '@coreui/icons-angular';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { delay, filter, map, tap } from 'rxjs/operators';
+import { AuthService } from '../../../services/auth.service';
 
 @Component({
   selector: 'app-default-header',
@@ -38,8 +40,12 @@ export class DefaultHeaderComponent extends HeaderComponent {
 
   readonly #activatedRoute: ActivatedRoute = inject(ActivatedRoute);
   readonly #colorModeService = inject(ColorModeService);
-  readonly colorMode = this.#colorModeService.colorMode;
   readonly #destroyRef: DestroyRef = inject(DestroyRef);
+  readonly #authService = inject(AuthService);
+  readonly #router = inject(Router);
+
+  readonly colorMode = this.#colorModeService.colorMode;
+  readonly authService = this.#authService;
 
   readonly colorModes = [
     { name: 'light', text: 'Light', icon: 'cilSun' },
@@ -147,4 +153,8 @@ export class DefaultHeaderComponent extends HeaderComponent {
     { id: 4, title: 'Angular Version', value: 100, color: 'success' }
   ];
 
+  logout(): void {
+    this.#authService.logout();
+    this.#router.navigate(['/landing']);
+  }
 }

@@ -5,14 +5,29 @@
         <c-card-group>
           <c-card class="p-4">
             <c-card-body>
-              <form cForm>
+              <form cForm (ngSubmit)="onLogin()">
                 <h1>Login</h1>
                 <p class="text-body-secondary">Sign In to your account</p>
+
+                @if (loginError()) {
+                  <div class="alert alert-danger" role="alert">
+                    Invalid credentials. Please try again.
+                  </div>
+                }
+
                 <c-input-group class="mb-3">
                   <span cInputGroupText>
                     <svg cIcon name="cilUser"></svg>
                   </span>
-                  <input autoComplete="username" cFormControl placeholder="Username" />
+                  <input
+                    autoComplete="username"
+                    cFormControl
+                    placeholder="Email"
+                    [(ngModel)]="loginForm.email"
+                    name="email"
+                    type="email"
+                    required
+                  />
                 </c-input-group>
                 <c-input-group class="mb-4">
                   <span cInputGroupText>
@@ -23,17 +38,29 @@
                     cFormControl
                     placeholder="Password"
                     type="password"
+                    [(ngModel)]="loginForm.password"
+                    name="password"
+                    required
                   />
                 </c-input-group>
                 <c-row>
                   <c-col xs="6">
-                    <button cButton class="px-4" color="primary">
+                    <button
+                      cButton
+                      class="px-4"
+                      color="primary"
+                      type="submit"
+                      [disabled]="isLoading()"
+                    >
+                      @if (isLoading()) {
+                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                      }
                       Login
                     </button>
                   </c-col>
                   <c-col class="text-right" xs="6">
-                    <button cButton class="px-0" color="link">
-                      Forgot password?
+                    <button cButton class="px-0" color="link" type="button" routerLink="/landing">
+                      Back to Landing
                     </button>
                   </c-col>
                 </c-row>

@@ -1,15 +1,24 @@
 import { Routes } from '@angular/router';
 import { DefaultLayoutComponent } from './layout';
+import { authGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
   {
     path: '',
-    redirectTo: 'control',
+    redirectTo: 'landing',
     pathMatch: 'full'
+  },
+  {
+    path: 'landing',
+    loadComponent: () => import('./views/landing/landing.component').then(m => m.LandingComponent),
+    data: {
+      title: 'Welcome to Crystord'
+    }
   },
   {
     path: '',
     component: DefaultLayoutComponent,
+    canActivate: [authGuard],
     data: {
       title: 'Home'
     },

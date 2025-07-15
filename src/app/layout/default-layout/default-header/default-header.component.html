@@ -71,7 +71,9 @@
     <ul cDropdownMenu class="pt-0 w-auto">
       <li>
         <h6 cDropdownHeader class="bg-body-secondary text-body-secondary fw-semibold py-2 rounded-top">
-          Account
+          Account @if (authService.isDemoMode()) {
+            <c-badge color="warning" class="ms-2">DEMO</c-badge>
+          }
         </h6>
       </li>
       <li>
@@ -150,7 +152,7 @@
         </a>
       </li>
       <li>
-        <a cDropdownItem routerLink="">
+        <a cDropdownItem (click)="logout()">
           <svg cIcon class="me-2" name="cilAccountLogout"></svg>
           Logout
         </a>
