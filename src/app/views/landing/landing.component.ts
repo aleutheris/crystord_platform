@@ -21,6 +21,8 @@ import { IconDirective } from '@coreui/icons-angular';
 
 @Component({
   selector: 'app-landing',
+  templateUrl: './landing.component.html',
+  styleUrls: ['./landing.component.scss'],
   standalone: true,
   imports: [
     CommonModule,
@@ -38,221 +40,7 @@ import { IconDirective } from '@coreui/icons-angular';
     SpinnerComponent,
     AlertComponent,
     IconDirective
-  ],
-  template: `
-    <div class="bg-body-tertiary min-vh-100 d-flex flex-row align-items-center">
-      <c-container>
-        <c-row class="justify-content-center">
-          <c-col md="12" lg="10" xl="8">
-            <!-- Hero Section -->
-            <div class="text-center mb-5">
-              <img src="./assets/logo.png" alt="Crystord Logo" class="mb-4" style="max-height: 80px;">
-              <h1 class="display-4 fw-bold text-primary mb-3">Welcome to Crystord</h1>
-              <p class="lead text-muted mb-4">
-                Your comprehensive control and monitoring solution. Experience powerful analytics,
-                real-time monitoring, and intuitive controls all in one place.
-              </p>
-            </div>
-
-            <c-row class="g-4">
-              <!-- Login Card -->
-              <c-col md="6">
-                <c-card class="shadow">
-                  <c-card-body class="p-4">
-                    <h4 class="mb-3 text-center">
-                      <svg cIcon name="cilUser" class="me-2"></svg>
-                      Sign In
-                    </h4>
-                    <p class="text-muted text-center mb-4">Access your account to continue</p>
-
-                    @if (loginError()) {
-                      <c-alert color="danger" [dismissible]="false">
-                        Invalid credentials. Please try again.
-                      </c-alert>
-                    }
-
-                    <form cForm (ngSubmit)="onLogin()">
-                      <c-input-group class="mb-3">
-                        <span cInputGroupText>
-                          <svg cIcon name="cilUser"></svg>
-                        </span>
-                        <input
-                          cFormControl
-                          [(ngModel)]="loginForm.email"
-                          name="email"
-                          placeholder="Email"
-                          autocomplete="username"
-                          type="email"
-                          required
-                        />
-                      </c-input-group>
-                      <c-input-group class="mb-4">
-                        <span cInputGroupText>
-                          <svg cIcon name="cilLockLocked"></svg>
-                        </span>
-                        <input
-                          cFormControl
-                          [(ngModel)]="loginForm.password"
-                          name="password"
-                          placeholder="Password"
-                          autocomplete="current-password"
-                          type="password"
-                          required
-                        />
-                      </c-input-group>
-                      <div class="d-grid">
-                        <button
-                          cButton
-                          color="primary"
-                          type="submit"
-                          [disabled]="isLoading()"
-                          class="px-4"
-                        >
-                          @if (isLoading()) {
-                            <c-spinner size="sm" class="me-2"></c-spinner>
-                          }
-                          Sign In
-                        </button>
-                      </div>
-                    </form>
-
-                    <div class="text-center mt-3">
-                      <small class="text-muted">
-                        Don't have an account?
-                        <a href="#" class="text-decoration-none">Contact admin</a>
-                      </small>
-                    </div>
-                  </c-card-body>
-                </c-card>
-              </c-col>
-
-              <!-- Demo Card -->
-              <c-col md="6">
-                <c-card class="shadow border-primary">
-                  <c-card-body class="p-4">
-                    <h4 class="mb-3 text-center text-primary">
-                      <svg cIcon name="cilSpeedometer" class="me-2"></svg>
-                      Try Demo
-                    </h4>
-                    <p class="text-muted text-center mb-4">
-                      Explore all features with sample data
-                    </p>
-
-                    <div class="mb-4">
-                      <h6 class="fw-semibold mb-3">Demo Features:</h6>
-                      <ul class="list-unstyled">
-                        <li class="mb-2">
-                          <svg cIcon name="cilCheckCircle" class="text-success me-2"></svg>
-                          Interactive Dashboard
-                        </li>
-                        <li class="mb-2">
-                          <svg cIcon name="cilCheckCircle" class="text-success me-2"></svg>
-                          Real-time Charts & Analytics
-                        </li>
-                        <li class="mb-2">
-                          <svg cIcon name="cilCheckCircle" class="text-success me-2"></svg>
-                          Control Panels
-                        </li>
-                        <li class="mb-2">
-                          <svg cIcon name="cilCheckCircle" class="text-success me-2"></svg>
-                          User Management (View Only)
-                        </li>
-                      </ul>
-                    </div>
-
-                    <div class="d-grid">
-                      <button
-                        cButton
-                        color="primary"
-                        variant="outline"
-                        (click)="startDemo()"
-                        class="px-4"
-                      >
-                        <svg cIcon name="cilMediaPlay" class="me-2"></svg>
-                        Start Demo
-                      </button>
-                    </div>
-
-                    <div class="text-center mt-3">
-                      <small class="text-muted">
-                        No registration required
-                      </small>
-                    </div>
-                  </c-card-body>
-                </c-card>
-              </c-col>
-            </c-row>
-
-            <!-- Features Section -->
-            <c-row class="mt-5">
-              <c-col md="12">
-                <div class="text-center mb-4">
-                  <h3 class="fw-bold">Why Choose Crystord?</h3>
-                </div>
-              </c-col>
-              <c-col md="4" class="text-center mb-4">
-                <div class="mb-3">
-                  <svg cIcon name="cilChart" size="3xl" class="text-primary"></svg>
-                </div>
-                <h5>Advanced Analytics</h5>
-                <p class="text-muted">
-                  Comprehensive data visualization and reporting tools to help you make informed decisions.
-                </p>
-              </c-col>
-              <c-col md="4" class="text-center mb-4">
-                <div class="mb-3">
-                  <svg cIcon name="cilShieldAlt" size="3xl" class="text-success"></svg>
-                </div>
-                <h5>Secure & Reliable</h5>
-                <p class="text-muted">
-                  Enterprise-grade security with 99.9% uptime guarantee and data protection.
-                </p>
-              </c-col>
-              <c-col md="4" class="text-center mb-4">
-                <div class="mb-3">
-                  <svg cIcon name="cilSettings" size="3xl" class="text-info"></svg>
-                </div>
-                <h5>Easy Control</h5>
-                <p class="text-muted">
-                  Intuitive interface designed for both beginners and advanced users.
-                </p>
-              </c-col>
-            </c-row>
-          </c-col>
-        </c-row>
-      </c-container>
-    </div>
-  `,
-  styles: [`
-    .min-vh-100 {
-      min-height: 100vh;
-    }
-
-    .shadow {
-      box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
-    }
-
-    .border-primary {
-      border: 2px solid var(--cui-primary) !important;
-    }
-
-    .lead {
-      font-size: 1.125rem;
-      font-weight: 300;
-    }
-
-    .display-4 {
-      font-size: 2.5rem;
-      font-weight: 300;
-      line-height: 1.2;
-    }
-
-    @media (max-width: 768px) {
-      .display-4 {
-        font-size: 2rem;
-      }
-    }
-  `]
+  ]
 })
 export class LandingComponent {
   loginForm = {
@@ -290,6 +78,6 @@ export class LandingComponent {
 
   startDemo(): void {
     this.authService.startDemo();
-    this.router.navigate(['/dashboard']);
+    this.router.navigate(['/control/detail']);
   }
 }
