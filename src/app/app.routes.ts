@@ -72,6 +72,13 @@ export const routes: Routes = [
     }
   },
   {
+    path: 'terms/gaddon',
+    loadComponent: () => import('./views/terms/gaddon/gaddon.component').then(m => m.GaddonComponent),
+    data: {
+      title: 'Terms of Service'
+    }
+  },
+  {
     path: '404',
     loadComponent: () => import('./views/pages/page404/page404.component').then(m => m.Page404Component),
     data: {
