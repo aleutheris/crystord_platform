@@ -88,6 +88,13 @@ export const routes: Routes = [
     }
   },
   {
+    path: 'support/gaddon',
+    loadComponent: () => import('./views/pages/support/gaddon/gaddon.component').then(m => m.GaddonComponent),
+    data: {
+      title: 'Gaddon Support'
+    }
+  },
+  {
     path: '404',
     loadComponent: () => import('./views/pages/page404/page404.component').then(m => m.Page404Component),
     data: {
