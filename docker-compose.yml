@@ -7,10 +7,11 @@ services:
     container_name: crystord_web
     labels:
       - traefik.enable=true
-      - traefik.http.routers.crystord.rule=Host(`crystord.com`)
-      - traefik.http.services.crystord.loadbalancer.server.port=4201
-      - traefik.http.routers.crystord.tls=true
-      - traefik.http.routers.crystord.tls.certresolver=le
+      - traefik.docker.network=reverse_proxy_default
+      - traefik.http.routers.crystord_web.rule=Host(`crystord.com`)
+      - traefik.http.services.crystord_web.loadbalancer.server.port=4201
+      - traefik.http.routers.crystord_web.tls=true
+      - traefik.http.routers.crystord_web.tls.certresolver=le
     networks:
       - crystord_net
       - reverse_proxy_default

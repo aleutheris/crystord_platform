@@ -80,4 +80,20 @@ export class LandingComponent {
     this.authService.startDemo();
     this.router.navigate(['/control/detail']);
   }
+
+  openYouTube(): void {
+    window.open('https://www.youtube.com/@aleutheris', '_blank');
+  }
+
+  openNewsletter(): void {
+    window.open('https://crystord.substack.com/embed', '_blank');
+  }
+
+  openAddon(): void {
+    window.open('https://crystord.com/addon', '_blank');
+  }
+
+  openEmail(): void {
+    window.open('mailto:aleutheris@gmail.com?subject=Crystord Inquiry', '_blank');
+  }
 }
