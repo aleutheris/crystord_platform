@@ -75,28 +75,28 @@ export const routes: Routes = [
   },
   {
     path: 'gaddon',
-    loadComponent: () => import('./views/pages/gaddon/gaddon.component').then(m => m.GaddonComponent),
+    loadComponent: () => import('./views/gaddon/gaddon.component').then(m => m.GaddonComponent),
     data: {
       title: 'Crystord Google Add-on'
     }
   },
   {
-    path: 'privacy/gaddon',
-    loadComponent: () => import('./views/privacy/gaddon/gaddon.component').then(m => m.GaddonComponent),
+    path: 'gaddon/privacy',
+    loadComponent: () => import('./views/gaddon/privacy/privacy.component').then(m => m.PrivacyComponent),
     data: {
-      title: 'Gaddon'
+      title: 'Gaddon Privacy Policy'
     }
   },
   {
-    path: 'terms/gaddon',
-    loadComponent: () => import('./views/terms/gaddon/gaddon.component').then(m => m.GaddonComponent),
+    path: 'gaddon/terms',
+    loadComponent: () => import('./views/gaddon/terms/terms.component').then(m => m.TermsComponent),
     data: {
-      title: 'Terms of Service'
+      title: 'Gaddon Terms of Service'
     }
   },
   {
-    path: 'support/gaddon',
-    loadComponent: () => import('./views/pages/support/gaddon/gaddon.component').then(m => m.GaddonComponent),
+    path: 'gaddon/support',
+    loadComponent: () => import('./views/gaddon/support/support.component').then(m => m.SupportComponent),
     data: {
       title: 'Gaddon Support'
     }
