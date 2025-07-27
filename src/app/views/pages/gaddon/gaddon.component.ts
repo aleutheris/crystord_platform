@@ -48,6 +48,6 @@ export class GaddonComponent {
   }
 
   exploreCore(): void {
-    this.router.navigate(['/']);
+    window.open('https://crystord.com', '_blank');
   }
 }
