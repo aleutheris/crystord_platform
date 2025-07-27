@@ -90,7 +90,7 @@ export class LandingComponent {
   }
 
   openAddon(): void {
-    window.open('https://crystord.com/addon', '_blank');
+    this.router.navigate(['/gaddon']);
   }
 
   openEmail(): void {
