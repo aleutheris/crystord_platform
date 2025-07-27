@@ -74,6 +74,13 @@ export const routes: Routes = [
     ]
   },
   {
+    path: 'gaddon',
+    loadComponent: () => import('./views/pages/gaddon/gaddon.component').then(m => m.GaddonComponent),
+    data: {
+      title: 'Crystord Google Add-on'
+    }
+  },
+  {
     path: 'privacy/gaddon',
     loadComponent: () => import('./views/privacy/gaddon/gaddon.component').then(m => m.GaddonComponent),
     data: {
