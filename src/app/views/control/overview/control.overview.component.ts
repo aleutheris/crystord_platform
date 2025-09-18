@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, inject, Injector } from '@angular/core';
 import {
   RowComponent,
   ColComponent,
@@ -12,9 +12,28 @@ import {
   TableDirective,
 } from '@coreui/angular';
 import { FormsModule } from '@angular/forms';
-import { ShapesCreator, TreeConfiguration, NodeElement } from './shapes.creator';
 import { Atom, Bond } from '../atomhall/atom.model';
 import { AtomService } from '../atomhall/atom.service';
+
+// Rete.js imports
+import { NodeEditor, GetSchemes, ClassicPreset } from 'rete';
+import { AreaPlugin, AreaExtensions } from 'rete-area-plugin';
+import { ConnectionPlugin, Presets as ConnectionPresets } from 'rete-connection-plugin';
+import { AngularPlugin, Presets, AngularArea2D } from 'rete-angular-plugin/18';
+
+type Schemes = GetSchemes<
+  ClassicPreset.Node,
+  ClassicPreset.Connection<ClassicPreset.Node, ClassicPreset.Node>
+>;
+
+type AreaExtra = AngularArea2D<Schemes>;
+
+// Keep NodeElement interface for getIndexedAtoms method
+interface NodeElement {
+  uuid: string;
+  children: NodeElement[];
+  data: Atom;
+}
 
 
 interface AtomTexted {
@@ -61,23 +80,20 @@ export class ControlOverviewComponent {
   atomsFeatures: Atom[];
   atomsIndexed: Record<string, NodeElement>;
   atomsFeaturesTexted: AtomTexted[];
-  treeConfiguration: TreeConfiguration;
 
-  constructor(private shapesCreator: ShapesCreator,
-              private atomService: AtomService) {
+  // Rete.js properties
+  private editor!: NodeEditor<Schemes>;
+  private area!: AreaPlugin<Schemes, AreaExtra>;
+  private injector = inject(Injector);
+
+  constructor(private atomService: AtomService) {
     // this.searchText = 'uuid=cc249313-1d09-4614-ae53-e8d7826b0ba2';
-    this.searchText = 'labels=';
+    this.searchText = 'labels=groceries';
     this.isSearchTextValid = undefined;
     this.searchKey = '';
     this.atomsFeatures = [];
     this.atomsIndexed = {};
     this.atomsFeaturesTexted = [];
-    this.treeConfiguration = {
-      marginWidth: 10,
-      marginHeight: 10,
-      width: 700, //window.innerWidth,
-      height: 1000 //window.innerHeight,
-    }
   }
 
   searchClickedAtom(atom: AtomTexted) {
@@ -119,12 +135,98 @@ export class ControlOverviewComponent {
 
   handleRetrievedData() {
     this.atomsIndexed = this.getIndexedAtoms(this.atomsFeatures);
-    if (this.searchKey === 'labels') {
-      this.shapesCreator.createShapes(this.atomsIndexed);
-    } else if (this.searchKey === 'uuid') {
-      this.shapesCreator.createTree(this.atomsIndexed, this.treeConfiguration);
-    }
     this.atomsFeaturesTexted = this.atomsContentToString(this.atomsFeatures);
+    this.createReteGraph();
+  }
+
+  private async initializeReteEditor() {
+    const container = document.getElementById('rete-container');
+    if (!container) {
+      console.error('Rete container not found');
+      return;
+    }
+
+    if (this.area) {
+      try {
+        this.area.destroy();
+      } catch { /* noop */ }
+    }
+
+    // Initialize editor and rendering area
+    this.editor = new NodeEditor<Schemes>();
+    this.area = new AreaPlugin<Schemes, AreaExtra>(container);
+
+    const render = new AngularPlugin<Schemes, AreaExtra>({ injector: this.injector });
+    render.addPreset(Presets.classic.setup());
+
+    const connection = new ConnectionPlugin<Schemes, AreaExtra>();
+    connection.addPreset(ConnectionPresets.classic.setup());
+
+    this.editor.use(this.area);
+    this.area.use(render);
+    this.area.use(connection);
+
+    AreaExtensions.selectableNodes(this.area, AreaExtensions.selector(), {
+      accumulating: AreaExtensions.accumulateOnCtrl()
+    });
+  }
+
+  private async createReteGraph() {
+    await this.initializeReteEditor();
+
+    if (!this.atomsFeatures || this.atomsFeatures.length === 0) {
+      return;
+    }
+
+    // Clear existing nodes
+    this.editor.clear();
+
+    // Create nodes for each atom
+    const nodeMap = new Map<string, ClassicPreset.Node>();
+    const socket = new ClassicPreset.Socket('socket');
+
+    for (let i = 0; i < this.atomsFeatures.length; i++) {
+      const atom = this.atomsFeatures[i];
+      const node = new ClassicPreset.Node(atom.properties.nuclearies.title || `Atom ${i}`);
+
+      // Add input and output sockets for connections
+      node.addOutput('output', new ClassicPreset.Output(socket));
+      node.addInput('input', new ClassicPreset.Input(socket));
+
+      await this.editor.addNode(node);
+      nodeMap.set(atom.properties.shellies.uuid, node);
+
+      // Position nodes in a grid layout
+      const x = (i % 5) * 250;
+      const y = Math.floor(i / 5) * 150;
+      await this.area.translate(node.id, { x, y });
+    }
+
+    // Create connections based on bonds
+    for (const atom of this.atomsFeatures) {
+      const sourceNode = nodeMap.get(atom.properties.shellies.uuid);
+      if (!sourceNode) continue;
+
+      for (const bond of atom.bonds) {
+        const targetNode = nodeMap.get(bond.uuid);
+        if (targetNode && sourceNode !== targetNode) {
+          const connection = new ClassicPreset.Connection(
+            sourceNode,
+            'output',
+            targetNode,
+            'input'
+          );
+          await this.editor.addConnection(connection);
+        }
+      }
+    }
+
+    // Auto-arrange the layout
+    setTimeout(() => {
+      if (this.area && this.editor) {
+        AreaExtensions.zoomAt(this.area, this.editor.getNodes());
+      }
+    }, 0);
   }
 
   updateAtomFeatures(index: number): void {
@@ -272,12 +374,6 @@ export class ControlOverviewComponent {
       uuidOperation = uuidOperation.replace(this.atomsIndexed[uuid].data.properties.nuclearies.title, uuid);
     });
     return uuidOperation;
-  }
-
-  private parseValue(value: any) {
-    if (typeof value === 'string') {
-      return JSON.parse(value);
-    }
   }
 
   private parseSearchTextIntoQuery(searchText: string, readout: string) {
