@@ -32,7 +32,7 @@ export class GaddonComponent {
   constructor(private router: Router) {}
 
   installAddon(): void {
-    window.open('https://workspace.google.com/marketplace/app/crystord/crystord-addon', '_blank');
+    window.open('https://gsuite.google.com/marketplace/app/foo/186388621973', '_blank');
   }
 
   learnMore(): void {
