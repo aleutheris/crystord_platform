@@ -11,6 +11,7 @@ import {
   ButtonDirective,
   TableDirective,
 } from '@coreui/angular';
+import { IconDirective } from '@coreui/icons-angular';
 import { FormsModule } from '@angular/forms';
 import { Atom, Bond } from '../atomhall/atom.model';
 import { AtomService } from '../atomhall/atom.service';
@@ -70,7 +71,8 @@ interface AtomTexted {
     FormsModule,
     TextColorDirective,
     ButtonDirective,
-    TableDirective
+    TableDirective,
+    IconDirective
   ]
 })
 export class ControlOverviewComponent {
@@ -101,7 +103,124 @@ export class ControlOverviewComponent {
     this.retrieveAtomsFeatures();
   }
 
-  retrieveAtomsFeatures() {
+  rearrangeGraph() {
+    if (!this.editor || !this.area) {
+      return;
+    }
+
+    const nodes = this.editor.getNodes();
+    const connections = this.editor.getConnections();
+
+    if (nodes.length === 0) {
+      return;
+    }
+
+    this.arrangeNodesHierarchically(nodes, connections);
+  }
+
+  private async arrangeNodesHierarchically(nodes: any[], connections: any[]) {
+    // Build adjacency lists for proper level calculation
+    const outgoing = new Map<string, string[]>();
+    const incoming = new Map<string, string[]>();
+
+    // Initialize maps
+    nodes.forEach(node => {
+      outgoing.set(node.id, []);
+      incoming.set(node.id, []);
+    });
+
+    // Build connection maps
+    connections.forEach(conn => {
+      outgoing.get(conn.source)?.push(conn.target);
+      incoming.get(conn.target)?.push(conn.source);
+    });
+
+    // Calculate levels using topological sort approach
+    const levels: string[][] = [];
+    const nodeToLevel = new Map<string, number>();
+    const visited = new Set<string>();
+
+    // Find root nodes (no incoming connections)
+    const rootNodes = nodes.filter(node => incoming.get(node.id)?.length === 0);
+
+    if (rootNodes.length === 0) {
+      // No clear hierarchy - arrange in simple grid
+      await this.arrangeInGrid(nodes);
+      return;
+    }
+
+    // BFS to assign levels
+    const queue: Array<{nodeId: string, level: number}> = [];
+
+    rootNodes.forEach(node => {
+      queue.push({nodeId: node.id, level: 0});
+      nodeToLevel.set(node.id, 0);
+    });
+
+    while (queue.length > 0) {
+      const {nodeId, level} = queue.shift()!;
+
+      if (visited.has(nodeId)) continue;
+      visited.add(nodeId);
+
+      // Ensure level array exists
+      while (levels.length <= level) {
+        levels.push([]);
+      }
+      levels[level].push(nodeId);
+
+      // Add children to next level
+      const children = outgoing.get(nodeId) || [];
+      children.forEach(childId => {
+        if (!visited.has(childId)) {
+          const childLevel = level + 1;
+          const existingLevel = nodeToLevel.get(childId);
+          if (existingLevel === undefined || childLevel > existingLevel) {
+            nodeToLevel.set(childId, childLevel);
+            queue.push({nodeId: childId, level: childLevel});
+          }
+        }
+      });
+    }
+
+    // Position nodes by levels
+    const levelWidth = 300;
+    const nodeHeight = 120;
+
+    for (let levelIndex = 0; levelIndex < levels.length; levelIndex++) {
+      const levelNodes = levels[levelIndex];
+      const x = levelIndex * levelWidth + 100;
+
+      for (let nodeIndex = 0; nodeIndex < levelNodes.length; nodeIndex++) {
+        const nodeId = levelNodes[nodeIndex];
+        const node = nodes.find(n => n.id === nodeId);
+        if (node) {
+          const y = nodeIndex * nodeHeight + 100;
+          await this.area.translate(node.id, { x, y });
+        }
+      }
+    }
+
+    // Fit view to show all nodes
+    setTimeout(() => {
+      if (this.area && this.editor) {
+        AreaExtensions.zoomAt(this.area, this.editor.getNodes());
+      }
+    }, 100);
+  }
+
+  private async arrangeInGrid(nodes: any[]) {
+    // Fallback: simple grid layout
+    const cols = Math.ceil(Math.sqrt(nodes.length));
+    const nodeWidth = 250;
+    const nodeHeight = 150;
+
+    for (let i = 0; i < nodes.length; i++) {
+      const x = (i % cols) * nodeWidth + 100;
+      const y = Math.floor(i / cols) * nodeHeight + 100;
+      await this.area.translate(nodes[i].id, { x, y });
+    }
+  }  retrieveAtomsFeatures() {
     this.updateSearchKey();
     const retrievalInteraction = this.chooseRetrievalInteraction();
     this.atomService.readAtoms(

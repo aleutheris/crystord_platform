@@ -21,6 +21,16 @@
     <c-card class="mb-4">
       <c-card-header>
         <strong>Graph</strong>
+        <div class="float-end">
+          <button
+            cButton
+            color="primary"
+            type="button"
+            variant="outline"
+            (click)="rearrangeGraph()">
+            Rearrange
+          </button>
+        </div>
       </c-card-header>
       <c-card-body>
         <div id="rete-container" style="height: 600px; width: 100%;"></div>
