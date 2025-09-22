@@ -25,13 +25,6 @@ export const routes: Routes = [
         data: {
           title: 'Overview'
         }
-      },
-      {
-        path: 'rete',
-        loadComponent: () => import('./rete/rete-example.component').then(m => m.ReteExampleComponent),
-        data: {
-          title: 'Rete'
-        }
       }
     ]
   }

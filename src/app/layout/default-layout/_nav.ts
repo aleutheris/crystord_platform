@@ -15,11 +15,6 @@ export const navItems: INavData[] = [
         name: 'Overview',
         url: '/control/overview',
         icon: 'nav-icon-bullet'
-      },
-      {
-        name: 'Rete',
-        url: '/control/rete',
-        icon: 'nav-icon-bullet'
       }
     ]
   },
