@@ -1,21 +1,14 @@
 #!/usr/bin/env python3
+import json
 import argparse
 import subprocess
 from datetime import datetime
 
-SERVER_ADDRESS = "aleuhouse"
-# SERVER_ADDRESS = "nucubuntunl"
-SERVER_PORT_OUT = "4201"
-SERVER_PORT_IN = "4201"
-LOCAL_HOME_DIR = "/home/ample"
-SERVER_HOME_DIR = "/home/aleutheris"
-# SERVER_HOME_DIR = "/home/ample"
-APP_DIR = "/app"
+SERVER_CHOOSEN = "nucubuntunl" # local, nucubuntunl or aleutheris
+SERVER_MODE = "dev"  # dev or prod
+
 PRESERVED_FOLDER = "/node_modules"
 DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
-PROJECT_NAME = "crystord_web"
-TAG = PROJECT_NAME + ":prod"
-DOCKER_NETWORK = "crystord_net"
 
 
 def run_command(command):
@@ -44,11 +37,11 @@ def run_command(command):
     print("\n")
 
 
-def get_container_ids_by_tag(tag, server_address=None):
+def get_container_ids_by_tag(project_tag, server_address=None):
     if server_address:
-        command = ["ssh", server_address, "docker", "ps", "-a", "--filter", f"ancestor={tag}", "--format", "{{.ID}}"]
+        command = ["ssh", server_address, "docker", "ps", "-a", "--filter", f"ancestor={project_tag}", "--format", "{{.ID}}"]
     else:
-        command = ["docker", "ps", "-a", "--filter", f"ancestor={tag}", "--format", "{{.ID}}"]
+        command = ["docker", "ps", "-a", "--filter", f"ancestor={project_tag}", "--format", "{{.ID}}"]
 
     try:
         result = subprocess.run(
@@ -63,11 +56,11 @@ def get_container_ids_by_tag(tag, server_address=None):
         return []
 
 
-def get_image_ids_by_tag(tag, server_address=None):
+def get_image_ids_by_tag(project_tag, server_address=None):
     if server_address:
-        command = ["ssh", server_address, "docker", "images", tag, "-q"]
+        command = ["ssh", server_address, "docker", "images", project_tag, "-q"]
     else:
-        command = ["docker", "images", tag, "-q"]
+        command = ["docker", "images", project_tag, "-q"]
 
     try:
         result = subprocess.run(
@@ -81,55 +74,117 @@ def get_image_ids_by_tag(tag, server_address=None):
         print("Error running docker command:", e)
         return []
 
+def edit_dockercompose(file_path, args):
+    image = args["image"]
+    ports = args["ports"]
+
+    with open(file_path, 'r') as file:
+        lines = file.readlines()
+
+    with open(file_path, 'w') as file:
+        i = 0
+        while i < len(lines):
+            line = lines[i]
+            stripped = line.strip()
+
+            # Handle image line
+            if stripped.startswith('image:'):
+                indent = line[:line.index('image:')]
+                file.write(f"{indent}image: {image}\n")
+                i += 1
+
+            # Handle ports section
+            elif stripped.startswith('ports:'):
+                indent = line[:line.index('ports:')]
+                file.write(f"{indent}ports:\n")
+
+                # Skip existing port entries
+                i += 1
+                while i < len(lines) and (lines[i].strip().startswith('-') or lines[i].strip() == ''):
+                    i += 1
+
+                # Write new ports
+                for port in ports:
+                    file.write(f"{indent}  - \"{port}\"\n")
+
+                # Don't increment i here since we already advanced it
+                continue
+
+            else:
+                file.write(line)
+                i += 1
+
 
 def main():
+    with open("deploy_config.json") as f:
+        deploy_config = json.load(f)
+
+    with open("src/proxy.conf.json", "w") as proxy_file:
+        proxy_config = {
+            "/api": {
+                "target": deploy_config['servers'][SERVER_CHOOSEN]['proxy'][SERVER_MODE]['target'],
+                "secure": deploy_config['servers'][SERVER_CHOOSEN]['proxy'][SERVER_MODE]['secure']
+            }
+        }
+        json.dump(proxy_config, proxy_file, indent=2)
+
+    edit_dockercompose("docker-compose.yml", {
+        "image": deploy_config["project"]["name"] + ":" + deploy_config["project"]["tag"][SERVER_MODE],
+        "ports": deploy_config["servers"][SERVER_CHOOSEN]["ports"][SERVER_MODE]
+    })
+
+    tag = deploy_config["project"]["tag"][SERVER_MODE]
+    local_home_dir = deploy_config["local"]["home_dir"]
+
+    server_address = deploy_config["servers"][SERVER_CHOOSEN]["address"]
+    server_home_dir = deploy_config["servers"][SERVER_CHOOSEN]["home_dir"]
+
+    project_name = deploy_config["project"]["name"]
+
+
     parser = argparse.ArgumentParser()
     parser.add_argument("-c", "--container", action="store_false", dest="silent", help="Disable standard output")
     args = parser.parse_args()
 
-    run_command(["cp", "src/proxy.conf.server.json", "src/proxy.conf.json"])
-
-    run_command(["rsync", "-avz", "-e", "ssh", "./docker-compose.yml", SERVER_ADDRESS + ":~/containers/" + PROJECT_NAME + "/"])
+    run_command(["rsync", "-avz", "-e", "ssh", "./docker-compose.yml", server_address + ":~/containers/" + project_name + "/"])
 
     if not args.silent:
         print("Deploying the container...")
 
-        local_container_ids = get_container_ids_by_tag(TAG)
-        server_container_ids = get_container_ids_by_tag(TAG, server_address=SERVER_ADDRESS)
-        local_image_ids = get_image_ids_by_tag(TAG)
-        server_image_ids = get_image_ids_by_tag(TAG, server_address=SERVER_ADDRESS)
+        local_container_ids = get_container_ids_by_tag(project_name +":"+ tag)
+        server_container_ids = get_container_ids_by_tag(project_name +":"+ tag, server_address=server_address)
+        local_image_ids = get_image_ids_by_tag(project_name +":"+ tag)
+        server_image_ids = get_image_ids_by_tag(project_name +":"+ tag, server_address=server_address)
 
         if local_container_ids != ['']:
             run_command(["docker", "stop"] + local_container_ids)
         if server_container_ids != ['']:
-            run_command(["ssh", SERVER_ADDRESS, "docker", "stop"] + server_container_ids)
+            run_command(["ssh", server_address, "docker", "stop"] + server_container_ids)
 
         if local_container_ids != ['']:
             run_command(["docker", "rm"] + local_container_ids)
         if server_container_ids != ['']:
-            run_command(["ssh", SERVER_ADDRESS, "docker", "rm"] + server_container_ids)
+            run_command(["ssh", server_address, "docker", "rm"] + server_container_ids)
 
         if local_image_ids != ['']:
             run_command(["docker", "rmi", "-f"] + local_image_ids)
         if server_image_ids != ['']:
-            run_command(["ssh", SERVER_ADDRESS, "docker", "rmi", "-f", TAG])
+            run_command(["ssh", server_address, "docker", "rmi", "-f", project_name +":"+ tag])
 
+        run_command(["docker", "build", "--target", SERVER_MODE, "-t", project_name +":"+ tag, "."])
 
-        run_command(["docker", "build", "--target", "prod", "-t", TAG, "."])
-        # run_command(["docker", "build", "--target", "dev", "-t", PROJECT_NAME + ":dev", "."])
+        run_command(["docker", "save", "-o", local_home_dir +"/"+ project_name + ".tar", project_name])
 
-        run_command(["docker", "save", "-o", LOCAL_HOME_DIR +"/"+ PROJECT_NAME + ".tar", PROJECT_NAME])
+        run_command(["scp", local_home_dir +"/"+ project_name + ".tar", server_address + ":" + server_home_dir])
+        run_command(["rm", local_home_dir +"/"+ project_name + ".tar"])
 
-        run_command(["scp", LOCAL_HOME_DIR +"/"+ PROJECT_NAME + ".tar", SERVER_ADDRESS + ":" + SERVER_HOME_DIR])
-        run_command(["rm", LOCAL_HOME_DIR +"/"+ PROJECT_NAME + ".tar"])
+        run_command(["ssh", server_address, "docker", "load", "-i", server_home_dir +"/"+ project_name + ".tar"])
 
-        run_command(["ssh", SERVER_ADDRESS, "docker", "load", "-i", SERVER_HOME_DIR +"/"+ PROJECT_NAME + ".tar"])
-
-        run_command(["ssh", SERVER_ADDRESS, "cd ~/containers/" + PROJECT_NAME + " && docker-compose", "up", "-d"])
+        run_command(["ssh", server_address, "cd ~/containers/" + project_name + " && docker-compose", "up", "-d"])
 
         run_command(["docker", "images"])
-        run_command(["ssh", SERVER_ADDRESS, "docker", "images"])
+        run_command(["ssh", server_address, "docker", "images"])
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":#
     main()

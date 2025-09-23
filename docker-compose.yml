@@ -2,8 +2,7 @@
 
 services:
   crystord_web:
-    image: crystord_web:prod
-    # image: crystord_web:dev
+    image: crystord_web:dev
     container_name: crystord_web
     labels:
       - traefik.enable=true
@@ -18,7 +17,6 @@ services:
     restart: unless-stopped
     ports:
       - "4201:4201"
-
 networks:
   crystord_net:
     external: true

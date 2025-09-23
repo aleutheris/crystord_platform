@@ -1,0 +1,72 @@
+{
+  "servers": {
+    "local": {
+      "address": "localhost",
+      "home_dir": "/home/ample",
+      "ports": {
+        "dev": ["4201:4201"],
+        "prod": ["4201:4201"]
+      },
+      "proxy": {
+        "dev": {
+          "target": "http://crystord:5665",
+          "secure": false
+        },
+        "prod": {
+          "target": "http://crystord:5665",
+          "secure": false
+        }
+      }
+    },
+    "aleuhouse": {
+      "address": "aleuhouse",
+      "home_dir": "/home/aleutheris",
+      "ports": {
+        "dev": ["4201:4201"],
+        "prod": ["4201:4201"]
+      },
+      "proxy": {
+        "dev": {
+          "target": "http://crystord_api:5665",
+          "secure": false
+        },
+        "prod": {
+          "target": "http://crystord_api:5665",
+          "secure": false
+        }
+      }
+    },
+    "nucubuntunl": {
+      "address": "nucubuntunl",
+      "ports": {
+        "dev": ["4201:4201"],
+        "prod": ["4201:4201"]
+      },
+      "home_dir": "/home/ample",
+      "proxy": {
+        "dev": {
+          "target": "http://crystord_api:5665",
+          "secure": false
+        },
+        "prod": {
+          "target": "http://crystord_api:5665",
+          "secure": false
+        }
+      }
+    }
+  },
+  "local": {
+    "home_dir": "/home/ample"
+  },
+  "project": {
+    "name": "crystord_web",
+    "tag": {
+      "prod": "prod",
+      "dev": "dev"
+    }
+  },
+  "network": {
+    "name": "crystord_network"
+  },
+  "app_dir": "/app"
+}

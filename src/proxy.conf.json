@@ -1,6 +1,6 @@
 {
   "/api": {
-    "target": "http://crystord:5665",
+    "target": "http://crystord_api:5665",
     "secure": false
   }
 }
