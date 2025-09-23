@@ -10,6 +10,7 @@ doxygen_output/
 doc/.directory
 
 # Local files
+src/proxy.conf.json
 *.csv
 *.ods
 *.jpg

@@ -4,7 +4,7 @@ import argparse
 import subprocess
 from datetime import datetime
 
-SERVER_CHOOSEN = "nucubuntunl" # local, nucubuntunl or aleutheris
+SERVER_CHOSEN = "local" # local, nucubuntunl or aleutheris
 SERVER_MODE = "dev"  # dev or prod
 
 PRESERVED_FOLDER = "/node_modules"
@@ -115,76 +115,139 @@ def edit_dockercompose(file_path, args):
                 i += 1
 
 
-def main():
-    with open("deploy_config.json") as f:
-        deploy_config = json.load(f)
+def update_proxy_config(deploy_config, server_chosen, server_mode):
+    """Update the proxy configuration file with the specified server settings."""
+    proxy_config = {
+        "/api": {
+            "target": deploy_config['servers'][server_chosen]['proxy'][server_mode]['target'],
+            "secure": deploy_config['servers'][server_chosen]['proxy'][server_mode]['secure']
+        }
+    }
 
     with open("src/proxy.conf.json", "w") as proxy_file:
-        proxy_config = {
-            "/api": {
-                "target": deploy_config['servers'][SERVER_CHOOSEN]['proxy'][SERVER_MODE]['target'],
-                "secure": deploy_config['servers'][SERVER_CHOOSEN]['proxy'][SERVER_MODE]['secure']
-            }
-        }
         json.dump(proxy_config, proxy_file, indent=2)
+
+
+def cleanup_local_containers_and_images(project_name, tag):
+    """Stop and remove existing containers and images locally."""
+    local_container_ids = get_container_ids_by_tag(project_name + ":" + tag)
+    local_image_ids = get_image_ids_by_tag(project_name + ":" + tag)
+
+    # Stop local containers
+    if local_container_ids != ['']:
+        run_command(["docker", "stop"] + local_container_ids)
+
+    # Remove local containers
+    if local_container_ids != ['']:
+        run_command(["docker", "rm"] + local_container_ids)
+
+    # Remove local images
+    if local_image_ids != ['']:
+        run_command(["docker", "rmi", "-f"] + local_image_ids)
+
+
+def cleanup_server_containers_and_images(project_name, tag, server_address):
+    """Stop and remove existing containers and images on the server."""
+    server_container_ids = get_container_ids_by_tag(project_name + ":" + tag, server_address=server_address)
+    server_image_ids = get_image_ids_by_tag(project_name + ":" + tag, server_address=server_address)
+
+    # Stop server containers
+    if server_container_ids != ['']:
+        run_command(["ssh", server_address, "docker", "stop"] + server_container_ids)
+
+    # Remove server containers
+    if server_container_ids != ['']:
+        run_command(["ssh", server_address, "docker", "rm"] + server_container_ids)
+
+    # Remove server images
+    if server_image_ids != ['']:
+        run_command(["ssh", server_address, "docker", "rmi", "-f", project_name + ":" + tag])
+
+
+def deploy_to_local(deploy_config):
+    """Deploy the application locally using Docker."""
+    print("Deploying locally...")
+
+    update_proxy_config(deploy_config, SERVER_CHOSEN, SERVER_MODE)
 
     edit_dockercompose("docker-compose.yml", {
         "image": deploy_config["project"]["name"] + ":" + deploy_config["project"]["tag"][SERVER_MODE],
-        "ports": deploy_config["servers"][SERVER_CHOOSEN]["ports"][SERVER_MODE]
+        "ports": deploy_config["servers"][SERVER_CHOSEN]["ports"][SERVER_MODE]
+    })
+
+    tag = deploy_config["project"]["tag"][SERVER_MODE]
+    project_name = deploy_config["project"]["name"]
+
+    # Clean up local containers and images
+    cleanup_local_containers_and_images(project_name, tag)
+
+    # Build the Docker image
+    run_command(["docker", "build", "--target", SERVER_MODE, "-t", project_name + ":" + tag, "."])
+
+    # Start the container using docker-compose
+    run_command(["docker-compose", "up", "-d"])
+
+    # Show local images
+    run_command(["docker", "images"])
+
+
+def deploy_to_server(deploy_config):
+    """Deploy the application to a remote server."""
+    print("Deploying to server...")
+
+    update_proxy_config(deploy_config, SERVER_CHOSEN, SERVER_MODE)
+
+    edit_dockercompose("docker-compose.yml", {
+        "image": deploy_config["project"]["name"] + ":" + deploy_config["project"]["tag"][SERVER_MODE],
+        "ports": deploy_config["servers"][SERVER_CHOSEN]["ports"][SERVER_MODE]
     })
 
     tag = deploy_config["project"]["tag"][SERVER_MODE]
     local_home_dir = deploy_config["local"]["home_dir"]
 
-    server_address = deploy_config["servers"][SERVER_CHOOSEN]["address"]
-    server_home_dir = deploy_config["servers"][SERVER_CHOOSEN]["home_dir"]
+    server_address = deploy_config["servers"][SERVER_CHOSEN]["address"]
+    server_home_dir = deploy_config["servers"][SERVER_CHOSEN]["home_dir"]
 
     project_name = deploy_config["project"]["name"]
 
+    # Sync docker-compose file to server
+    run_command(["rsync", "-avz", "-e", "ssh", "./docker-compose.yml", server_address + ":~/containers/" + project_name + "/"])
+
+    # Clean up both local and server containers/images
+    cleanup_local_containers_and_images(project_name, tag)
+    cleanup_server_containers_and_images(project_name, tag, server_address)
+
+    # Build the Docker image locally
+    run_command(["docker", "build", "--target", SERVER_MODE, "-t", project_name + ":" + tag, "."])
+
+    # Save and transfer the image to server
+    run_command(["docker", "save", "-o", local_home_dir + "/" + project_name + ".tar", project_name])
+    run_command(["scp", local_home_dir + "/" + project_name + ".tar", server_address + ":" + server_home_dir])
+    run_command(["rm", local_home_dir + "/" + project_name + ".tar"])
+
+    # Load image on server and start container
+    run_command(["ssh", server_address, "docker", "load", "-i", server_home_dir + "/" + project_name + ".tar"])
+    run_command(["ssh", server_address, "cd ~/containers/" + project_name + " && docker-compose", "up", "-d"])
+
+    # Show images on both local and server
+    run_command(["docker", "images"])
+    run_command(["ssh", server_address, "docker", "images"])
+
+
+def main():
+    with open("deploy_config.json") as f:
+        deploy_config = json.load(f)
 
     parser = argparse.ArgumentParser()
     parser.add_argument("-c", "--container", action="store_false", dest="silent", help="Disable standard output")
     args = parser.parse_args()
 
-    run_command(["rsync", "-avz", "-e", "ssh", "./docker-compose.yml", server_address + ":~/containers/" + project_name + "/"])
-
     if not args.silent:
-        print("Deploying the container...")
-
-        local_container_ids = get_container_ids_by_tag(project_name +":"+ tag)
-        server_container_ids = get_container_ids_by_tag(project_name +":"+ tag, server_address=server_address)
-        local_image_ids = get_image_ids_by_tag(project_name +":"+ tag)
-        server_image_ids = get_image_ids_by_tag(project_name +":"+ tag, server_address=server_address)
-
-        if local_container_ids != ['']:
-            run_command(["docker", "stop"] + local_container_ids)
-        if server_container_ids != ['']:
-            run_command(["ssh", server_address, "docker", "stop"] + server_container_ids)
-
-        if local_container_ids != ['']:
-            run_command(["docker", "rm"] + local_container_ids)
-        if server_container_ids != ['']:
-            run_command(["ssh", server_address, "docker", "rm"] + server_container_ids)
-
-        if local_image_ids != ['']:
-            run_command(["docker", "rmi", "-f"] + local_image_ids)
-        if server_image_ids != ['']:
-            run_command(["ssh", server_address, "docker", "rmi", "-f", project_name +":"+ tag])
-
-        run_command(["docker", "build", "--target", SERVER_MODE, "-t", project_name +":"+ tag, "."])
-
-        run_command(["docker", "save", "-o", local_home_dir +"/"+ project_name + ".tar", project_name])
-
-        run_command(["scp", local_home_dir +"/"+ project_name + ".tar", server_address + ":" + server_home_dir])
-        run_command(["rm", local_home_dir +"/"+ project_name + ".tar"])
-
-        run_command(["ssh", server_address, "docker", "load", "-i", server_home_dir +"/"+ project_name + ".tar"])
-
-        run_command(["ssh", server_address, "cd ~/containers/" + project_name + " && docker-compose", "up", "-d"])
-
-        run_command(["docker", "images"])
-        run_command(["ssh", server_address, "docker", "images"])
+        if SERVER_CHOSEN == "local":
+            deploy_to_local(deploy_config)
+        else:
+            deploy_to_server(deploy_config)
 
 
-if __name__ == "__main__":#
+if __name__ == "__main__":
     main()
