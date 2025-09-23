@@ -4,7 +4,7 @@ import argparse
 import subprocess
 from datetime import datetime
 
-SERVER_CHOSEN = "local" # local, nucubuntunl or aleutheris
+SERVER_CHOSEN = "nucubuntunl" # local, nucubuntunl or aleutheris
 SERVER_MODE = "dev"  # dev or prod
 
 PRESERVED_FOLDER = "/node_modules"
