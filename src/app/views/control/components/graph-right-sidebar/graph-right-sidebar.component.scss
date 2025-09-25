@@ -64,14 +64,13 @@
         color: rgba(255, 255, 255, 0.6) !important;
       }
 
-      // Button styling to match CoreUI theme
+      // Button styling
       .btn-outline-light {
         border-color: rgba(255, 255, 255, 0.3);
         color: rgba(255, 255, 255, 0.8);
 
         &:hover {
           background-color: rgba(255, 255, 255, 0.1);
-          border-color: rgba(255, 255, 255, 0.5);
           color: #fff;
         }
       }
@@ -86,24 +85,41 @@
         }
       }
 
-      .btn-outline-danger {
-        border-color: var(--cui-danger);
-        color: var(--cui-danger);
-
-        &:hover:not(:disabled) {
-          background-color: var(--cui-danger);
-          color: #fff;
-        }
-
-        &:disabled {
-          opacity: 0.5;
-          border-color: rgba(255, 255, 255, 0.2);
-          color: rgba(255, 255, 255, 0.4);
-        }
-      }
-
       hr {
         border-color: rgba(255, 255, 255, 0.2);
+      }
+
+            // Mode selector dropdown
+      c-dropdown {
+        .btn {
+          background-color: rgba(255, 255, 255, 0.1);
+          border-color: rgba(255, 255, 255, 0.3);
+          color: rgba(255, 255, 255, 0.9);
+
+          &:hover {
+            background-color: rgba(255, 255, 255, 0.15);
+            color: #fff;
+          }
+        }
+
+        .dropdown-menu {
+          background-color: #343a54;
+          border-color: rgba(255, 255, 255, 0.2);
+
+          .dropdown-item {
+            color: rgba(255, 255, 255, 0.8);
+
+            &:hover {
+              background-color: rgba(255, 255, 255, 0.1);
+              color: #fff;
+            }
+
+            &.active {
+              background-color: var(--cui-primary);
+              color: #fff;
+            }
+          }
+        }
       }
     }
 

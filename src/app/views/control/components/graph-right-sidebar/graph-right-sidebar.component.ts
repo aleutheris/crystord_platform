@@ -10,10 +10,19 @@ import {
   ButtonDirective,
   FormControlDirective,
   InputGroupComponent,
-  InputGroupTextDirective
+  InputGroupTextDirective,
+  DropdownComponent,
+  DropdownToggleDirective,
+  DropdownMenuDirective,
+  DropdownItemDirective
 } from '@coreui/angular';
 import { Atom } from '../../atomhall/atom.model';
 import { AtomService } from '../../atomhall/atom.service';
+
+export enum SidebarMode {
+  CREATE_ATOM = 'create-atom',
+  UPDATE_ATOM = 'update-atom'
+}
 
 export interface GraphSidebarConfig {
   width: {
@@ -40,7 +49,11 @@ export interface GraphSidebarConfig {
     IconDirective,
     FormControlDirective,
     InputGroupComponent,
-    InputGroupTextDirective
+    InputGroupTextDirective,
+    DropdownComponent,
+    DropdownToggleDirective,
+    DropdownMenuDirective,
+    DropdownItemDirective
   ]
 })
 export class GraphRightSidebarComponent implements AfterContentInit {
@@ -61,6 +74,15 @@ export class GraphRightSidebarComponent implements AfterContentInit {
 
   isExpanded: boolean = true;
   hasProjectedContent: boolean = false;
+
+  // Mode selector properties
+  currentMode: SidebarMode = SidebarMode.CREATE_ATOM;
+  SidebarMode = SidebarMode; // Expose enum to template
+
+  modeOptions = [
+    { value: SidebarMode.CREATE_ATOM, label: 'Create Atom' },
+    { value: SidebarMode.UPDATE_ATOM, label: 'Update Atom' }
+  ];
 
   // Atom creation properties (copied from detail component)
   newAtom: Atom = this.initializeNewAtom();
@@ -152,5 +174,67 @@ export class GraphRightSidebarComponent implements AfterContentInit {
 
   get currentWidth(): string {
     return this.isExpanded ? this.config.width.expanded : this.config.width.narrow;
+  }
+
+  /**
+   * Handle mode change from dropdown
+   */
+  onModeChange(mode: SidebarMode) {
+    this.currentMode = mode;
+
+    // Update the config title based on mode
+    switch (mode) {
+      case SidebarMode.CREATE_ATOM:
+        this.config.title = 'Create Atom';
+        break;
+      case SidebarMode.UPDATE_ATOM:
+        this.config.title = 'Update Atom';
+        break;
+    }
+
+    // Reset atom when switching modes
+    this.newAtom = this.initializeNewAtom();
+  }
+
+  /**
+   * Get the current mode label for display
+   */
+  get currentModeLabel(): string {
+    const option = this.modeOptions.find(opt => opt.value === this.currentMode);
+    return option ? option.label : 'Create Atom';
+  }
+
+  /**
+   * Load atom data for updating (placeholder for now)
+   */
+  loadAtomForUpdate() {
+    if (!this.newAtom.properties.shellies.uuid) {
+      console.error('UUID is required to load atom for update');
+      return;
+    }
+
+    // TODO: Implement actual atom loading logic
+    // This would typically call atomService.getAtom(uuid)
+    console.log('Loading atom for update:', this.newAtom.properties.shellies.uuid);
+
+    // Placeholder: For now, just log the action
+    // In a real implementation, this would populate the form with existing atom data
+  }
+
+  /**
+   * Update an existing atom (placeholder for now)
+   */
+  updateAtom() {
+    if (!this.newAtom.properties.shellies.uuid) {
+      console.error('UUID is required to update atom');
+      return;
+    }
+
+    // TODO: Implement actual atom update logic
+    // This would typically call atomService.updateAtom(uuid, atomData)
+    console.log('Updating atom:', this.newAtom.properties.shellies.uuid, this.newAtom);
+
+    // Placeholder: For now, just log the action
+    // In a real implementation, this would send an update request to the backend
   }
 }
