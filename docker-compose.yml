@@ -11,7 +11,7 @@ services:
       - traefik.http.routers.crystord_web.tls=true
       - traefik.http.routers.crystord_web.tls.certresolver=le
     ports:
-      - "4201:4201" # Warning this should be removed in production
+      - "4201:4201"
     networks:
       - reverse_proxy_default
     restart: unless-stopped

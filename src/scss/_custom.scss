@@ -8,18 +8,35 @@
 
 // Dynamic container width adjustment - uses more screen space while avoiding sidebar/scrollbar overlap
 c-container[breakpoint="lg"] {
-  // Use much more of the available width
-  max-width: calc(100vw - 280px) !important;
+  // Use much more of the available width, account for browser scrollbar (~17px)
+  max-width: calc(100vw - 300px) !important;
   width: 100% !important;
 
   // Reduce horizontal padding to minimal
-  padding-left: 1rem !important;
-  padding-right: 1rem !important;
+  padding-left: 0.5rem !important;
+  padding-right: 0.5rem !important;
 }
 
 // Adjust when sidebar is collapsed/narrow
 .sidebar-minimized c-container[breakpoint="lg"] {
-  max-width: calc(100vw - 80px) !important;
+  max-width: calc(100vw - 100px) !important;
+}
+
+// Reduce the main content area left margin to minimize space between sidebar and content
+.wrapper {
+  margin-left: 0 !important;
+  overflow-x: hidden !important;
+}
+
+// Ensure body content sits closer to sidebar
+.body {
+  padding-left: 0.5rem !important;
+  overflow-x: hidden !important;
+}
+
+// Prevent horizontal scroll on the main content area
+html, body {
+  overflow-x: hidden !important;
 }
 
 // Handle responsive behavior for smaller screens

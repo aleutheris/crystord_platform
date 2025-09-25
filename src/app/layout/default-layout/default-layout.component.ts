@@ -1,6 +1,9 @@
 import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Router, NavigationEnd } from '@angular/router';
 import { RouterLink, RouterOutlet } from '@angular/router';
 import { NgScrollbar } from 'ngx-scrollbar';
+import { filter } from 'rxjs/operators';
 
 import { IconDirective } from '@coreui/icons-angular';
 import {
@@ -31,6 +34,7 @@ function isOverflown(element: HTMLElement) {
   styleUrls: ['./default-layout.component.scss'],
   standalone: true,
   imports: [
+    CommonModule,
     SidebarComponent,
     SidebarHeaderComponent,
     SidebarBrandComponent,
@@ -50,6 +54,22 @@ function isOverflown(element: HTMLElement) {
 })
 export class DefaultLayoutComponent {
   public navItems = navItems;
+  public isFullWidthRoute = false;
+
+  constructor(private router: Router) {
+    // Listen to route changes to determine if current route should be full width
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe((event) => {
+      // Add routes that should be full width (like control overview)
+      const fullWidthRoutes = ['/control/overview'];
+      this.isFullWidthRoute = fullWidthRoutes.some(route => (event as NavigationEnd).url.includes(route));
+    });
+
+    // Set initial state based on current URL
+    const fullWidthRoutes = ['/control/overview'];
+    this.isFullWidthRoute = fullWidthRoutes.some(route => this.router.url.includes(route));
+  }
 
   onScrollbarUpdate($event: any) {
     // if ($event.verticalUsed) {
