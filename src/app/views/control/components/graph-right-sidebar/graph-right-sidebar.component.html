@@ -1,0 +1,97 @@
+<!-- Right Sidebar for Graph Controls -->
+<div class="graph-right-sidebar-container" [style.width]="currentWidth">
+  <!-- Sidebar -->
+  <c-sidebar
+    #rightSidebar="cSidebar"
+    class="graph-right-sidebar"
+    colorScheme="dark"
+    [style.width]="currentWidth"
+    [visible]="visible"
+    position="fixed">
+
+    <!-- Header with title and toggle button -->
+    <c-sidebar-header class="border-bottom d-flex justify-content-between align-items-center">
+      <span *ngIf="isExpanded" class="sidebar-title">{{ config.title }}</span>
+      <button
+        type="button"
+        class="btn btn-sm btn-ghost-light sidebar-toggle-btn"
+        (click)="toggleSidebar()"
+        [attr.aria-label]="isExpanded ? 'Collapse sidebar' : 'Expand sidebar'">
+        <svg cIcon
+             [name]="isExpanded ? 'cilChevronRight' : 'cilChevronLeft'"
+             size="sm">
+        </svg>
+      </button>
+    </c-sidebar-header>
+
+    <!-- Content Area -->
+    <div class="sidebar-content" *ngIf="isExpanded">
+      <!-- Projected Content -->
+      <ng-content></ng-content>
+
+      <!-- Default Content if no content projected -->
+      <ng-container *ngIf="!hasProjectedContent">
+        <div class="p-3">
+          <h6>Graph Controls</h6>
+          <p class="text-muted small">
+            Graph control buttons and tools will be added here.
+          </p>
+
+          <!-- Placeholder controls -->
+          <div class="d-grid gap-2">
+            <button type="button" class="btn btn-outline-light btn-sm">
+              <svg cIcon name="cilZoomIn" size="sm" class="me-2"></svg>
+              Zoom In
+            </button>
+            <button type="button" class="btn btn-outline-light btn-sm">
+              <svg cIcon name="cilZoomOut" size="sm" class="me-2"></svg>
+              Zoom Out
+            </button>
+            <button type="button" class="btn btn-outline-light btn-sm">
+              <svg cIcon name="cilFullscreen" size="sm" class="me-2"></svg>
+              Fit to Screen
+            </button>
+            <button type="button" class="btn btn-outline-light btn-sm">
+              <svg cIcon name="cilReload" size="sm" class="me-2"></svg>
+              Reset View
+            </button>
+          </div>
+
+          <hr class="my-3">
+
+          <h6 class="small">Node Tools</h6>
+          <div class="d-grid gap-2">
+            <button type="button" class="btn btn-outline-primary btn-sm">
+              <svg cIcon name="cilPlus" size="sm" class="me-2"></svg>
+              Add Node
+            </button>
+            <button type="button" class="btn btn-outline-danger btn-sm" disabled>
+              <svg cIcon name="cilTrash" size="sm" class="me-2"></svg>
+              Delete Selected
+            </button>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+
+    <!-- Collapsed state content -->
+    <div class="sidebar-collapsed-content" *ngIf="!isExpanded">
+      <div class="d-flex flex-column align-items-center p-2">
+        <!-- Icon-only buttons for collapsed state -->
+        <button type="button" class="btn btn-ghost-light btn-sm mb-2" title="Zoom In">
+          <svg cIcon name="cilZoomIn" size="sm"></svg>
+        </button>
+        <button type="button" class="btn btn-ghost-light btn-sm mb-2" title="Zoom Out">
+          <svg cIcon name="cilZoomOut" size="sm"></svg>
+        </button>
+        <button type="button" class="btn btn-ghost-light btn-sm mb-2" title="Fit to Screen">
+          <svg cIcon name="cilFullscreen" size="sm"></svg>
+        </button>
+        <button type="button" class="btn btn-ghost-light btn-sm mb-2" title="Reset View">
+          <svg cIcon name="cilReload" size="sm"></svg>
+        </button>
+      </div>
+    </div>
+
+  </c-sidebar>
+</div>

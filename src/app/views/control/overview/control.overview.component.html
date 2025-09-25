@@ -32,8 +32,16 @@
           </button>
         </div>
       </c-card-header>
-      <c-card-body>
+      <c-card-body class="position-relative">
         <div id="rete-container" style="height: 600px; width: 100%;"></div>
+
+        <!-- Right Sidebar for Graph Controls -->
+        <app-graph-right-sidebar
+          [visible]="rightSidebarVisible"
+          [config]="rightSidebarConfig"
+          (toggleEvent)="onRightSidebarToggle($event)"
+          (visibleChange)="rightSidebarVisible = $event">
+        </app-graph-right-sidebar>
       </c-card-body>
     </c-card>
   </c-col>

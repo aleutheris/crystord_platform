@@ -22,6 +22,8 @@ import { AtomSearchService } from '../services/atom-search.service';
 import { AtomTransformerService } from '../services/atom-transformer.service';
 import { GraphLayoutService } from '../services/graph-layout.service';
 import { ReteGraphManagerService } from '../services/rete-graph-manager.service';
+import { GraphControlsService } from '../services/graph-controls.service';
+import { GraphRightSidebarComponent, GraphSidebarConfig } from '../components/graph-right-sidebar';
 
 
 @Component({
@@ -41,7 +43,8 @@ import { ReteGraphManagerService } from '../services/rete-graph-manager.service'
     TextColorDirective,
     ButtonDirective,
     TableDirective,
-    IconDirective
+    IconDirective,
+    GraphRightSidebarComponent
   ]
 })
 export class ControlOverviewComponent {
@@ -52,12 +55,24 @@ export class ControlOverviewComponent {
   atomsIndexed: Record<string, NodeElement>;
   atomsFeaturesTexted: AtomTexted[];
 
+  // Right sidebar properties
+  rightSidebarVisible: boolean = true;
+  rightSidebarConfig: GraphSidebarConfig = {
+    width: {
+      expanded: '600px',
+      narrow: '60px'
+    },
+    defaultExpanded: true,
+    title: 'Graph Controls'
+  };
+
   constructor(
     private atomService: AtomService,
     private searchService: AtomSearchService,
     private transformerService: AtomTransformerService,
     private layoutService: GraphLayoutService,
-    private reteManager: ReteGraphManagerService
+    private reteManager: ReteGraphManagerService,
+    private graphControlsService: GraphControlsService
   ) {
     // this.searchText = 'uuid=cc249313-1d09-4614-ae53-e8d7826b0ba2';
     this.searchText = 'labels=groceries';
@@ -148,5 +163,12 @@ export class ControlOverviewComponent {
     });
   }
 
+  /**
+   * Handle right sidebar toggle event
+   */
+  onRightSidebarToggle(expanded: boolean): void {
+    this.graphControlsService.setSidebarExpanded(expanded);
+    console.log('Right sidebar toggled:', expanded ? 'expanded' : 'collapsed');
+  }
 
 }
