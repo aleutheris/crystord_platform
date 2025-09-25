@@ -32,44 +32,40 @@
       <!-- Default Content if no content projected -->
       <ng-container *ngIf="!hasProjectedContent">
         <div class="p-3">
-          <h6>Graph Controls</h6>
           <p class="text-muted small">
-            Graph control buttons and tools will be added here.
+            Create an atom
           </p>
 
-          <!-- Placeholder controls -->
-          <div class="d-grid gap-2">
-            <button type="button" class="btn btn-outline-light btn-sm">
-              <svg cIcon name="cilZoomIn" size="sm" class="me-2"></svg>
-              Zoom In
-            </button>
-            <button type="button" class="btn btn-outline-light btn-sm">
-              <svg cIcon name="cilZoomOut" size="sm" class="me-2"></svg>
-              Zoom Out
-            </button>
-            <button type="button" class="btn btn-outline-light btn-sm">
-              <svg cIcon name="cilFullscreen" size="sm" class="me-2"></svg>
-              Fit to Screen
-            </button>
-            <button type="button" class="btn btn-outline-light btn-sm">
-              <svg cIcon name="cilReload" size="sm" class="me-2"></svg>
-              Reset View
-            </button>
-          </div>
+          <!-- Atom Creation Form (copied from detail component) -->
+          <c-input-group class="mb-3">
+            <span cInputGroupText>Title</span>
+            <input
+              cFormControl
+              placeholder="Write Atom's title here."
+              [(ngModel)]="newAtom.properties.nuclearies.title"/>
+          </c-input-group>
 
-          <hr class="my-3">
+          <c-input-group class="mb-3">
+            <span cInputGroupText>Labels</span>
+            <input
+              cFormControl
+              placeholder="Write Atom's labels here."
+              [(ngModel)]="newAtom.labels"
+              [ngModelOptions]="{ standalone: true }"
+              (ngModelChange)="newAtom.labels = $event.split(',')"/>
+          </c-input-group>
 
-          <h6 class="small">Node Tools</h6>
-          <div class="d-grid gap-2">
-            <button type="button" class="btn btn-outline-primary btn-sm">
-              <svg cIcon name="cilPlus" size="sm" class="me-2"></svg>
-              Add Node
-            </button>
-            <button type="button" class="btn btn-outline-danger btn-sm" disabled>
-              <svg cIcon name="cilTrash" size="sm" class="me-2"></svg>
-              Delete Selected
-            </button>
-          </div>
+          <c-input-group class="mb-3">
+            <span cInputGroupText>Atom UUID</span>
+            <span cInputGroupText class="text-muted">{{ newAtom.properties.shellies.uuid || '(will be generated)' }}</span>
+          </c-input-group>
+
+          <button
+            type="button"
+            class="btn btn-primary btn-sm w-100"
+            (click)="formAtoms()">
+            Create Atom
+          </button>
         </div>
       </ng-container>
     </div>
@@ -77,18 +73,9 @@
     <!-- Collapsed state content -->
     <div class="sidebar-collapsed-content" *ngIf="!isExpanded">
       <div class="d-flex flex-column align-items-center p-2">
-        <!-- Icon-only buttons for collapsed state -->
-        <button type="button" class="btn btn-ghost-light btn-sm mb-2" title="Zoom In">
-          <svg cIcon name="cilZoomIn" size="sm"></svg>
-        </button>
-        <button type="button" class="btn btn-ghost-light btn-sm mb-2" title="Zoom Out">
-          <svg cIcon name="cilZoomOut" size="sm"></svg>
-        </button>
-        <button type="button" class="btn btn-ghost-light btn-sm mb-2" title="Fit to Screen">
-          <svg cIcon name="cilFullscreen" size="sm"></svg>
-        </button>
-        <button type="button" class="btn btn-ghost-light btn-sm mb-2" title="Reset View">
-          <svg cIcon name="cilReload" size="sm"></svg>
+        <!-- Icon-only button for atom creation -->
+        <button type="button" class="btn btn-ghost-light btn-sm mb-2" title="Create Atom">
+          <svg cIcon name="cilPlus" size="sm"></svg>
         </button>
       </div>
     </div>

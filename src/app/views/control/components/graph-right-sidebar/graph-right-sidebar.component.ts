@@ -1,13 +1,19 @@
 import { Component, Input, Output, EventEmitter, ContentChild, TemplateRef, AfterContentInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { IconDirective } from '@coreui/icons-angular';
 import {
   SidebarComponent,
   SidebarHeaderComponent,
   SidebarFooterComponent,
   SidebarToggleDirective,
-  ButtonDirective
+  ButtonDirective,
+  FormControlDirective,
+  InputGroupComponent,
+  InputGroupTextDirective
 } from '@coreui/angular';
+import { Atom } from '../../atomhall/atom.model';
+import { AtomService } from '../../atomhall/atom.service';
 
 export interface GraphSidebarConfig {
   width: {
@@ -25,12 +31,16 @@ export interface GraphSidebarConfig {
   standalone: true,
   imports: [
     CommonModule,
+    FormsModule,
     SidebarComponent,
     SidebarHeaderComponent,
     SidebarFooterComponent,
     SidebarToggleDirective,
     ButtonDirective,
-    IconDirective
+    IconDirective,
+    FormControlDirective,
+    InputGroupComponent,
+    InputGroupTextDirective
   ]
 })
 export class GraphRightSidebarComponent implements AfterContentInit {
@@ -40,7 +50,7 @@ export class GraphRightSidebarComponent implements AfterContentInit {
       narrow: '60px'
     },
     defaultExpanded: true,
-    title: 'Graph Controls'
+    title: 'Create Atom'
   };
 
   @Input() visible: boolean = true;
@@ -52,12 +62,82 @@ export class GraphRightSidebarComponent implements AfterContentInit {
   isExpanded: boolean = true;
   hasProjectedContent: boolean = false;
 
+  // Atom creation properties (copied from detail component)
+  newAtom: Atom = this.initializeNewAtom();
+
+  constructor(private atomService: AtomService) {}
+
   ngOnInit() {
     this.isExpanded = this.config.defaultExpanded;
   }
 
   ngAfterContentInit() {
     this.hasProjectedContent = !!this.contentTemplate;
+  }
+
+  /**
+   * Initialize a new atom with default structure (copied from detail component)
+   */
+  private initializeNewAtom(): Atom {
+    return {
+      labels: [],
+      bonds: [],
+      properties: {
+        shellies: {
+          uuid: '', // Empty string - UUID will be assigned by backend
+          changeHistory: []
+        },
+        nuclearies: {
+          title: '',
+          description: '',
+          content: '',
+          constants: '',
+          operation: ''
+        },
+        ionies: {}
+      }
+    };
+  }
+
+  /**
+   * Create a new atom (copied exactly from detail component)
+   */
+  formAtoms() {
+    let mq: {
+      modification: string,
+      args: {
+        inputs: {
+          labels: string[],
+          properties: {
+            nuclearies: {
+              title: string
+            }
+          }
+        }
+      }
+    } = {
+      modification: 'form_atoms',
+      args: {
+        inputs: {
+          labels: this.newAtom.labels,
+          properties: {
+            nuclearies: {
+              title: this.newAtom.properties.nuclearies.title
+            }
+          }
+        }
+      }
+    };
+
+    this.atomService.modifyAtoms(mq).subscribe({
+      next: (data) => {
+        this.newAtom = data['result'];
+        console.log('Atom created successfully:', data);
+      },
+      error: (error) => {
+        console.error('There was an error creating the atom:', error);
+      }
+    });
   }
 
   toggleSidebar() {
