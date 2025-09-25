@@ -6,6 +6,30 @@
 // custom tweaks for scrollbar styling (wip)
 @import "scrollbar";
 
+// Dynamic container width adjustment - uses more screen space while avoiding sidebar/scrollbar overlap
+c-container[breakpoint="lg"] {
+  // Use much more of the available width
+  max-width: calc(100vw - 280px) !important;
+  width: 100% !important;
+
+  // Reduce horizontal padding to minimal
+  padding-left: 1rem !important;
+  padding-right: 1rem !important;
+}
+
+// Adjust when sidebar is collapsed/narrow
+.sidebar-minimized c-container[breakpoint="lg"] {
+  max-width: calc(100vw - 80px) !important;
+}
+
+// Handle responsive behavior for smaller screens
+@media (max-width: 991.98px) {
+  c-container[breakpoint="lg"] {
+    // On mobile, sidebar is overlay so use most of the width
+    max-width: calc(100vw - 2rem) !important;
+  }
+}
+
  // custom calendar today cell color
 .calendar-cell.today {
   --cui-calendar-cell-today-color: var(--cui-info) !important;
