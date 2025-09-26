@@ -5,14 +5,6 @@
   <c-card-body class="position-relative" style="padding-top: 70px; --graph-controls-height: 70px;">
         <!-- Top controls: Rearrange button and Search Bar -->
         <div style="position: absolute; top: 0; left: 0; width: 100%; z-index: 10; display: flex; gap: 1rem; align-items: center; padding: 10px; background: transparent;">
-          <button
-            cButton
-            color="primary"
-            type="button"
-            variant="outline"
-            (click)="rearrangeGraph()">
-            Rearrange
-          </button>
           <input [valid]="isSearchTextValid" aria-label="default input example"
             cFormControl
             placeholder="Search..."
@@ -20,6 +12,25 @@
             [(ngModel)]="searchText"
             (keyup.enter)="retrieveAtomsFeatures()"
             style="flex: 1; min-width: 200px; max-width: 100%;"/>
+          <button
+            cButton
+            color="success"
+            type="button"
+            variant="outline"
+            (click)="retrieveAtomsFeatures()"
+            aria-label="Run Search"
+            style="margin-left: auto; margin-right: 0.5rem;">
+            <svg cIcon name="cil-media-play" size="lg"></svg>
+          </button>
+          <button
+            cButton
+            color="primary"
+            type="button"
+            variant="outline"
+            (click)="rearrangeGraph()"
+            aria-label="Rearrange">
+            <svg cIcon name="cil-applications-settings" size="lg"></svg>
+          </button>
         </div>
         <div id="rete-container" style="height: 600px; width: 100%;"></div>
 
