@@ -5,6 +5,8 @@ import { ConnectionPlugin, Presets as ConnectionPresets } from 'rete-connection-
 import { AngularPlugin, Presets } from 'rete-angular-plugin/18';
 import { Schemes, AreaExtra, LAYOUT_CONSTANTS } from '../config/rete-config';
 import { Atom } from '../atomhall/atom.model';
+import { NodeAtomMappingService } from './node-atom-mapping.service';
+import { AtomSelectionService } from './atom-selection.service';
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +16,11 @@ export class ReteGraphManagerService {
   private area!: AreaPlugin<Schemes, AreaExtra>;
   private selector!: any;
 
-  constructor(private injector: Injector) { }
+  constructor(
+    private injector: Injector,
+    private nodeAtomMapping: NodeAtomMappingService,
+    private atomSelection: AtomSelectionService
+  ) {}
 
   /**
    * Gets the current editor instance
@@ -116,6 +122,15 @@ export class ReteGraphManagerService {
           });
         });
       }
+
+      if (entity && entity.id) {
+        const uuid = this.nodeAtomMapping.getUuidByNodeId(entity.id);
+        if (uuid) {
+          this.atomSelection.selectAtom(uuid);
+        } else {
+          this.atomSelection.selectAtom(null);
+        }
+      }
     };
 
     this.selector.remove = (entity: any) => {
@@ -152,6 +167,7 @@ export class ReteGraphManagerService {
 
       await this.editor.addNode(node);
       nodeMap.set(atom.properties.shellies.uuid, node);
+      this.nodeAtomMapping.register(node.id, atom.properties.shellies.uuid);
 
       // Position nodes in a grid layout initially
       const x = (i % 5) * LAYOUT_CONSTANTS.GRID_NODE_WIDTH;

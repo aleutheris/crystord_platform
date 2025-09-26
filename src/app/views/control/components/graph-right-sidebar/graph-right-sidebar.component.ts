@@ -18,6 +18,8 @@ import {
 } from '@coreui/angular';
 import { Atom } from '../../atomhall/atom.model';
 import { AtomService } from '../../atomhall/atom.service';
+import { AtomSelectionService } from '../../services/atom-selection.service';
+import { AtomStoreService } from '../../services/atom-store.service';
 
 export enum SidebarMode {
   CREATE_ATOM = 'create-atom',
@@ -90,7 +92,29 @@ export class GraphRightSidebarComponent implements AfterContentInit {
   // Atom update properties (separate from create mode)
   atomForUpdate: Atom = this.initializeUpdateAtom();
 
-  constructor(private atomService: AtomService) {}
+  // Selected atom UUID
+  selectedAtomUuid: string | null = null;
+
+  constructor(
+    private atomService: AtomService,
+    private atomSelection: AtomSelectionService,
+    private atomStore: AtomStoreService
+  ) {
+    // Subscribe to selection changes
+    this.atomSelection.getSelectedUuid$().subscribe(uuid => {
+      this.selectedAtomUuid = uuid;
+      if (uuid) {
+        // Switch to Changing mode and update atomForUpdate
+        this.currentMode = SidebarMode.UPDATE_ATOM;
+        const atom = this.atomStore.getAtomByUuid(uuid);
+        if (atom) {
+          this.atomForUpdate = atom;
+        } else {
+          this.atomForUpdate = this.initializeUpdateAtom();
+        }
+      }
+    });
+  }
 
   ngOnInit() {
     this.isExpanded = this.config.defaultExpanded;

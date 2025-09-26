@@ -15,6 +15,7 @@ import { IconDirective } from '@coreui/icons-angular';
 import { FormsModule } from '@angular/forms';
 import { Atom } from '../atomhall/atom.model';
 import { AtomService } from '../atomhall/atom.service';
+import { AtomStoreService } from '../services/atom-store.service';
 
 // Import refactored services and models
 import { NodeElement, AtomTexted, UpdateQuery } from '../models/atom-models';
@@ -72,7 +73,8 @@ export class ControlOverviewComponent {
     private transformerService: AtomTransformerService,
     private layoutService: GraphLayoutService,
     private reteManager: ReteGraphManagerService,
-    private graphControlsService: GraphControlsService
+    private graphControlsService: GraphControlsService,
+  private atomStore: AtomStoreService
   ) {
     // this.searchText = 'uuid=cc249313-1d09-4614-ae53-e8d7826b0ba2';
     this.searchText = 'labels=groceries';
@@ -104,6 +106,7 @@ export class ControlOverviewComponent {
     this.atomService.readAtoms(query).subscribe({
       next: (data) => {
         this.atomsFeatures = data['result'];
+        this.atomStore.setAtoms(this.atomsFeatures); // update atom store
         this.handleRetrievedData();
         this.isSearchTextValid = true;
       },
