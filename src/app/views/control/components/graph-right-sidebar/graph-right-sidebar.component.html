@@ -102,6 +102,26 @@
 
             <!-- Update Atom Mode - Complete Atom Features (copied from control.detail) -->
             <div *ngSwitchCase="SidebarMode.UPDATE_ATOM">
+              <!-- Action Buttons -->
+              <div class="d-grid gap-2 d-md-flex justify-content-md-start mb-3">
+                <button
+                  cButton
+                  color="primary"
+                  type="button"
+                  variant="outline"
+                  (click)="updateAtomFeatures()">
+                  Update Atom
+                </button>
+
+                <button
+                  cButton
+                  color="primary"
+                  type="button"
+                  variant="outline"
+                  (click)="destroyAtoms()">
+                  Destroy Atom
+                </button>
+              </div>
 
               <!-- Atom UUID with Get Button -->
               <c-input-group class="mb-3">
@@ -212,27 +232,6 @@
                   style="height: 150px;">
                 </textarea>
               </c-input-group>
-
-              <!-- Action Buttons -->
-              <div class="d-grid gap-2 d-md-flex justify-content-md-start">
-                <button
-                  cButton
-                  color="primary"
-                  type="button"
-                  variant="outline"
-                  (click)="updateAtomFeatures()">
-                  Update Atom
-                </button>
-
-                <button
-                  cButton
-                  color="primary"
-                  type="button"
-                  variant="outline"
-                  (click)="destroyAtoms()">
-                  Destroy Atom
-                </button>
-              </div>
             </div>
           </div>
         </div>
