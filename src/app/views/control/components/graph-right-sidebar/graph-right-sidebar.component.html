@@ -60,9 +60,6 @@
           <div [ngSwitch]="currentMode">
             <!-- Create Atom Mode -->
             <div *ngSwitchCase="SidebarMode.CREATE_ATOM">
-              <p class="text-muted small">
-                Create a new atom
-              </p>
 
               <!-- Create Atom Button (with same container and style as Update buttons) -->
               <div class="d-grid gap-2 d-md-flex justify-content-md-start mb-3">
@@ -105,9 +102,6 @@
 
             <!-- Update Atom Mode - Complete Atom Features (copied from control.detail) -->
             <div *ngSwitchCase="SidebarMode.UPDATE_ATOM">
-              <p class="text-muted small">
-                Get and update your Atom
-              </p>
 
               <!-- Atom UUID with Get Button -->
               <c-input-group class="mb-3">
