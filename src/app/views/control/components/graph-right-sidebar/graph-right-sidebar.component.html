@@ -64,7 +64,20 @@
                 Create a new atom
               </p>
 
-              <!-- Atom Creation Form (copied from detail component) -->
+              <!-- Create Atom Button (with same container and style as Update buttons) -->
+              <div class="d-grid gap-2 d-md-flex justify-content-md-start mb-3">
+                <button
+                  cButton
+                  color="primary"
+                  type="button"
+                  variant="outline"
+                  (click)="formAtoms()"
+                  [disabled]="!isCreateAtomButtonEnabled">
+                  Create Atom
+                </button>
+              </div>
+
+              <!-- Atom Creation Form -->
               <c-input-group class="mb-3">
                 <span cInputGroupText>Title</span>
                 <input
@@ -83,17 +96,11 @@
                   (ngModelChange)="newAtom.labels = $event.split(',')"/>
               </c-input-group>
 
-              <c-input-group class="mb-3">
+              <!-- Atom UUID (only show after creation) -->
+              <c-input-group class="mb-3" *ngIf="shouldShowUuid">
                 <span cInputGroupText>Atom UUID</span>
-                <span cInputGroupText class="text-muted">{{ newAtom.properties.shellies.uuid || '(will be generated)' }}</span>
+                <span cInputGroupText class="text-muted">{{ newAtom.properties.shellies.uuid }}</span>
               </c-input-group>
-
-              <button
-                type="button"
-                class="btn btn-primary btn-sm w-100"
-                (click)="formAtoms()">
-                Create Atom
-              </button>
             </div>
 
             <!-- Update Atom Mode - Complete Atom Features (copied from control.detail) -->

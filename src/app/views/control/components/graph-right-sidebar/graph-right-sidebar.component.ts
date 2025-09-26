@@ -63,7 +63,7 @@ export class GraphRightSidebarComponent implements AfterContentInit {
       narrow: '60px'
     },
     defaultExpanded: true,
-    title: 'Create Atom'
+    title: 'Atom Features'
   };
 
   @Input() visible: boolean = true;
@@ -80,8 +80,8 @@ export class GraphRightSidebarComponent implements AfterContentInit {
   SidebarMode = SidebarMode; // Expose enum to template
 
   modeOptions = [
-    { value: SidebarMode.CREATE_ATOM, label: 'Create Atom' },
-    { value: SidebarMode.UPDATE_ATOM, label: 'Update Atom' }
+    { value: SidebarMode.CREATE_ATOM, label: 'Forming' },
+    { value: SidebarMode.UPDATE_ATOM, label: 'Changing' }
   ];
 
   // Atom creation properties (copied from detail component)
@@ -209,15 +209,8 @@ export class GraphRightSidebarComponent implements AfterContentInit {
   onModeChange(mode: SidebarMode) {
     this.currentMode = mode;
 
-    // Update the config title based on mode
-    switch (mode) {
-      case SidebarMode.CREATE_ATOM:
-        this.config.title = 'Create Atom';
-        break;
-      case SidebarMode.UPDATE_ATOM:
-        this.config.title = 'Update Atom';
-        break;
-    }
+    // Both modes use the same title
+    this.config.title = 'Atom Features';
 
     // Reset atoms when switching modes
     this.newAtom = this.initializeNewAtom();
@@ -227,7 +220,26 @@ export class GraphRightSidebarComponent implements AfterContentInit {
    */
   get currentModeLabel(): string {
     const option = this.modeOptions.find(opt => opt.value === this.currentMode);
-    return option ? option.label : 'Create Atom';
+    return option ? option.label : 'Forming';
+  }
+
+  /**
+   * Check if Create Atom button should be enabled
+   * Button is enabled only when both title and labels have content
+   */
+  get isCreateAtomButtonEnabled(): boolean {
+    return !!(
+      this.newAtom.properties.nuclearies.title?.trim() &&
+      this.newAtom.labels?.length > 0 &&
+      this.newAtom.labels.some(label => label?.trim())
+    );
+  }
+
+  /**
+   * Check if UUID should be shown (only after atom creation)
+   */
+  get shouldShowUuid(): boolean {
+    return !!(this.newAtom.properties.shellies.uuid?.trim());
   }
 
   /**
