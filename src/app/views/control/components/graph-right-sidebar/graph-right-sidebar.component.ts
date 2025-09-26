@@ -220,7 +220,7 @@ export class GraphRightSidebarComponent implements AfterContentInit {
    */
   get currentModeLabel(): string {
     const option = this.modeOptions.find(opt => opt.value === this.currentMode);
-    return option ? option.label : 'Forming';
+    return option ? option.label : 'Create Atom';
   }
 
   /**
