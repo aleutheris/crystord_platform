@@ -12,6 +12,7 @@ import { Atom } from '../atomhall/atom.model';
 export class ReteGraphManagerService {
   private editor!: NodeEditor<Schemes>;
   private area!: AreaPlugin<Schemes, AreaExtra>;
+  private selector!: any;
 
   constructor(private injector: Injector) { }
 
@@ -61,9 +62,67 @@ export class ReteGraphManagerService {
     this.area.use(render);
     this.area.use(connection);
 
-    AreaExtensions.selectableNodes(this.area, AreaExtensions.selector(), {
-      accumulating: AreaExtensions.accumulateOnCtrl()
-    });
+    // Add connection creation logging
+    // Override the editor's addConnection method to log connections
+    const originalAddConnection = this.editor.addConnection.bind(this.editor);
+    this.editor.addConnection = async (connection: any) => {
+      const result = await originalAddConnection(connection);
+
+      // Log the connection creation
+      const sourceNode = this.editor.getNode(connection.source);
+      const targetNode = this.editor.getNode(connection.target);
+
+      console.log('🔗 Connection created:', {
+        connection: connection,
+        sourceNode: sourceNode,
+        targetNode: targetNode,
+        sourceOutput: connection.sourceOutput,
+        targetInput: connection.targetInput
+      });
+
+      console.log(`Connection created from ${sourceNode?.label || 'Unknown'} (${connection.sourceOutput}) to ${targetNode?.label || 'Unknown'} (${connection.targetInput})`);
+
+      return result;
+    };
+
+    // Setup node selection with logging
+    this.selector = AreaExtensions.selector();
+    const accumulating = AreaExtensions.accumulateOnCtrl();
+
+    AreaExtensions.selectableNodes(this.area, this.selector, { accumulating });
+
+    // Add logging by overriding the selector methods
+    const originalAdd = this.selector.add.bind(this.selector);
+    const originalRemove = this.selector.remove.bind(this.selector);
+
+    this.selector.add = (entity: any, accumulate?: boolean) => {
+      originalAdd(entity, accumulate);
+
+      // Log selection
+      console.log('Node selected:', entity);
+      const selectedNodes = this.getSelectedNodes();
+      console.log('Currently selected nodes:', selectedNodes);
+
+      if (selectedNodes.length > 0) {
+        console.log('Selected node details:');
+        selectedNodes.forEach((node, index) => {
+          console.log(`Node ${index + 1}:`, {
+            id: node.id,
+            label: node.label,
+            position: node.position,
+            inputs: node.inputs,
+            outputs: node.outputs,
+            controls: node.controls
+          });
+        });
+      }
+    };
+
+    this.selector.remove = (entity: any) => {
+      originalRemove(entity);
+      console.log('Node unselected:', entity);
+      console.log('Remaining selected nodes:', this.getSelectedNodes());
+    };
 
     return true;
   }
@@ -164,6 +223,14 @@ export class ReteGraphManagerService {
    */
   isInitialized(): boolean {
     return !!(this.editor && this.area);
+  }
+
+  /**
+   * Gets currently selected nodes
+   */
+  getSelectedNodes(): any[] {
+    if (!this.editor) return [];
+    return this.editor.getNodes().filter(node => node.selected);
   }
 
   /**
