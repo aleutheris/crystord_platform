@@ -1,27 +1,10 @@
-<c-row>
-  <c-col xs="12">
-    <c-card class="mb-4">
-      <c-card-header>
-        <strong>Search</strong>
-      </c-card-header>
-      <c-card-body>
-        <input [valid]="isSearchTextValid" aria-label="default input example"
-          cFormControl
-          placeholder="Search..."
-          type="text"
-          [(ngModel)]="searchText"
-          (keyup.enter)="retrieveAtomsFeatures()"/>
-      </c-card-body>
-    </c-card>
-  </c-col>
-</c-row>
 
 <c-row>
   <c-col xs="12">
     <c-card class="mb-4">
-      <c-card-header>
-        <strong>Graph</strong>
-        <div class="float-end">
+  <c-card-body class="position-relative" style="padding-top: 70px; --graph-controls-height: 70px;">
+        <!-- Top controls: Rearrange button and Search Bar -->
+        <div style="position: absolute; top: 0; left: 0; width: 100%; z-index: 10; display: flex; gap: 1rem; align-items: center; padding: 10px; background: transparent;">
           <button
             cButton
             color="primary"
@@ -30,9 +13,14 @@
             (click)="rearrangeGraph()">
             Rearrange
           </button>
+          <input [valid]="isSearchTextValid" aria-label="default input example"
+            cFormControl
+            placeholder="Search..."
+            type="text"
+            [(ngModel)]="searchText"
+            (keyup.enter)="retrieveAtomsFeatures()"
+            style="flex: 1; min-width: 200px; max-width: 100%;"/>
         </div>
-      </c-card-header>
-      <c-card-body class="position-relative">
         <div id="rete-container" style="height: 600px; width: 100%;"></div>
 
         <!-- Right Sidebar for Graph Controls -->
