@@ -87,6 +87,9 @@ export class GraphRightSidebarComponent implements AfterContentInit {
   // Atom creation properties (copied from detail component)
   newAtom: Atom = this.initializeNewAtom();
 
+  // Atom update properties (separate from create mode)
+  atomForUpdate: Atom = this.initializeUpdateAtom();
+
   constructor(private atomService: AtomService) {}
 
   ngOnInit() {
@@ -107,6 +110,30 @@ export class GraphRightSidebarComponent implements AfterContentInit {
       properties: {
         shellies: {
           uuid: '', // Empty string - UUID will be assigned by backend
+          changeHistory: []
+        },
+        nuclearies: {
+          title: '',
+          description: '',
+          content: '',
+          constants: '',
+          operation: ''
+        },
+        ionies: {}
+      }
+    };
+  }
+
+  /**
+   * Initialize an atom for update with default structure (copied from detail component)
+   */
+  private initializeUpdateAtom(): Atom {
+    return {
+      labels: [],
+      bonds: [],
+      properties: {
+        shellies: {
+          uuid: '',
           changeHistory: []
         },
         nuclearies: {
@@ -192,11 +219,10 @@ export class GraphRightSidebarComponent implements AfterContentInit {
         break;
     }
 
-    // Reset atom when switching modes
+    // Reset atoms when switching modes
     this.newAtom = this.initializeNewAtom();
-  }
-
-  /**
+    this.atomForUpdate = this.initializeUpdateAtom();
+  }  /**
    * Get the current mode label for display
    */
   get currentModeLabel(): string {
@@ -205,36 +231,202 @@ export class GraphRightSidebarComponent implements AfterContentInit {
   }
 
   /**
-   * Load atom data for updating (placeholder for now)
+   * Load atom features for updating (copied from control.detail)
    */
-  loadAtomForUpdate() {
-    if (!this.newAtom.properties.shellies.uuid) {
+  retrieveAtomFeatures() {
+    if (!this.atomForUpdate.properties.shellies.uuid) {
       console.error('UUID is required to load atom for update');
       return;
     }
 
-    // TODO: Implement actual atom loading logic
-    // This would typically call atomService.getAtom(uuid)
-    console.log('Loading atom for update:', this.newAtom.properties.shellies.uuid);
+    let rq: {
+      readout: string,
+      args: {
+        selector: {
+          properties: {
+            shellies: {
+              uuid: string
+            }
+          }
+        }
+      }
+    } = {
+      readout: 'retrieve_atom_features_nested',
+      args: {
+        selector: {
+          properties: {
+            shellies: {
+              uuid: this.atomForUpdate.properties.shellies.uuid
+            }
+          }
+        }
+      }
+    };
 
-    // Placeholder: For now, just log the action
-    // In a real implementation, this would populate the form with existing atom data
+    this.atomService.readAtoms(rq).subscribe({
+      next: (data) => {
+        this.atomForUpdate = this.atomDataToCamelCase(data['result'][0]);
+        this.atomForUpdate = this.atomDataFeaturesToString(this.atomForUpdate);
+        console.log('Atom loaded successfully:', this.atomForUpdate);
+      },
+      error: (error) => {
+        console.error('There was an error retrieving the atom data:', error);
+      }
+    });
   }
 
   /**
-   * Update an existing atom (placeholder for now)
+   * Update atom features (copied from control.detail)
    */
-  updateAtom() {
-    if (!this.newAtom.properties.shellies.uuid) {
+  updateAtomFeatures() {
+    if (!this.atomForUpdate.properties.shellies.uuid) {
       console.error('UUID is required to update atom');
       return;
     }
 
-    // TODO: Implement actual atom update logic
-    // This would typically call atomService.updateAtom(uuid, atomData)
-    console.log('Updating atom:', this.newAtom.properties.shellies.uuid, this.newAtom);
+    let mq: {
+      modification: string,
+      args: {
+        selector: {
+          properties: {
+            shellies: {
+              uuid: string
+            }
+          }
+        },
+        inputs: {
+          labels: string[],
+          properties: {
+            nuclearies: any
+          }
+        }
+      }
+    } = {
+      modification: 'update_atom_features',
+      args: {
+        selector: {
+          properties: {
+            shellies: {
+              uuid: this.atomForUpdate.properties.shellies.uuid
+            }
+          }
+        },
+        inputs: {
+          labels: this.atomForUpdate.labels,
+          properties: {
+            nuclearies: {
+              title: this.atomForUpdate.properties.nuclearies.title,
+              description: this.atomForUpdate.properties.nuclearies.description,
+              content: this.str2json(this.atomForUpdate.properties.nuclearies.content),
+              constants: this.atomForUpdate.properties.nuclearies.constants,
+              operation: this.str2json(this.atomForUpdate.properties.nuclearies.operation)
+            }
+          }
+        }
+      }
+    };
 
-    // Placeholder: For now, just log the action
-    // In a real implementation, this would send an update request to the backend
+    this.atomService.modifyAtoms(mq).subscribe({
+      next: (data) => {
+        console.log('Atom data updated successfully:', data);
+      },
+      error: (error) => {
+        console.error('There was an error updating the atom data:', error);
+      }
+    });
+  }
+
+  /**
+   * Destroy atom (copied from control.detail)
+   */
+  destroyAtoms() {
+    if (!this.atomForUpdate.properties.shellies.uuid) {
+      console.error('UUID is required to destroy atom');
+      return;
+    }
+
+    let mq: {
+      modification: string,
+      args: {
+        selector: {
+          properties: {
+            shellies: {
+              uuid: string
+            }
+          }
+        }
+      }
+    } = {
+      modification: 'destroy_atoms',
+      args: {
+        selector: {
+          properties: {
+            shellies: {
+              uuid: this.atomForUpdate.properties.shellies.uuid
+            }
+          }
+        }
+      }
+    };
+
+    this.atomService.modifyAtoms(mq).subscribe({
+      next: (data) => {
+        console.log('Atom destroyed successfully:', data);
+        // Reset the atom after successful destruction
+        this.atomForUpdate = this.initializeUpdateAtom();
+      },
+      error: (error) => {
+        console.error('There was an error destroying the atom:', error);
+      }
+    });
+  }
+
+  // Helper methods (copied from control.detail)
+  private atomDataToCamelCase(data: any) {
+    data.properties.shellies.changeHistory = data.properties.shellies.change_history;
+    delete data.properties.shellies.change_history;
+    return data;
+  }
+
+  private atomDataFeaturesToString(atom: Atom) {
+    if (typeof atom.properties.nuclearies.content === 'object') {
+      if (atom.properties.nuclearies.content) {
+        atom.properties.nuclearies.content = JSON.stringify(atom.properties.nuclearies.content, null, 2);
+      } else {
+        atom.properties.nuclearies.content = '';
+      }
+    } else {
+      atom.properties.nuclearies.content = atom.properties.nuclearies.content.toString();
+    }
+
+    if (typeof atom.properties.nuclearies.operation === 'object') {
+      if (atom.properties.nuclearies.operation) {
+        atom.properties.nuclearies.operation = JSON.stringify(atom.properties.nuclearies.operation, null, 2);
+      } else {
+        atom.properties.nuclearies.operation = '';
+      }
+    } else {
+      atom.properties.nuclearies.operation = atom.properties.nuclearies.operation.toString();
+    }
+
+    if (typeof atom.properties.nuclearies.constants === 'object') {
+      if (atom.properties.nuclearies.constants) {
+        atom.properties.nuclearies.constants = JSON.stringify(atom.properties.nuclearies.constants, null, 2);
+      } else {
+        atom.properties.nuclearies.constants = '';
+      }
+    } else {
+      atom.properties.nuclearies.constants = atom.properties.nuclearies.constants.toString();
+    }
+
+    return atom;
+  }
+
+  private str2json(value: any) {
+    let result = value;
+    if (typeof value === 'string' && (value.startsWith('{') || value.startsWith('['))) {
+      result = JSON.parse(value);
+    }
+    return result;
   }
 }

@@ -96,54 +96,142 @@
               </button>
             </div>
 
-            <!-- Update Atom Mode -->
+            <!-- Update Atom Mode - Complete Atom Features (copied from control.detail) -->
             <div *ngSwitchCase="SidebarMode.UPDATE_ATOM">
               <p class="text-muted small">
-                Update an existing atom
+                Get and update your Atom
               </p>
 
-              <!-- Search for existing atom first -->
+              <!-- Atom UUID with Get Button -->
               <c-input-group class="mb-3">
-                <span cInputGroupText>Search UUID</span>
+                <span cInputGroupText>Atom UUID</span>
                 <input
                   cFormControl
-                  placeholder="Enter atom UUID to update"
-                  [(ngModel)]="newAtom.properties.shellies.uuid"/>
+                  placeholder=""
+                  [(ngModel)]="atomForUpdate.properties.shellies.uuid"/>
+                <button
+                  cButton
+                  color="primary"
+                  type="button"
+                  variant="outline"
+                  (click)="retrieveAtomFeatures()">
+                  Get Atom
+                </button>
               </c-input-group>
 
-              <!-- Same form fields but for updating -->
+              <!-- Stored At (read-only) -->
               <c-input-group class="mb-3">
-                <span cInputGroupText>Title</span>
-                <input
-                  cFormControl
-                  placeholder="Update Atom's title here."
-                  [(ngModel)]="newAtom.properties.nuclearies.title"/>
+                <span cInputGroupText>Stored At</span>
+                <span cInputGroupText>{{ atomForUpdate.properties.shellies.changeHistory }}</span>
               </c-input-group>
 
+              <!-- Labels -->
               <c-input-group class="mb-3">
                 <span cInputGroupText>Labels</span>
                 <input
                   cFormControl
-                  placeholder="Update Atom's labels here."
-                  [(ngModel)]="newAtom.labels"
-                  [ngModelOptions]="{ standalone: true }"
-                  (ngModelChange)="newAtom.labels = $event.split(',')"/>
+                  placeholder=""
+                  [(ngModel)]="atomForUpdate.labels"/>
               </c-input-group>
 
-              <button
-                type="button"
-                class="btn btn-warning btn-sm w-100 mb-2"
-                (click)="loadAtomForUpdate()">
-                Load Atom
-              </button>
+              <!-- Bonds -->
+              <c-input-group class="mb-3">
+                <span cInputGroupText>Bonds</span>
+                <input
+                  cFormControl
+                  placeholder=""
+                  [(ngModel)]="atomForUpdate.bonds"/>
+              </c-input-group>
 
-              <button
-                type="button"
-                class="btn btn-success btn-sm w-100"
-                (click)="updateAtom()"
-                [disabled]="!newAtom.properties.shellies.uuid">
-                Update Atom
-              </button>
+              <!-- Title -->
+              <c-input-group class="mb-3">
+                <span cInputGroupText>Title</span>
+                <input
+                  cFormControl
+                  placeholder=""
+                  [(ngModel)]="atomForUpdate.properties.nuclearies.title"/>
+              </c-input-group>
+
+              <!-- Description -->
+              <c-input-group class="mb-3">
+                <span cInputGroupText>Description</span>
+                <input
+                  cFormControl
+                  placeholder=""
+                  [(ngModel)]="atomForUpdate.properties.nuclearies.description"/>
+              </c-input-group>
+
+              <!-- Content (with smart text/textarea switching) -->
+              <c-input-group class="mb-3">
+                <span cInputGroupText>Content</span>
+                <input
+                  *ngIf="!atomForUpdate.properties.nuclearies.content.includes('\n')"
+                  cFormControl
+                  placeholder=""
+                  [(ngModel)]="atomForUpdate.properties.nuclearies.content"/>
+                <textarea
+                  *ngIf="atomForUpdate.properties.nuclearies.content.includes('\n')"
+                  cFormControl
+                  placeholder=""
+                  [(ngModel)]="atomForUpdate.properties.nuclearies.content"
+                  style="height: 150px;">
+                </textarea>
+              </c-input-group>
+
+              <!-- Operation (with smart text/textarea switching) -->
+              <c-input-group class="mb-3">
+                <span cInputGroupText>Operation</span>
+                <input
+                  *ngIf="!atomForUpdate.properties.nuclearies.operation.includes('\n')"
+                  cFormControl
+                  placeholder=""
+                  [(ngModel)]="atomForUpdate.properties.nuclearies.operation"/>
+                <textarea
+                  *ngIf="atomForUpdate.properties.nuclearies.operation.includes('\n')"
+                  cFormControl
+                  placeholder=""
+                  [(ngModel)]="atomForUpdate.properties.nuclearies.operation"
+                  style="height: 150px;">
+                </textarea>
+              </c-input-group>
+
+              <!-- Constants (with smart text/textarea switching) -->
+              <c-input-group class="mb-3">
+                <span cInputGroupText>Constants</span>
+                <input
+                  *ngIf="!atomForUpdate.properties.nuclearies.constants.includes('\n')"
+                  cFormControl
+                  placeholder=""
+                  [(ngModel)]="atomForUpdate.properties.nuclearies.constants"/>
+                <textarea
+                  *ngIf="atomForUpdate.properties.nuclearies.constants.includes('\n')"
+                  cFormControl
+                  placeholder=""
+                  [(ngModel)]="atomForUpdate.properties.nuclearies.constants"
+                  style="height: 150px;">
+                </textarea>
+              </c-input-group>
+
+              <!-- Action Buttons -->
+              <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+                <button
+                  cButton
+                  color="primary"
+                  type="button"
+                  variant="outline"
+                  (click)="updateAtomFeatures()">
+                  Update Atom
+                </button>
+
+                <button
+                  cButton
+                  color="primary"
+                  type="button"
+                  variant="outline"
+                  (click)="destroyAtoms()">
+                  Destroy Atom
+                </button>
+              </div>
             </div>
           </div>
         </div>
