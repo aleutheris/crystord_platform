@@ -10,8 +10,6 @@ import { AreaExtra } from '../config/rete-config';
   providedIn: 'root'
 })
 export class GraphLayoutService {
-  // Always re-initialize plugin and applier for fresh graph
-
   constructor() { }
 
   async rearrangeGraph(
@@ -22,7 +20,6 @@ export class GraphLayoutService {
       return;
     }
 
-    // Always re-initialize plugin and applier for fresh graph
     const arrange = new AutoArrangePlugin<Schemes>();
     arrange.addPreset(ArrangePresets.classic.setup());
     area.use(arrange);

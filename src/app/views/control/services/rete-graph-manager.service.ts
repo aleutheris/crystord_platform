@@ -71,27 +71,10 @@ export class ReteGraphManagerService {
   this.area.use(render);
   this.area.use(connection);
 
-    // Add connection creation logging
-    // Override the editor's addConnection method to log connections
+    // Override the editor's addConnection method without logging
     const originalAddConnection = this.editor.addConnection.bind(this.editor);
     this.editor.addConnection = async (connection: any) => {
-      const result = await originalAddConnection(connection);
-
-      // Log the connection creation
-      const sourceNode = this.editor.getNode(connection.source);
-      const targetNode = this.editor.getNode(connection.target);
-
-      console.log('🔗 Connection created:', {
-        connection: connection,
-        sourceNode: sourceNode,
-        targetNode: targetNode,
-        sourceOutput: connection.sourceOutput,
-        targetInput: connection.targetInput
-      });
-
-      console.log(`Connection created from ${sourceNode?.label || 'Unknown'} (${connection.sourceOutput}) to ${targetNode?.label || 'Unknown'} (${connection.targetInput})`);
-
-      return result;
+      return await originalAddConnection(connection);
     };
 
     // Setup node selection with logging
@@ -167,7 +150,7 @@ export class ReteGraphManagerService {
 
       // Add input and output sockets for connections
       node.addOutput('output', new ClassicPreset.Output(socket));
-      node.addInput('input', new ClassicPreset.Input(socket));
+      node.addInput('input', new ClassicPreset.Input(socket, "", true));
 
       // Set required width/height properties for plugin compatibility
       node.width = LAYOUT_CONSTANTS.NODE_WIDTH;
