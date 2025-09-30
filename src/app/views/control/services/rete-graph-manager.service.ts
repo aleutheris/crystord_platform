@@ -1,9 +1,11 @@
 import { Injectable, Injector } from '@angular/core';
 import { NodeEditor, ClassicPreset } from 'rete';
 import { AreaPlugin, AreaExtensions } from 'rete-area-plugin';
+import { Schemes, Node, Connection } from '../graph/rete-schemes';
 import { ConnectionPlugin, Presets as ConnectionPresets } from 'rete-connection-plugin';
 import { AngularPlugin, Presets } from 'rete-angular-plugin/18';
-import { Schemes, AreaExtra, LAYOUT_CONSTANTS } from '../config/rete-config';
+import { AngularArea2D } from 'rete-angular-plugin/18';
+import { AreaExtra, LAYOUT_CONSTANTS } from '../config/rete-config';
 import { Atom } from '../atomhall/atom.model';
 import { NodeAtomMappingService } from './node-atom-mapping.service';
 import { AtomSelectionService } from './atom-selection.service';
@@ -12,6 +14,7 @@ import { AtomSelectionService } from './atom-selection.service';
   providedIn: 'root'
 })
 export class ReteGraphManagerService {
+  // Use unified Schemes type for plugin setup
   private editor!: NodeEditor<Schemes>;
   private area!: AreaPlugin<Schemes, AreaExtra>;
   private selector!: any;
@@ -54,19 +57,19 @@ export class ReteGraphManagerService {
       }
     }
 
-    // Initialize editor and rendering area
     this.editor = new NodeEditor<Schemes>();
     this.area = new AreaPlugin<Schemes, AreaExtra>(container);
 
-    const render = new AngularPlugin<Schemes, AreaExtra>({ injector: this.injector });
-    render.addPreset(Presets.classic.setup());
+    // Use AngularArea2D<Schemes> for plugin and preset generics
+    const render = new AngularPlugin<Schemes, AngularArea2D<Schemes>>({ injector: this.injector });
+    render.addPreset(Presets.classic.setup<Schemes, AngularArea2D<Schemes>>());
 
     const connection = new ConnectionPlugin<Schemes, AreaExtra>();
     connection.addPreset(ConnectionPresets.classic.setup());
 
-    this.editor.use(this.area);
-    this.area.use(render);
-    this.area.use(connection);
+  this.editor.use(this.area);
+  this.area.use(render);
+  this.area.use(connection);
 
     // Add connection creation logging
     // Override the editor's addConnection method to log connections
@@ -154,16 +157,21 @@ export class ReteGraphManagerService {
     this.editor.clear();
 
     // Create nodes for each atom
-    const nodeMap = new Map<string, ClassicPreset.Node>();
+    const nodeMap = new Map<string, Node>();
     const socket = new ClassicPreset.Socket('socket');
 
     for (let i = 0; i < atomsFeatures.length; i++) {
       const atom = atomsFeatures[i];
-      const node = new ClassicPreset.Node(atom.properties.nuclearies.title || `Atom ${i}`);
+      // Create node using extended Node class
+      const node = new Node(atom.properties.nuclearies.title || `Atom ${i}`);
 
       // Add input and output sockets for connections
       node.addOutput('output', new ClassicPreset.Output(socket));
       node.addInput('input', new ClassicPreset.Input(socket));
+
+      // Set required width/height properties for plugin compatibility
+      node.width = LAYOUT_CONSTANTS.NODE_WIDTH;
+      node.height = LAYOUT_CONSTANTS.NODE_HEIGHT;
 
       await this.editor.addNode(node);
       nodeMap.set(atom.properties.shellies.uuid, node);
@@ -191,7 +199,7 @@ export class ReteGraphManagerService {
    */
   private async createConnections(
     atomsFeatures: Atom[],
-    nodeMap: Map<string, ClassicPreset.Node>
+  nodeMap: Map<string, Node>
   ): Promise<void> {
     for (const atom of atomsFeatures) {
       const sourceNode = nodeMap.get(atom.properties.shellies.uuid);
@@ -200,7 +208,7 @@ export class ReteGraphManagerService {
       for (const bond of atom.bonds) {
         const targetNode = nodeMap.get(bond.uuid);
         if (targetNode && sourceNode !== targetNode) {
-          const connection = new ClassicPreset.Connection(
+          const connection = new Connection(
             sourceNode,
             'output',
             targetNode,
