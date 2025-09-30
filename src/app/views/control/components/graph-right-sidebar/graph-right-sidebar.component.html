@@ -183,12 +183,12 @@
               <c-input-group class="mb-3">
                 <span cInputGroupText>Operation</span>
                 <input
-                  *ngIf="!atomForUpdate.properties.nuclearies.operation.includes('\n')"
+                  *ngIf="!(atomForUpdate.properties.nuclearies.operation ?? '').includes('\n')"
                   cFormControl
                   placeholder=""
                   [(ngModel)]="atomForUpdate.properties.nuclearies.operation"/>
                 <textarea
-                  *ngIf="atomForUpdate.properties.nuclearies.operation.includes('\n')"
+                  *ngIf="(atomForUpdate.properties.nuclearies.operation ?? '').includes('\n')"
                   cFormControl
                   placeholder=""
                   [(ngModel)]="atomForUpdate.properties.nuclearies.operation"
@@ -200,12 +200,12 @@
               <c-input-group class="mb-3">
                 <span cInputGroupText>Constants</span>
                 <input
-                  *ngIf="!atomForUpdate.properties.nuclearies.constants.includes('\n')"
+                  *ngIf="!(atomForUpdate.properties.nuclearies.constants ?? '').includes('\n')"
                   cFormControl
                   placeholder=""
                   [(ngModel)]="atomForUpdate.properties.nuclearies.constants"/>
                 <textarea
-                  *ngIf="atomForUpdate.properties.nuclearies.constants.includes('\n')"
+                  *ngIf="(atomForUpdate.properties.nuclearies.constants ?? '').includes('\n')"
                   cFormControl
                   placeholder=""
                   [(ngModel)]="atomForUpdate.properties.nuclearies.constants"

@@ -9,11 +9,13 @@ import { AreaExtra, LAYOUT_CONSTANTS } from '../config/rete-config';
 import { Atom } from '../atomhall/atom.model';
 import { NodeAtomMappingService } from './node-atom-mapping.service';
 import { AtomSelectionService } from './atom-selection.service';
+import { DockPlugin, DockPresets } from 'rete-dock-plugin';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ReteGraphManagerService {
+  private dock?: DockPlugin<Schemes>;
   // Use unified Schemes type for plugin setup
   private editor!: NodeEditor<Schemes>;
   private area!: AreaPlugin<Schemes, AreaExtra>;
@@ -70,6 +72,39 @@ export class ReteGraphManagerService {
   this.editor.use(this.area);
   this.area.use(render);
   this.area.use(connection);
+
+  // Initialize dock plugin and add preset
+  this.dock = new DockPlugin<Schemes>();
+  this.dock.addPreset(DockPresets.classic.setup({ area: this.area, size: 100, scale: 0.6 }));
+  this.area.use(this.dock);
+
+  // Register node factories for drag-and-drop creation
+  this.dock.add(() => {
+    // Create a node with all Atom-compatible properties
+    const node = new Node('Atom');
+    // Add input and output sockets for connections
+    const socket = new ClassicPreset.Socket('socket');
+    node.addOutput('output', new ClassicPreset.Output(socket));
+    node.addInput('input', new ClassicPreset.Input(socket, '', true));
+    // Set required width/height properties for plugin compatibility
+    node.width = LAYOUT_CONSTANTS.NODE_WIDTH;
+    node.height = LAYOUT_CONSTANTS.NODE_HEIGHT;
+    // Attach Atom-like properties for sidebar compatibility
+    (node as any).labels = [];
+    (node as any).bonds = [];
+    (node as any).properties = {
+      shellies: { uuid: '', changeHistory: [] },
+      nuclearies: {
+        title: 'Atom',
+        description: '',
+        content: '',
+        constants: '',
+        operation: ''
+      },
+      ionies: {}
+    };
+    return node;
+  });
 
     // Override the editor's addConnection method without logging
     const originalAddConnection = this.editor.addConnection.bind(this.editor);
