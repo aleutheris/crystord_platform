@@ -10,8 +10,7 @@ import { AreaExtra } from '../config/rete-config';
   providedIn: 'root'
 })
 export class GraphLayoutService {
-  private arrange?: AutoArrangePlugin<Schemes>;
-  private applier?: ArrangeAppliers.TransitionApplier<Schemes, never>;
+  // Always re-initialize plugin and applier for fresh graph
 
   constructor() { }
 
@@ -23,25 +22,20 @@ export class GraphLayoutService {
       return;
     }
 
-    // Initialize AutoArrangePlugin if not already
-    if (!this.arrange) {
-      this.arrange = new AutoArrangePlugin<Schemes>();
-      this.arrange.addPreset(ArrangePresets.classic.setup());
-      area.use(this.arrange);
-    }
+    // Always re-initialize plugin and applier for fresh graph
+    const arrange = new AutoArrangePlugin<Schemes>();
+    arrange.addPreset(ArrangePresets.classic.setup());
+    area.use(arrange);
 
-    // Setup animated transition applier if not already
-    if (!this.applier) {
-      this.applier = new ArrangeAppliers.TransitionApplier<Schemes, never>({
-        duration: 500,
-        timingFunction: (t) => t,
-        async onTick() {
-          await AreaExtensions.zoomAt(area, editor.getNodes());
-        }
-      });
-    }
+    const applier = new ArrangeAppliers.TransitionApplier<Schemes, never>({
+      duration: 500,
+      timingFunction: (t) => t,
+      async onTick() {
+        await AreaExtensions.zoomAt(area, editor.getNodes());
+      }
+    });
 
-    await this.arrange.layout({ applier: this.applier });
+    await arrange.layout({ applier });
     await AreaExtensions.zoomAt(area, editor.getNodes());
   }
 }
