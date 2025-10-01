@@ -109,6 +109,22 @@ export class ReteGraphManagerService {
 
     // 3. Create a node and reference the Atom by UUID
     const node = new Node(atom.properties.nuclearies.title); // Use Atom title for node label
+    // Add title input control to allow editing atom title
+    // Add title input control to allow editing atom title
+    const titleCtrl = new ClassicPreset.InputControl('text', {
+      initial: atom.properties.nuclearies.title,
+      change: (val: string) => {
+        node.label = val;
+        const all = this.atomStore.getAtomsValue();
+        const updated = all.map(a =>
+          a.properties.shellies.uuid === uuid
+            ? { ...a, properties: { ...a.properties, nuclearies: { ...a.properties.nuclearies, title: val } } }
+            : a
+        );
+        this.atomStore.setAtoms(updated);
+      }
+    });
+    node.addControl('title', titleCtrl);
     const socket = new ClassicPreset.Socket('socket');
     node.addOutput('output', new ClassicPreset.Output(socket));
     node.addInput('input', new ClassicPreset.Input(socket, '', true));
@@ -156,6 +172,16 @@ export class ReteGraphManagerService {
   originalRemove(entity);
     };
 
+    // Keep node labels in sync with atom titles in the store
+    this.atomStore.getAtoms$().subscribe(atoms => {
+      this.editor.getNodes().forEach(node => {
+        const uuid = (node as any).atomUuid;
+        const atom = this.atomStore.getAtomByUuid(uuid);
+        if (atom && node.label !== atom.properties.nuclearies.title) {
+          node.label = atom.properties.nuclearies.title;
+        }
+      });
+    });
     return true;
   }
 
@@ -177,7 +203,23 @@ export class ReteGraphManagerService {
     for (let i = 0; i < atomsFeatures.length; i++) {
       const atom = atomsFeatures[i];
       // Create node using extended Node class
-      const node = new Node(atom.properties.nuclearies.title || `Atom ${i}`);
+      const initialTitle = atom.properties.nuclearies.title || `Atom ${i}`;
+      const node = new Node(initialTitle);
+      // Add title input control for editing
+      const titleCtrl = new ClassicPreset.InputControl('text', {
+        initial: initialTitle,
+        change: (val: string) => {
+          node.label = val;
+          const all = this.atomStore.getAtomsValue();
+          const updated = all.map(a =>
+            a.properties.shellies.uuid === atom.properties.shellies.uuid
+              ? { ...a, properties: { ...a.properties, nuclearies: { ...a.properties.nuclearies, title: val } } }
+              : a
+          );
+          this.atomStore.setAtoms(updated);
+        }
+      });
+      node.addControl('title', titleCtrl);
 
       // Add input and output sockets for connections
       node.addOutput('output', new ClassicPreset.Output(socket));
