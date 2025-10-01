@@ -105,8 +105,6 @@ export class ReteGraphManagerService {
     if (!existing.some((a: Atom) => a.properties.shellies.uuid === uuid)) {
       const updated: Atom[] = [...existing, atom];
       this.atomStore.setAtoms(updated);
-      console.log('[STORE] Atom added via AtomStoreService:', atom);
-      console.log('[STORE] Current atoms in AtomStoreService:', updated);
     }
 
     // 3. Create a node and reference the Atom by UUID
@@ -119,8 +117,7 @@ export class ReteGraphManagerService {
   (node as any).atomUuid = uuid;
   // Register node-to-atom mapping for dock-created node
   this.nodeAtomMapping.register(node.id, uuid);
-  // LOGGING: Node created and linked to Atom
-  console.log('[DOCK] Atom node created via drag-and-drop:', node, '-> UUID:', uuid);
+  // ...existing code...
     return node;
   });
 
@@ -143,24 +140,7 @@ export class ReteGraphManagerService {
     this.selector.add = (entity: any, accumulate?: boolean) => {
       originalAdd(entity, accumulate);
 
-      // Log selection
-      console.log('Node selected:', entity);
-      const selectedNodes = this.getSelectedNodes();
-      console.log('Currently selected nodes:', selectedNodes);
-
-      if (selectedNodes.length > 0) {
-        console.log('Selected node details:');
-        selectedNodes.forEach((node, index) => {
-          console.log(`Node ${index + 1}:`, {
-            id: node.id,
-            label: node.label,
-            position: node.position,
-            inputs: node.inputs,
-            outputs: node.outputs,
-            controls: node.controls
-          });
-        });
-      }
+      // ...existing code...
 
       if (entity && entity.id) {
         const uuid = this.nodeAtomMapping.getUuidByNodeId(entity.id);
@@ -173,9 +153,7 @@ export class ReteGraphManagerService {
     };
 
     this.selector.remove = (entity: any) => {
-      originalRemove(entity);
-      console.log('Node unselected:', entity);
-      console.log('Remaining selected nodes:', this.getSelectedNodes());
+  originalRemove(entity);
     };
 
     return true;
