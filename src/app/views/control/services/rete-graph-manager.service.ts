@@ -8,6 +8,7 @@ import { AngularArea2D } from 'rete-angular-plugin/18';
 import { AreaExtra, LAYOUT_CONSTANTS } from '../config/rete-config';
 import { Atom } from '../atomhall/atom.model';
 import { NodeAtomMappingService } from './node-atom-mapping.service';
+import { AtomStoreService } from './atom-store.service';
 import { AtomSelectionService } from './atom-selection.service';
 import { DockPlugin, DockPresets } from 'rete-dock-plugin';
 
@@ -24,7 +25,8 @@ export class ReteGraphManagerService {
   constructor(
     private injector: Injector,
     private nodeAtomMapping: NodeAtomMappingService,
-    private atomSelection: AtomSelectionService
+    private atomSelection: AtomSelectionService,
+    private atomStore: AtomStoreService
   ) {}
 
   /**
@@ -80,29 +82,45 @@ export class ReteGraphManagerService {
 
   // Register node factories for drag-and-drop creation
   this.dock.add(() => {
-    // Create a node with all Atom-compatible properties
-    const node = new Node('Atom');
-    // Add input and output sockets for connections
+    // 1. Create a new Atom object with the same structure as database-fetched Atoms
+    const uuid = crypto.randomUUID();
+    const atom: Atom = {
+      labels: ['label1'], // Always a single label for dock-created atoms
+      bonds: [],
+      properties: {
+        shellies: { uuid, changeHistory: [] },
+        nuclearies: {
+          title: 'New Atom', // Always 'New Atom' for dock-created atoms
+          description: '',
+          content: '',
+          constants: '',
+          operation: ''
+        },
+        ionies: {}
+      }
+    };
+
+    // 2. Add Atom to the atom store
+    const existing: Atom[] = this.atomStore.getAtomsValue();
+    if (!existing.some((a: Atom) => a.properties.shellies.uuid === uuid)) {
+      const updated: Atom[] = [...existing, atom];
+      this.atomStore.setAtoms(updated);
+      console.log('[STORE] Atom added via AtomStoreService:', atom);
+      console.log('[STORE] Current atoms in AtomStoreService:', updated);
+    }
+
+    // 3. Create a node and reference the Atom by UUID
+    const node = new Node(atom.properties.nuclearies.title); // Use Atom title for node label
     const socket = new ClassicPreset.Socket('socket');
     node.addOutput('output', new ClassicPreset.Output(socket));
     node.addInput('input', new ClassicPreset.Input(socket, '', true));
-    // Set required width/height properties for plugin compatibility
     node.width = LAYOUT_CONSTANTS.NODE_WIDTH;
     node.height = LAYOUT_CONSTANTS.NODE_HEIGHT;
-    // Attach Atom-like properties for sidebar compatibility
-    (node as any).labels = [];
-    (node as any).bonds = [];
-    (node as any).properties = {
-      shellies: { uuid: '', changeHistory: [] },
-      nuclearies: {
-        title: 'Atom',
-        description: '',
-        content: '',
-        constants: '',
-        operation: ''
-      },
-      ionies: {}
-    };
+  (node as any).atomUuid = uuid;
+  // Register node-to-atom mapping for dock-created node
+  this.nodeAtomMapping.register(node.id, uuid);
+  // LOGGING: Node created and linked to Atom
+  console.log('[DOCK] Atom node created via drag-and-drop:', node, '-> UUID:', uuid);
     return node;
   });
 

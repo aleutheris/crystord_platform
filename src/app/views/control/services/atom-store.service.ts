@@ -10,20 +10,34 @@ export class AtomStoreService {
    * Update the atom store with a new list of atoms
    */
   setAtoms(atoms: Atom[]): void {
-    this.atomsSubject.next(atoms);
+  console.log('[AtomStoreService] setAtoms called with:', atoms);
+  this.atomsSubject.next(atoms);
+  console.log('[AtomStoreService] atomsSubject now contains:', this.atomsSubject.getValue());
   }
 
   /**
    * Get all atoms as observable
    */
   getAtoms$(): Observable<Atom[]> {
-    return this.atomsSubject.asObservable();
+  console.log('[AtomStoreService] getAtoms$ called. Current atoms:', this.atomsSubject.getValue());
+  return this.atomsSubject.asObservable();
   }
 
   /**
    * Get atom by UUID
    */
   getAtomByUuid(uuid: string): Atom | undefined {
-    return this.atomsSubject.getValue().find(atom => atom.properties?.shellies?.uuid === uuid);
+  const atoms = this.atomsSubject.getValue();
+  const found = atoms.find(atom => atom.properties?.shellies?.uuid === uuid);
+  console.log(`[AtomStoreService] getAtomByUuid called for uuid: ${uuid}. Found:`, found);
+  return found;
+  }
+  /**
+   * Synchronously get current atoms array
+   */
+  getAtomsValue(): Atom[] {
+    const atoms = this.atomsSubject.getValue();
+    console.log('[AtomStoreService] getAtomsValue():', atoms);
+    return atoms;
   }
 }
