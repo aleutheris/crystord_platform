@@ -49,6 +49,9 @@ import { GraphRightSidebarComponent, GraphSidebarConfig } from '../components/gr
   ]
 })
 export class ControlOverviewComponent {
+  async ngOnInit() {
+    await this.reteManager.initializeReteEditor();
+  }
   searchText: string;
   isSearchTextValid: boolean | undefined = undefined;
   searchKey: string;
