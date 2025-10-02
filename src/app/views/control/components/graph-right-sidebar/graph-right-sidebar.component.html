@@ -150,7 +150,8 @@
                 <input
                   cFormControl
                   placeholder=""
-                  [(ngModel)]="atomForUpdate.properties.nuclearies.title"/>
+                  [(ngModel)]="atomForUpdate.properties.nuclearies.title"
+                  (ngModelChange)="onAtomPropertyChanged()"/>
               </c-input-group>
 
               <!-- Description -->
@@ -169,12 +170,14 @@
                   *ngIf="!atomForUpdate.properties.nuclearies.content.includes('\n')"
                   cFormControl
                   placeholder=""
-                  [(ngModel)]="atomForUpdate.properties.nuclearies.content"/>
+                  [(ngModel)]="atomForUpdate.properties.nuclearies.content"
+                  (ngModelChange)="onAtomPropertyChanged()"/>
                 <textarea
                   *ngIf="atomForUpdate.properties.nuclearies.content.includes('\n')"
                   cFormControl
                   placeholder=""
                   [(ngModel)]="atomForUpdate.properties.nuclearies.content"
+                  (ngModelChange)="onAtomPropertyChanged()"
                   style="height: 150px;">
                 </textarea>
               </c-input-group>

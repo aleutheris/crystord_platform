@@ -3,14 +3,13 @@ import { NodeEditor, ClassicPreset } from 'rete';
 import { AreaPlugin, AreaExtensions } from 'rete-area-plugin';
 import { Schemes, Node, Connection } from '../graph/rete-schemes';
 import { ConnectionPlugin, Presets as ConnectionPresets } from 'rete-connection-plugin';
-import { AngularPlugin, Presets } from 'rete-angular-plugin/18';
-import { AngularArea2D } from 'rete-angular-plugin/18';
+import { AngularPlugin, Presets, AngularArea2D } from 'rete-angular-plugin/18';
+import { DockPlugin, DockPresets } from 'rete-dock-plugin';
 import { AreaExtra, LAYOUT_CONSTANTS } from '../config/rete-config';
 import { Atom } from '../atomhall/atom.model';
 import { NodeAtomMappingService } from './node-atom-mapping.service';
 import { AtomStoreService } from './atom-store.service';
 import { AtomSelectionService } from './atom-selection.service';
-import { DockPlugin, DockPresets } from 'rete-dock-plugin';
 
 @Injectable({
   providedIn: 'root'
@@ -70,72 +69,53 @@ export class ReteGraphManagerService {
 
     const connection = new ConnectionPlugin<Schemes, AreaExtra>();
     connection.addPreset(ConnectionPresets.classic.setup());
+    this.editor.use(this.area);
+    this.area.use(render);
+    this.area.use(connection);
 
-  this.editor.use(this.area);
-  this.area.use(render);
-  this.area.use(connection);
+    // Initialize dock plugin and add preset
+    this.dock = new DockPlugin<Schemes>();
+    this.dock.addPreset(DockPresets.classic.setup({ area: this.area, size: 100, scale: 0.6 }));
+    this.area.use(this.dock);
 
-  // Initialize dock plugin and add preset
-  this.dock = new DockPlugin<Schemes>();
-  this.dock.addPreset(DockPresets.classic.setup({ area: this.area, size: 100, scale: 0.6 }));
-  this.area.use(this.dock);
+    // Register node factories for drag-and-drop creation
+    this.dock.add(() => {
+      const uuid = crypto.randomUUID();
+      const atom: Atom = {
+        labels: ['label1'],
+        bonds: [],
+        properties: {
+          shellies: { uuid, changeHistory: [] },
+          nuclearies: {
+            title: 'New Atom',
+            description: '',
+            content: '',
+            constants: '',
+            operation: ''
+          },
+          ionies: {}
+        }
+      };
 
-  // Register node factories for drag-and-drop creation
-  this.dock.add(() => {
-    // 1. Create a new Atom object with the same structure as database-fetched Atoms
-    const uuid = crypto.randomUUID();
-    const atom: Atom = {
-      labels: ['label1'], // Always a single label for dock-created atoms
-      bonds: [],
-      properties: {
-        shellies: { uuid, changeHistory: [] },
-        nuclearies: {
-          title: 'New Atom', // Always 'New Atom' for dock-created atoms
-          description: '',
-          content: '',
-          constants: '',
-          operation: ''
-        },
-        ionies: {}
+      const existing = this.atomStore.getAtomsValue();
+      if (!existing.some(a => a.properties.shellies.uuid === uuid)) {
+        this.atomStore.setAtoms([...existing, atom]);
       }
-    };
 
-    // 2. Add Atom to the atom store
-    const existing: Atom[] = this.atomStore.getAtomsValue();
-    if (!existing.some((a: Atom) => a.properties.shellies.uuid === uuid)) {
-      const updated: Atom[] = [...existing, atom];
-      this.atomStore.setAtoms(updated);
-    }
+      const node = new Node(atom.properties.nuclearies.title);
+      const contentCtrl = this.createContentControl(atom.properties.nuclearies.content, uuid);
+      node.addControl('content', contentCtrl);
 
-    // 3. Create a node and reference the Atom by UUID
-    const node = new Node(atom.properties.nuclearies.title); // Use Atom title for node label
-    // Add title input control to allow editing atom title
-    // Add title input control to allow editing atom title
-    const titleCtrl = new ClassicPreset.InputControl('text', {
-      initial: atom.properties.nuclearies.title,
-      change: (val: string) => {
-        node.label = val;
-        const all = this.atomStore.getAtomsValue();
-        const updated = all.map(a =>
-          a.properties.shellies.uuid === uuid
-            ? { ...a, properties: { ...a.properties, nuclearies: { ...a.properties.nuclearies, title: val } } }
-            : a
-        );
-        this.atomStore.setAtoms(updated);
-      }
+      const socket = new ClassicPreset.Socket('socket');
+      node.addOutput('output', new ClassicPreset.Output(socket));
+      node.addInput('input', new ClassicPreset.Input(socket, '', true));
+      node.width = LAYOUT_CONSTANTS.NODE_WIDTH;
+      node.height = LAYOUT_CONSTANTS.NODE_HEIGHT + 40;
+      (node as any).atomUuid = uuid;
+
+      this.nodeAtomMapping.register(node.id, uuid);
+      return node;
     });
-    node.addControl('title', titleCtrl);
-    const socket = new ClassicPreset.Socket('socket');
-    node.addOutput('output', new ClassicPreset.Output(socket));
-    node.addInput('input', new ClassicPreset.Input(socket, '', true));
-    node.width = LAYOUT_CONSTANTS.NODE_WIDTH;
-    node.height = LAYOUT_CONSTANTS.NODE_HEIGHT;
-  (node as any).atomUuid = uuid;
-  // Register node-to-atom mapping for dock-created node
-  this.nodeAtomMapping.register(node.id, uuid);
-  // ...existing code...
-    return node;
-  });
 
     // Override the editor's addConnection method without logging
     const originalAddConnection = this.editor.addConnection.bind(this.editor);
@@ -169,7 +149,7 @@ export class ReteGraphManagerService {
     };
 
     this.selector.remove = (entity: any) => {
-  originalRemove(entity);
+      originalRemove(entity);
     };
 
     // Keep node labels in sync with atom titles in the store
@@ -177,8 +157,35 @@ export class ReteGraphManagerService {
       this.editor.getNodes().forEach(node => {
         const uuid = (node as any).atomUuid;
         const atom = this.atomStore.getAtomByUuid(uuid);
-        if (atom && node.label !== atom.properties.nuclearies.title) {
+        if (!atom) return;
+        if (node.label !== atom.properties.nuclearies.title) {
           node.label = atom.properties.nuclearies.title;
+        }
+
+        const controlsMap = (node as any).controls;
+        if (controlsMap && typeof controlsMap.get === 'function') {
+          const control = controlsMap.get('content');
+          if (control) {
+            const desired = atom.properties.nuclearies.content;
+            // Prefer setValue if available
+            if (typeof (control as any).setValue === 'function') {
+              (control as any).setValue(desired);
+            } else if ('value' in (control as any)) {
+              // Fallback: directly assign value
+              (control as any).value = desired;
+            } else if ((control as any).props && 'initial' in (control as any).props) {
+              // Last resort mutate initial (some presets read from props.initial on re-render)
+              (control as any).props.initial = desired;
+            }
+            // Attempt to trigger control-specific update API
+            if (typeof (control as any).update === 'function') {
+              (control as any).update();
+            }
+            // Force node re-render so Angular plugin redraws the control
+            try {
+              (this.area as any).update && (this.area as any).update('node', node.id);
+            } catch {}
+          }
         }
       });
     });
@@ -202,35 +209,22 @@ export class ReteGraphManagerService {
 
     for (let i = 0; i < atomsFeatures.length; i++) {
       const atom = atomsFeatures[i];
-      // Create node using extended Node class
       const initialTitle = atom.properties.nuclearies.title || `Atom ${i}`;
       const node = new Node(initialTitle);
-      // Add title input control for editing
-      const titleCtrl = new ClassicPreset.InputControl('text', {
-        initial: initialTitle,
-        change: (val: string) => {
-          node.label = val;
-          const all = this.atomStore.getAtomsValue();
-          const updated = all.map(a =>
-            a.properties.shellies.uuid === atom.properties.shellies.uuid
-              ? { ...a, properties: { ...a.properties, nuclearies: { ...a.properties.nuclearies, title: val } } }
-              : a
-          );
-          this.atomStore.setAtoms(updated);
-        }
-      });
-      node.addControl('title', titleCtrl);
+      const contentCtrl = this.createContentControl(
+        atom.properties.nuclearies.content,
+        atom.properties.shellies.uuid
+      );
+      node.addControl('content', contentCtrl);
 
-      // Add input and output sockets for connections
       node.addOutput('output', new ClassicPreset.Output(socket));
-      node.addInput('input', new ClassicPreset.Input(socket, "", true));
-
-      // Set required width/height properties for plugin compatibility
+      node.addInput('input', new ClassicPreset.Input(socket, '', true));
       node.width = LAYOUT_CONSTANTS.NODE_WIDTH;
-      node.height = LAYOUT_CONSTANTS.NODE_HEIGHT;
+      node.height = LAYOUT_CONSTANTS.NODE_HEIGHT + 40;
 
       await this.editor.addNode(node);
       nodeMap.set(atom.properties.shellies.uuid, node);
+      (node as any).atomUuid = atom.properties.shellies.uuid;
       this.nodeAtomMapping.register(node.id, atom.properties.shellies.uuid);
 
       // Position nodes in a grid layout initially
@@ -255,7 +249,7 @@ export class ReteGraphManagerService {
    */
   private async createConnections(
     atomsFeatures: Atom[],
-  nodeMap: Map<string, Node>
+    nodeMap: Map<string, Node>
   ): Promise<void> {
     for (const atom of atomsFeatures) {
       const sourceNode = nodeMap.get(atom.properties.shellies.uuid);
@@ -325,5 +319,47 @@ export class ReteGraphManagerService {
    */
   getConnections(): any[] {
     return this.editor ? this.editor.getConnections() : [];
+  }
+
+  private createContentControl(initialContent: string, atomUuid: string): ClassicPreset.InputControl<'text'> {
+    const control = new ClassicPreset.InputControl('text', {
+      initial: initialContent ?? '',
+      change: (val: string) => this.updateAtomContent(atomUuid, val ?? '')
+    });
+    if (typeof (control as any).setValue === 'function') {
+      (control as any).setValue(initialContent ?? '');
+    }
+    return control;
+  }
+
+  private updateAtomContent(atomUuid: string, content: string): void {
+    const atoms = this.atomStore.getAtomsValue();
+    let changed = false;
+
+    const updatedAtoms = atoms.map(atom => {
+      if (atom.properties.shellies.uuid !== atomUuid) {
+        return atom;
+      }
+
+      if (atom.properties.nuclearies.content === content) {
+        return atom;
+      }
+
+      changed = true;
+      return {
+        ...atom,
+        properties: {
+          ...atom.properties,
+          nuclearies: {
+            ...atom.properties.nuclearies,
+            content
+          }
+        }
+      };
+    });
+
+    if (changed) {
+      this.atomStore.setAtoms(updatedAtoms);
+    }
   }
 }

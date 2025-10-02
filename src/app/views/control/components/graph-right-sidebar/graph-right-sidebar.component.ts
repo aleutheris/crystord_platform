@@ -114,6 +114,17 @@ export class GraphRightSidebarComponent implements AfterContentInit {
         }
       }
     });
+
+    this.atomStore.getAtoms$().subscribe(() => {
+      if (!this.selectedAtomUuid) {
+        return;
+      }
+
+      const atom = this.atomStore.getAtomByUuid(this.selectedAtomUuid);
+      if (atom) {
+        this.atomForUpdate = atom;
+      }
+    });
   }
 
   ngOnInit() {
@@ -415,6 +426,15 @@ export class GraphRightSidebarComponent implements AfterContentInit {
         console.error('There was an error destroying the atom:', error);
       }
     });
+  }
+
+  /**
+   * Notify store when atom properties change
+   */
+  onAtomPropertyChanged(): void {
+    if (this.currentMode === SidebarMode.UPDATE_ATOM && this.atomForUpdate.properties.shellies.uuid) {
+      this.atomStore.updateAtom(this.atomForUpdate);
+    }
   }
 
   // Helper methods (copied from control.detail)

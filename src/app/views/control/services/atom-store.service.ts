@@ -10,27 +10,41 @@ export class AtomStoreService {
    * Update the atom store with a new list of atoms
    */
   setAtoms(atoms: Atom[]): void {
-  this.atomsSubject.next(atoms);
+    this.atomsSubject.next(atoms);
   }
 
   /**
    * Get all atoms as observable
    */
   getAtoms$(): Observable<Atom[]> {
-  return this.atomsSubject.asObservable();
+    return this.atomsSubject.asObservable();
   }
 
   /**
    * Get atom by UUID
    */
   getAtomByUuid(uuid: string): Atom | undefined {
-  const atoms = this.atomsSubject.getValue();
-  return atoms.find(atom => atom.properties?.shellies?.uuid === uuid);
+    const atoms = this.atomsSubject.getValue();
+    return atoms.find(atom => atom.properties?.shellies?.uuid === uuid);
   }
+
   /**
    * Synchronously get current atoms array
    */
   getAtomsValue(): Atom[] {
-  return this.atomsSubject.getValue();
+    return this.atomsSubject.getValue();
+  }
+
+  /**
+   * Update a single atom in the store by UUID
+   */
+  updateAtom(updatedAtom: Atom): void {
+    const atoms = this.atomsSubject.getValue();
+    const newAtoms = atoms.map(atom =>
+      atom.properties.shellies.uuid === updatedAtom.properties.shellies.uuid
+        ? updatedAtom
+        : atom
+    );
+    this.atomsSubject.next(newAtoms);
   }
 }
