@@ -10,11 +10,52 @@
     position="fixed">
 
     <!-- Header with title and toggle button -->
-    <c-sidebar-header class="border-bottom d-flex justify-content-between align-items-center">
-      <span *ngIf="isExpanded" class="sidebar-title">{{ config.title }}</span>
+    <c-sidebar-header class="border-bottom d-flex align-items-center gap-2">
+      <span *ngIf="isExpanded" class="sidebar-title me-auto">{{ config.title }}</span>
+
+      <!-- Action buttons moved to header -->
+      <div *ngIf="isExpanded" class="d-flex gap-2">
+        <ng-container [ngSwitch]="currentMode">
+          <!-- Create Mode Button -->
+          <button
+            *ngSwitchCase="SidebarMode.CREATE_ATOM"
+            cButton
+            color="primary"
+            type="button"
+            variant="outline"
+            (click)="formAtoms()"
+            [disabled]="!isCreateAtomButtonEnabled"
+            aria-label="Create Atom">
+            Create
+          </button>
+
+          <!-- Update Mode Buttons -->
+          <ng-container *ngSwitchCase="SidebarMode.UPDATE_ATOM">
+            <button
+              cButton
+              color="primary"
+              type="button"
+              variant="outline"
+              (click)="updateAtomFeatures()"
+              aria-label="Update Atom">
+              Update
+            </button>
+            <button
+              cButton
+              color="primary"
+              type="button"
+              variant="outline"
+              (click)="destroyAtoms()"
+              aria-label="Destroy Atom">
+              Destroy
+            </button>
+          </ng-container>
+        </ng-container>
+      </div>
+
       <button
         type="button"
-        class="btn btn-sm btn-ghost-light sidebar-toggle-btn"
+        class="btn btn-sm btn-ghost-light sidebar-toggle-btn ms-1"
         (click)="toggleSidebar()"
         [attr.aria-label]="isExpanded ? 'Collapse sidebar' : 'Expand sidebar'">
         <svg cIcon
@@ -60,19 +101,6 @@
           <div [ngSwitch]="currentMode">
             <!-- Create Atom Mode -->
             <div *ngSwitchCase="SidebarMode.CREATE_ATOM">
-
-              <!-- Create Atom Button (with same container and style as Update buttons) -->
-              <div class="d-grid gap-2 d-md-flex justify-content-md-start mb-3">
-                <button
-                  cButton
-                  color="primary"
-                  type="button"
-                  variant="outline"
-                  (click)="formAtoms()"
-                  [disabled]="!isCreateAtomButtonEnabled">
-                  Create Atom
-                </button>
-              </div>
 
               <!-- Atom Creation Form -->
               <c-input-group class="mb-3">
@@ -216,26 +244,7 @@
                 </textarea>
               </c-input-group>
 
-              <!-- Action Buttons -->
-              <div class="d-grid gap-2 d-md-flex justify-content-md-start">
-                <button
-                  cButton
-                  color="primary"
-                  type="button"
-                  variant="outline"
-                  (click)="updateAtomFeatures()">
-                  Update Atom
-                </button>
-
-                <button
-                  cButton
-                  color="primary"
-                  type="button"
-                  variant="outline"
-                  (click)="destroyAtoms()">
-                  Destroy Atom
-                </button>
-              </div>
+              <!-- Action buttons removed (now in header) -->
             </div>
           </div>
         </div>

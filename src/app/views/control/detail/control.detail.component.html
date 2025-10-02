@@ -36,30 +36,29 @@
   <c-col xs="5">
     <c-card class="mb-4">
       <c-card-header ngPreserveWhitespaces>
-        <strong>Atom Features</strong> <small></small>
-      </c-card-header>
-      <c-card-body>
-        <p class="text-body-secondary small">
-          Get and update your Atom
-        </p>
+          <strong>Atom Features</strong> <small></small>
+          <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+            <button cButton
+              color="primary"
+              type="button"
+              variant="outline"
+              (click)="updateAtomFeatures()">
+              Update Atom
+            </button>
 
-        <div class="d-grid gap-2 d-md-flex justify-content-md-start">
-          <button cButton
-            color="primary"
-            type="button"
-            variant="outline"
-            (click)="updateAtomFeatures()">
-            Update Atom
-          </button>
-
-          <button cButton
-            color="primary"
-            type="button"
-            variant="outline"
-            (click)="destroyAtoms()">
-            Destroy Atom
-          </button>
-        </div>
+            <button cButton
+              color="primary"
+              type="button"
+              variant="outline"
+              (click)="destroyAtoms()">
+              Destroy Atom
+            </button>
+          </div>
+        </c-card-header>
+        <c-card-body>
+          <p class="text-body-secondary small">
+            Get and update your Atom
+          </p>
 
         <c-input-group class="mb-3">
           <span cInputGroupText id="basic-addon1">Atom UUID</span>
@@ -171,45 +170,46 @@
 
     <c-card class="mb-4">
       <c-card-header ngPreserveWhitespaces>
-        <strong>Forming</strong> <small></small>
-      </c-card-header>
-      <c-card-body>
-        <p class="text-body-secondary small">
-          Create an atom
-        </p>
-          <c-input-group class="mb-3">
-            <span cInputGroupText id="basic-addon1">Title</span>
-            <input aria-describedby="basic-addon1"
-                    aria-label="Title"
-                    cFormControl
-                    placeholder="Write Atom's title here."
-                    [(ngModel)]="newAtom.properties.nuclearies.title"/>
-          </c-input-group>
-          <c-input-group class="mb-3">
-            <span cInputGroupText id="basic-addon1">Labels</span>
-            <input aria-describedby="basic-addon1"
-              aria-label="Labels"
-              cFormControl
-              placeholder="Write Atom's labels here."
-              [(ngModel)]="newAtom.labels"
-              [ngModelOptions]="{ standalone: true }"
-              (ngModelChange)="newAtom.labels = $event.split(',')"/>
-          </c-input-group>
+          <strong>Forming</strong> <small></small>
+          <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+            <button cButton
+              color="primary"
+              id="inputGroupFileAddon03"
+              type="button"
+              variant="outline"
+              (click)="formAtoms()">
+              Create Atom
+            </button>
+          </div>
+        </c-card-header>
+        <c-card-body>
+          <p class="text-body-secondary small">
+            Create an atom
+          </p>
+            <c-input-group class="mb-3">
+              <span cInputGroupText id="basic-addon1">Title</span>
+              <input aria-describedby="basic-addon1"
+                      aria-label="Title"
+                      cFormControl
+                      placeholder="Write Atom's title here."
+                      [(ngModel)]="newAtom.properties.nuclearies.title"/>
+            </c-input-group>
+            <c-input-group class="mb-3">
+              <span cInputGroupText id="basic-addon1">Labels</span>
+              <input aria-describedby="basic-addon1"
+                aria-label="Labels"
+                cFormControl
+                placeholder="Write Atom's labels here."
+                [(ngModel)]="newAtom.labels"
+                [ngModelOptions]="{ standalone: true }"
+                (ngModelChange)="newAtom.labels = $event.split(',')"/>
+            </c-input-group>
 
-          <c-input-group class="mb-3">
-            <span cInputGroupText id="basic-addon1">Atom UUID</span>
-            <span cInputGroupText id="basic-addon1">{{ newAtom.properties.shellies.uuid }}</span>
-          </c-input-group>
-
-          <button cButton
-            color="primary"
-            id="inputGroupFileAddon03"
-            type="button"
-            variant="outline"
-            (click)="formAtoms()">
-            Create Atom
-          </button>
-      </c-card-body>
+            <c-input-group class="mb-3">
+              <span cInputGroupText id="basic-addon1">Atom UUID</span>
+              <span cInputGroupText id="basic-addon1">{{ newAtom.properties.shellies.uuid }}</span>
+            </c-input-group>
+        </c-card-body>
     </c-card>
   </c-col>
 </c-row>
