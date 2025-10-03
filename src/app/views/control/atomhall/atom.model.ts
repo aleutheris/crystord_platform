@@ -9,7 +9,7 @@ export interface Atom {
 export interface Bond {
   uuid: string,
   name: string,
-  direction: string,
+  direction: 'to' | 'from',
 }
 
 export interface AtomProperties {

@@ -252,12 +252,28 @@ export class ReteGraphManagerService {
     nodeMap: Map<string, Node>
   ): Promise<void> {
     for (const atom of atomsFeatures) {
-      const sourceNode = nodeMap.get(atom.properties.shellies.uuid);
-      if (!sourceNode) continue;
+      const currentNode = nodeMap.get(atom.properties.shellies.uuid);
+      if (!currentNode) continue;
 
       for (const bond of atom.bonds) {
-        const targetNode = nodeMap.get(bond.uuid);
-        if (targetNode && sourceNode !== targetNode) {
+        const bondedNode = nodeMap.get(bond.uuid);
+        if (bondedNode && currentNode !== bondedNode) {
+          let sourceNode: Node;
+          let targetNode: Node;
+
+          if (bond.direction === 'to') {
+            // From current atom to bonded atom
+            sourceNode = currentNode;
+            targetNode = bondedNode;
+          } else if (bond.direction === 'from') {
+            // From bonded atom to current atom
+            sourceNode = bondedNode;
+            targetNode = currentNode;
+          } else {
+            // Fallback, though directions are always provided
+            continue;
+          }
+
           const connection = new Connection(
             sourceNode,
             'output',
