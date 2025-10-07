@@ -3,7 +3,8 @@ let PROPERTY_UUID = "uuid"
 export interface Atom {
   labels: string[],
   bonds: Bond[],
-  properties: AtomProperties
+  properties: AtomProperties,
+  isDockTemplate?: boolean
 };
 
 export interface Bond {

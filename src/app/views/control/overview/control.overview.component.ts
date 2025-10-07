@@ -101,6 +101,10 @@ export class ControlOverviewComponent {
     this.layoutService.rearrangeGraph(this.reteManager.getEditor(), this.reteManager.getArea());
   }
 
+  saveGraph() {
+    console.log('Atom Store:', this.atomStore.getAtomsValue());
+  }
+
   retrieveAtomsFeatures() {
     this.searchKey = this.searchService.updateSearchKey(this.searchText);
     const retrievalInteraction = this.searchService.chooseRetrievalInteraction(this.searchKey);

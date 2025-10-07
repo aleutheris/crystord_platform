@@ -20,6 +20,93 @@ export class ReteGraphManagerService {
   private editor!: NodeEditor<Schemes>;
   private area!: AreaPlugin<Schemes, AreaExtra>;
   private selector!: any;
+  private connectionPlugin?: ConnectionPlugin<Schemes, AreaExtra>;
+  private suppressConnectionHandlers = false;
+
+  private extractNodeId(endpoint: any): string | null {
+    if (!endpoint) {
+      return null;
+    }
+
+    if (typeof endpoint === 'string' || typeof endpoint === 'number') {
+      return String(endpoint);
+    }
+
+    if (typeof endpoint.nodeId === 'string' || typeof endpoint.nodeId === 'number') {
+      return String(endpoint.nodeId);
+    }
+
+    if (typeof endpoint.id === 'string' || typeof endpoint.id === 'number') {
+      return String(endpoint.id);
+    }
+
+    return null;
+  }
+
+  private processConnectionAdded(connection: any): void {
+    if (this.suppressConnectionHandlers || !this.editor) {
+      return;
+    }
+
+    const sourceId = this.extractNodeId(connection?.source);
+    const targetId = this.extractNodeId(connection?.target);
+
+    if (sourceId == null || targetId == null || sourceId === targetId) {
+      return;
+    }
+
+  const sourceNode = this.editor.getNode(sourceId);
+  const targetNode = this.editor.getNode(targetId);
+
+    if (!sourceNode || !targetNode) {
+      return;
+    }
+
+  const sourceUuid = this.nodeAtomMapping.getUuidByNodeId(sourceNode.id) ?? (sourceNode as any)?.atomUuid;
+  const targetUuid = this.nodeAtomMapping.getUuidByNodeId(targetNode.id) ?? (targetNode as any)?.atomUuid;
+
+    if (!sourceUuid || !targetUuid || sourceUuid === targetUuid) {
+      return;
+    }
+
+    const targetAtom = this.atomStore.getAtomByUuid(targetUuid);
+    const sourceAtom = this.atomStore.getAtomByUuid(sourceUuid);
+    const targetName = targetAtom?.properties?.nuclearies?.title ?? '';
+    const sourceName = sourceAtom?.properties?.nuclearies?.title ?? '';
+
+    this.atomStore.addBond(sourceUuid, targetUuid, 'to', targetName);
+    this.atomStore.addBond(targetUuid, sourceUuid, 'from', sourceName);
+  }
+
+  private processConnectionRemoved(connection: any): void {
+    if (this.suppressConnectionHandlers || !this.editor) {
+      return;
+    }
+
+    const sourceId = this.extractNodeId(connection?.source);
+    const targetId = this.extractNodeId(connection?.target);
+
+    if (sourceId == null || targetId == null || sourceId === targetId) {
+      return;
+    }
+
+  const sourceNode = this.editor.getNode(sourceId);
+  const targetNode = this.editor.getNode(targetId);
+
+    if (!sourceNode || !targetNode) {
+      return;
+    }
+
+    const sourceUuid = this.nodeAtomMapping.getUuidByNodeId(sourceNode.id) ?? (sourceNode as any)?.atomUuid;
+    const targetUuid = this.nodeAtomMapping.getUuidByNodeId(targetNode.id) ?? (targetNode as any)?.atomUuid;
+
+    if (!sourceUuid || !targetUuid || sourceUuid === targetUuid) {
+      return;
+    }
+
+    this.atomStore.removeBond(sourceUuid, targetUuid, 'to');
+    this.atomStore.removeBond(targetUuid, sourceUuid, 'from');
+  }
 
   constructor(
     private injector: Injector,
@@ -61,6 +148,7 @@ export class ReteGraphManagerService {
     }
 
     this.editor = new NodeEditor<Schemes>();
+
     this.area = new AreaPlugin<Schemes, AreaExtra>(container);
 
     // Use AngularArea2D<Schemes> for plugin and preset generics
@@ -69,9 +157,33 @@ export class ReteGraphManagerService {
 
     const connection = new ConnectionPlugin<Schemes, AreaExtra>();
     connection.addPreset(ConnectionPresets.classic.setup());
+    this.connectionPlugin = connection;
     this.editor.use(this.area);
     this.area.use(render);
     this.area.use(connection);
+
+    this.registerConnectionHandlers();
+
+    // Expose instances on window for manual inspection in DevTools
+    try {
+      (window as any).__RETE_EDITOR__ = this.editor;
+      (window as any).__RETE_AREA__ = this.area;
+      (window as any).__RETE_CONNECTION_PLUGIN__ = this.connectionPlugin;
+    } catch (e) {}
+
+    // Editor-level event listeners as a fallback for connection events
+    // Some builds of Rete emit connection events on the editor instance
+    if (this.editor && typeof (this.editor as any).on === 'function') {
+      const ed = this.editor as any;
+      const listenEvents = ['connectioncreate', 'connectioncreated', 'connectionremove', 'connectionremoved'];
+      listenEvents.forEach(ev => {
+        try {
+          ed.on(ev, () => {});
+        } catch (e) {
+          // ignore if the event isn't supported
+        }
+      });
+    }
 
     // Initialize dock plugin and add preset
     this.dock = new DockPlugin<Schemes>();
@@ -94,13 +206,15 @@ export class ReteGraphManagerService {
             operation: ''
           },
           ionies: {}
-        }
+        },
+        isDockTemplate: true // Mark as dock template initially
       };
 
-      const existing = this.atomStore.getAtomsValue();
-      if (!existing.some(a => a.properties.shellies.uuid === uuid)) {
-        this.atomStore.setAtoms([...existing, atom]);
-      }
+      // Don't add to store yet - wait for node to be placed
+      // const existing = this.atomStore.getAtomsValue();
+      // if (!existing.some(a => a.properties.shellies.uuid === uuid)) {
+      //   this.atomStore.setAtoms([...existing, atom]);
+      // }
 
       const node = new Node(atom.properties.nuclearies.title);
       const contentCtrl = this.createContentControl(atom.properties.nuclearies.content, uuid);
@@ -112,16 +226,34 @@ export class ReteGraphManagerService {
       node.width = LAYOUT_CONSTANTS.NODE_WIDTH;
       node.height = LAYOUT_CONSTANTS.NODE_HEIGHT + 40;
       (node as any).atomUuid = uuid;
+      (node as any).atom = atom; // Store atom on node temporarily
 
       this.nodeAtomMapping.register(node.id, uuid);
       return node;
     });
 
-    // Override the editor's addConnection method without logging
-    const originalAddConnection = this.editor.addConnection.bind(this.editor);
-    this.editor.addConnection = async (connection: any) => {
-      return await originalAddConnection(connection);
-    };
+    // Override the editor's addConnection/removeConnection methods to ensure we catch all
+    try {
+      const originalAddConnection = (this.editor as any).addConnection?.bind(this.editor);
+      if (originalAddConnection) {
+        (this.editor as any).addConnection = async (connection: any) => {
+          const res = await originalAddConnection(connection);
+          this.processConnectionAdded(connection);
+          return res;
+        };
+      }
+
+      const originalRemoveConnection = (this.editor as any).removeConnection?.bind(this.editor);
+      if (originalRemoveConnection) {
+        (this.editor as any).removeConnection = async (connection: any) => {
+          const res = await originalRemoveConnection(connection);
+          this.processConnectionRemoved(connection);
+          return res;
+        };
+      }
+    } catch (e) {
+      // Swallow failures from optional editor overrides
+    }
 
     // Setup node selection with logging
     this.selector = AreaExtensions.selector();
@@ -192,6 +324,70 @@ export class ReteGraphManagerService {
     return true;
   }
 
+  private registerConnectionHandlers(): void {
+    if (!this.editor) {
+      return;
+    }
+
+    this.editor.addPipe((context: any) => {
+      if (!context) {
+        return context;
+      }
+
+      if (context.type === 'nodecreated') {
+        this.handleNodeCreated(context.data as Node);
+      } else if (context.type === 'noderemoved') {
+        this.handleNodeRemoved(context.data as Node);
+      }
+
+      return context;
+    });
+
+    if (this.connectionPlugin) {
+      this.connectionPlugin.addPipe((context: any) => {
+        if (!context) {
+          return context;
+        }
+
+        if (context.type === 'connectioncreated') {
+          this.handleConnectionCreated(context.data as Connection);
+        } else if (context.type === 'connectionremoved') {
+          this.handleConnectionRemoved(context.data as Connection);
+        }
+
+        return context;
+      });
+    }
+  }
+
+  private handleConnectionCreated(connection: Connection): void {
+    this.processConnectionAdded(connection);
+  }
+
+  private handleConnectionRemoved(connection: Connection): void {
+    this.processConnectionRemoved(connection);
+  }
+
+  private handleNodeCreated(node: Node): void {
+    const atom = (node as any).atom;
+    if (atom && atom.isDockTemplate) {
+      // Remove the template flag and add to store
+      delete atom.isDockTemplate;
+      const existing = this.atomStore.getAtomsValue();
+      this.atomStore.setAtoms([...existing, atom]);
+    }
+  }
+
+  private handleNodeRemoved(node: Node): void {
+    const uuid = (node as any)?.atomUuid;
+    if (uuid) {
+      // Remove the atom from store when node is removed
+      const existing = this.atomStore.getAtomsValue();
+      const filtered = existing.filter(atom => atom.properties.shellies.uuid !== uuid);
+      this.atomStore.setAtoms(filtered);
+    }
+  }
+
   /**
    * Creates a Rete graph from atoms data
    */
@@ -200,41 +396,46 @@ export class ReteGraphManagerService {
       return;
     }
 
-    // Clear existing nodes
-    this.editor.clear();
+    this.suppressConnectionHandlers = true;
+    try {
+      // Clear existing nodes
+      this.editor.clear();
 
-    // Create nodes for each atom
-    const nodeMap = new Map<string, Node>();
-    const socket = new ClassicPreset.Socket('socket');
+      // Create nodes for each atom
+      const nodeMap = new Map<string, Node>();
+      const socket = new ClassicPreset.Socket('socket');
 
-    for (let i = 0; i < atomsFeatures.length; i++) {
-      const atom = atomsFeatures[i];
-      const initialTitle = atom.properties.nuclearies.title || `Atom ${i}`;
-      const node = new Node(initialTitle);
-      const contentCtrl = this.createContentControl(
-        atom.properties.nuclearies.content,
-        atom.properties.shellies.uuid
-      );
-      node.addControl('content', contentCtrl);
+      for (let i = 0; i < atomsFeatures.length; i++) {
+        const atom = atomsFeatures[i];
+        const initialTitle = atom.properties.nuclearies.title || `Atom ${i}`;
+        const node = new Node(initialTitle);
+        const contentCtrl = this.createContentControl(
+          atom.properties.nuclearies.content,
+          atom.properties.shellies.uuid
+        );
+        node.addControl('content', contentCtrl);
 
-      node.addOutput('output', new ClassicPreset.Output(socket));
-      node.addInput('input', new ClassicPreset.Input(socket, '', true));
-      node.width = LAYOUT_CONSTANTS.NODE_WIDTH;
-      node.height = LAYOUT_CONSTANTS.NODE_HEIGHT + 40;
+        node.addOutput('output', new ClassicPreset.Output(socket));
+        node.addInput('input', new ClassicPreset.Input(socket, '', true));
+        node.width = LAYOUT_CONSTANTS.NODE_WIDTH;
+        node.height = LAYOUT_CONSTANTS.NODE_HEIGHT + 40;
 
-      await this.editor.addNode(node);
-      nodeMap.set(atom.properties.shellies.uuid, node);
-      (node as any).atomUuid = atom.properties.shellies.uuid;
-      this.nodeAtomMapping.register(node.id, atom.properties.shellies.uuid);
+        await this.editor.addNode(node);
+        nodeMap.set(atom.properties.shellies.uuid, node);
+        (node as any).atomUuid = atom.properties.shellies.uuid;
+        this.nodeAtomMapping.register(node.id, atom.properties.shellies.uuid);
 
-      // Position nodes in a grid layout initially
-      const x = (i % 5) * LAYOUT_CONSTANTS.GRID_NODE_WIDTH;
-      const y = Math.floor(i / 5) * LAYOUT_CONSTANTS.GRID_NODE_HEIGHT;
-      await this.area.translate(node.id, { x, y });
+        // Position nodes in a grid layout initially
+        const x = (i % 5) * LAYOUT_CONSTANTS.GRID_NODE_WIDTH;
+        const y = Math.floor(i / 5) * LAYOUT_CONSTANTS.GRID_NODE_HEIGHT;
+        await this.area.translate(node.id, { x, y });
+      }
+
+      // Create connections based on bonds
+      await this.createConnections(atomsFeatures, nodeMap);
+    } finally {
+      this.suppressConnectionHandlers = false;
     }
-
-    // Create connections based on bonds
-    await this.createConnections(atomsFeatures, nodeMap);
 
     // Auto-arrange the layout
     setTimeout(() => {
@@ -291,7 +492,12 @@ export class ReteGraphManagerService {
    */
   clearGraph(): void {
     if (this.editor) {
-      this.editor.clear();
+      this.suppressConnectionHandlers = true;
+      try {
+        this.editor.clear();
+      } finally {
+        this.suppressConnectionHandlers = false;
+      }
     }
   }
 

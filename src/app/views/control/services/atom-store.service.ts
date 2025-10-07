@@ -47,4 +47,67 @@ export class AtomStoreService {
     );
     this.atomsSubject.next(newAtoms);
   }
+
+  addBond(atomUuid: string, bondUuid: string, direction: 'to' | 'from', name = ''): void {
+    const atoms = this.atomsSubject.getValue();
+    let changed = false;
+
+    const updatedAtoms = atoms.map(atom => {
+      if (atom.properties.shellies.uuid !== atomUuid) {
+        return atom;
+      }
+
+      const bonds = atom.bonds ?? [];
+      const alreadyExists = bonds.some(
+        bond => bond.uuid === bondUuid && bond.direction === direction
+      );
+      if (alreadyExists) {
+        return atom;
+      }
+
+      changed = true;
+      return {
+        ...atom,
+        bonds: [...bonds, { uuid: bondUuid, name, direction }]
+      };
+    });
+
+    if (changed) {
+      this.atomsSubject.next(updatedAtoms);
+    }
+  }
+
+  removeBond(atomUuid: string, bondUuid: string, direction?: 'to' | 'from'): boolean {
+    const atoms = this.atomsSubject.getValue();
+    let changed = false;
+
+    const updatedAtoms = atoms.map(atom => {
+      if (atom.properties.shellies.uuid !== atomUuid) {
+        return atom;
+      }
+
+      const bonds = atom.bonds ?? [];
+      const filtered = bonds.filter(bond => {
+        const uuidMatches = bond.uuid === bondUuid;
+        const directionMatches = direction ? bond.direction === direction : true;
+        return !(uuidMatches && directionMatches);
+      });
+
+      if (filtered.length === bonds.length) {
+        return atom;
+      }
+
+      changed = true;
+      return {
+        ...atom,
+        bonds: filtered
+      };
+    });
+
+    if (changed) {
+      this.atomsSubject.next(updatedAtoms);
+      return true;
+    }
+    return false;
+  }
 }
