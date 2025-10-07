@@ -61,7 +61,7 @@ export class AtomTransformerService {
 
       let atomTexted: AtomTexted = {
         labels: atom.labels,
-        bonds: this.getBondsUuidsString(atom.bonds),
+        bonds: atom.bonds.map(bond => bond.name),
         properties: {
           shellies: {
             uuid: atom.properties.shellies.uuid

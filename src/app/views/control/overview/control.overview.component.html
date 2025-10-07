@@ -93,7 +93,9 @@
                   [(ngModel)]="atom.properties.nuclearies.operation"
                   [ngStyle]="{ 'min-width': '200px', 'max-width': '400px' }"/>
               </td>
-              <td>{{ atom.bonds }}</td>
+              <td>
+                <span *ngFor="let bond_name of atom.bonds" class="badge bg-secondary rounded-pill me-1">{{ bond_name }}</span>
+              </td>
               <td>{{ atom.properties.shellies.uuid }}</td>
             </tr>
           </tbody>

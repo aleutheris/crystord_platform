@@ -166,10 +166,9 @@
               <!-- Bonds -->
               <c-input-group class="mb-3">
                 <span cInputGroupText>Bonds</span>
-                <input
-                  cFormControl
-                  placeholder=""
-                  [(ngModel)]="atomForUpdate.bonds"/>
+                <div class="d-flex flex-wrap gap-1 p-2 border rounded">
+                  <span *ngFor="let bond of atomForUpdate.bonds" class="badge bg-secondary">{{ bond.name }}</span>
+                </div>
               </c-input-group>
 
               <!-- Title -->

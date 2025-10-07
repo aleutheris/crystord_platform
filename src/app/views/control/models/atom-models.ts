@@ -8,7 +8,7 @@ export interface NodeElement {
 
 export interface AtomTexted {
   labels: string[];
-  bonds: string;
+  bonds: string[];
   properties: {
     shellies: {
       uuid: string;
