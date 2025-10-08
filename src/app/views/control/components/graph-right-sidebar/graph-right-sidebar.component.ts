@@ -92,6 +92,9 @@ export class GraphRightSidebarComponent implements AfterContentInit {
   // Atom update properties (separate from create mode)
   atomForUpdate: Atom = this.initializeUpdateAtom();
 
+  // Operation type dropdown
+  selectedOperationType: string = '';
+
   // Selected atom UUID
   selectedAtomUuid: string | null = null;
 
@@ -250,7 +253,18 @@ export class GraphRightSidebarComponent implements AfterContentInit {
     // Reset atoms when switching modes
     this.newAtom = this.initializeNewAtom();
     this.atomForUpdate = this.initializeUpdateAtom();
-  }  /**
+    this.selectedOperationType = ''; // Reset operation type when switching modes
+  }
+
+  /**
+   * Handle operation type change from dropdown
+   */
+  onOperationTypeChange(type: string) {
+    this.selectedOperationType = type;
+    // You can add additional logic here based on the selected operation type
+  }
+
+  /**
    * Get the current mode label for display
    */
   get currentModeLabel(): string {
@@ -314,6 +328,7 @@ export class GraphRightSidebarComponent implements AfterContentInit {
       next: (data) => {
         this.atomForUpdate = this.atomDataToCamelCase(data['result'][0]);
         this.atomForUpdate = this.atomDataFeaturesToString(this.atomForUpdate);
+        this.selectedOperationType = ''; // Reset operation type when loading new atom
         console.log('Atom loaded successfully:', this.atomForUpdate);
       },
       error: (error) => {

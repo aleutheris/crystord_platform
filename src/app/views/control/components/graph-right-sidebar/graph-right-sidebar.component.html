@@ -158,17 +158,35 @@
                 </textarea>
               </c-input-group>
 
+              <!-- Operation with dropdown -->
               <c-input-group class="mb-3">
                 <span cInputGroupText>Operation</span>
+                <c-dropdown class="input-group-dropdown">
+                  <button
+                    cButton
+                    cDropdownToggle
+                    variant="outline"
+                    size="sm"
+                    class="border-0 border-end">
+                    {{ selectedOperationType || 'Type' }}
+                  </button>
+                  <ul cDropdownMenu>
+                    <li><button cDropdownItem (click)="onOperationTypeChange('')">None</button></li>
+                    <li><button cDropdownItem (click)="onOperationTypeChange('math')">Math</button></li>
+                    <li><button cDropdownItem (click)="onOperationTypeChange('logic')">Logic</button></li>
+                    <li><button cDropdownItem (click)="onOperationTypeChange('text')">Text</button></li>
+                    <li><button cDropdownItem (click)="onOperationTypeChange('custom')">Custom</button></li>
+                  </ul>
+                </c-dropdown>
                 <input
                   *ngIf="!(atomForUpdate.properties.nuclearies.operation ?? '').includes('\n')"
                   cFormControl
-                  placeholder=""
+                  placeholder="Enter operation..."
                   [(ngModel)]="atomForUpdate.properties.nuclearies.operation"/>
                 <textarea
                   *ngIf="(atomForUpdate.properties.nuclearies.operation ?? '').includes('\n')"
                   cFormControl
-                  placeholder=""
+                  placeholder="Enter operation..."
                   [(ngModel)]="atomForUpdate.properties.nuclearies.operation"
                   style="height: 150px;">
                 </textarea>
