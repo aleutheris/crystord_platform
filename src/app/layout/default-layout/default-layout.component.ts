@@ -61,14 +61,17 @@ export class DefaultLayoutComponent {
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)
     ).subscribe((event) => {
-      // Add routes that should be full width (like control overview)
-      const fullWidthRoutes = ['/control/overview'];
-      this.isFullWidthRoute = fullWidthRoutes.some(route => (event as NavigationEnd).url.includes(route));
+      this.checkFullWidthRoute((event as NavigationEnd).url);
     });
 
     // Set initial state based on current URL
-    const fullWidthRoutes = ['/control/overview'];
-    this.isFullWidthRoute = fullWidthRoutes.some(route => this.router.url.includes(route));
+    this.checkFullWidthRoute(this.router.url);
+  }
+
+  private checkFullWidthRoute(url: string): void {
+    // Add routes that should be full width (like control overview)
+    // Check for both /control and /control/overview since /control redirects to /control/overview
+    this.isFullWidthRoute = url.includes('/control');
   }
 
   onScrollbarUpdate($event: any) {

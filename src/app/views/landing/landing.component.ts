@@ -78,7 +78,7 @@ export class LandingComponent {
 
   startDemo(): void {
     this.authService.startDemo();
-    this.router.navigate(['/control/detail']);
+    this.router.navigate(['/control']);
   }
 
   openYouTube(): void {

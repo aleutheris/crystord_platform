@@ -9,7 +9,7 @@ export const routes: Routes = [
     children: [
       {
         path: '',
-        redirectTo: 'detail',
+        redirectTo: 'overview',
         pathMatch: 'full'
       },
       {
