@@ -134,12 +134,9 @@ export class ControlOverviewComponent {
     const initialized = await this.reteManager.initializeReteEditor();
     if (initialized) {
       await this.reteManager.createReteGraph(this.atomsFeatures);
-      // Auto-arrange nodes immediately after creation
       this.layoutService.rearrangeGraph(this.reteManager.getEditor(), this.reteManager.getArea());
     }
   }
-
-
 
   updateAtomFeatures(index: number): void {
     const mq: UpdateQuery = {

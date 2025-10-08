@@ -1,6 +1,4 @@
-<!-- Right Sidebar for Graph Controls -->
 <div class="graph-right-sidebar-container" [style.width]="currentWidth">
-  <!-- Sidebar -->
   <c-sidebar
     #rightSidebar="cSidebar"
     class="graph-right-sidebar"
@@ -9,14 +7,11 @@
     [visible]="visible"
     position="fixed">
 
-    <!-- Header with title and toggle button -->
     <c-sidebar-header class="border-bottom d-flex align-items-center gap-2">
       <span *ngIf="isExpanded" class="sidebar-title me-auto">{{ config.title }}</span>
 
-      <!-- Action buttons moved to header -->
       <div *ngIf="isExpanded" class="d-flex gap-2">
         <ng-container [ngSwitch]="currentMode">
-          <!-- Create Mode Button -->
           <button
             *ngSwitchCase="SidebarMode.CREATE_ATOM"
             cButton
@@ -29,7 +24,6 @@
             Create
           </button>
 
-          <!-- Update Mode Buttons -->
           <ng-container *ngSwitchCase="SidebarMode.UPDATE_ATOM">
             <button
               cButton
@@ -65,15 +59,11 @@
       </button>
     </c-sidebar-header>
 
-    <!-- Content Area -->
     <div class="sidebar-content" *ngIf="isExpanded">
-      <!-- Projected Content -->
       <ng-content></ng-content>
 
-      <!-- Default Content if no content projected -->
       <ng-container *ngIf="!hasProjectedContent">
         <div class="p-3">
-          <!-- Mode Selector Dropdown -->
           <div class="mb-3">
             <c-dropdown class="d-grid">
               <button
@@ -97,12 +87,9 @@
             </c-dropdown>
           </div>
 
-          <!-- Dynamic Content Based on Mode -->
           <div [ngSwitch]="currentMode">
-            <!-- Create Atom Mode -->
             <div *ngSwitchCase="SidebarMode.CREATE_ATOM">
 
-              <!-- Atom Creation Form -->
               <c-input-group class="mb-3">
                 <span cInputGroupText>Title</span>
                 <input
@@ -119,51 +106,24 @@
                   [(ngModel)]="newAtom.labels"
                   [ngModelOptions]="{ standalone: true }"
                   (ngModelChange)="newAtom.labels = $event.split(',')"/>
-              </c-input-group>
+                </c-input-group>
 
-              <!-- Atom UUID (only show after creation) -->
-              <c-input-group class="mb-3" *ngIf="shouldShowUuid">
-                <span cInputGroupText>Atom UUID</span>
-                <span cInputGroupText class="text-muted">{{ newAtom.properties.shellies.uuid }}</span>
-              </c-input-group>
-            </div>
+                <c-input-group class="mb-3" *ngIf="shouldShowUuid">
+                  <span cInputGroupText>Atom UUID</span>
+                  <span cInputGroupText class="text-muted">{{ newAtom.properties.shellies.uuid }}</span>
+                </c-input-group>
+              </div>
 
-            <!-- Update Atom Mode - Complete Atom Features (copied from control.detail) -->
-            <div *ngSwitchCase="SidebarMode.UPDATE_ATOM">
+              <div *ngSwitchCase="SidebarMode.UPDATE_ATOM">
 
-              <!-- Atom UUID with Get Button -->
-              <c-input-group class="mb-3">
-                <span cInputGroupText>Atom UUID</span>
-                <input
-                  cFormControl
-                  placeholder=""
-                  [(ngModel)]="atomForUpdate.properties.shellies.uuid"/>
-                <button
-                  cButton
-                  color="primary"
-                  type="button"
-                  variant="outline"
-                  (click)="retrieveAtomFeatures()">
-                  Get Atom
-                </button>
-              </c-input-group>
-
-              <!-- Stored At (read-only) -->
-              <c-input-group class="mb-3">
-                <span cInputGroupText>Stored At</span>
-                <span cInputGroupText>{{ atomForUpdate.properties.shellies.changeHistory }}</span>
-              </c-input-group>
-
-              <!-- Labels -->
               <c-input-group class="mb-3">
                 <span cInputGroupText>Labels</span>
                 <input
-                  cFormControl
-                  placeholder=""
-                  [(ngModel)]="atomForUpdate.labels"/>
+                cFormControl
+                placeholder=""
+                [(ngModel)]="atomForUpdate.labels"/>
               </c-input-group>
 
-              <!-- Bonds -->
               <c-input-group class="mb-3">
                 <span cInputGroupText>Bonds</span>
                 <div class="d-flex flex-wrap gap-1 p-2 border rounded">
@@ -171,7 +131,6 @@
                 </div>
               </c-input-group>
 
-              <!-- Title -->
               <c-input-group class="mb-3">
                 <span cInputGroupText>Title</span>
                 <input
@@ -181,16 +140,6 @@
                   (ngModelChange)="onAtomPropertyChanged()"/>
               </c-input-group>
 
-              <!-- Description -->
-              <c-input-group class="mb-3">
-                <span cInputGroupText>Description</span>
-                <input
-                  cFormControl
-                  placeholder=""
-                  [(ngModel)]="atomForUpdate.properties.nuclearies.description"/>
-              </c-input-group>
-
-              <!-- Content (with smart text/textarea switching) -->
               <c-input-group class="mb-3">
                 <span cInputGroupText>Content</span>
                 <input
@@ -209,7 +158,6 @@
                 </textarea>
               </c-input-group>
 
-              <!-- Operation (with smart text/textarea switching) -->
               <c-input-group class="mb-3">
                 <span cInputGroupText>Operation</span>
                 <input
@@ -226,7 +174,14 @@
                 </textarea>
               </c-input-group>
 
-              <!-- Constants (with smart text/textarea switching) -->
+              <c-input-group class="mb-3">
+                <span cInputGroupText>Description</span>
+                <input
+                  cFormControl
+                  placeholder=""
+                  [(ngModel)]="atomForUpdate.properties.nuclearies.description"/>
+              </c-input-group>
+
               <c-input-group class="mb-3">
                 <span cInputGroupText>Constants</span>
                 <input
@@ -243,7 +198,26 @@
                 </textarea>
               </c-input-group>
 
-              <!-- Action buttons removed (now in header) -->
+              <c-input-group class="mb-3">
+                <span cInputGroupText>Stored At</span>
+                <span cInputGroupText>{{ atomForUpdate.properties.shellies.changeHistory }}</span>
+              </c-input-group>
+
+              <c-input-group class="mb-3">
+                <span cInputGroupText>Atom UUID</span>
+                <input
+                  cFormControl
+                  placeholder=""
+                  [(ngModel)]="atomForUpdate.properties.shellies.uuid"/>
+                <button
+                  cButton
+                  color="primary"
+                  type="button"
+                  variant="outline"
+                  (click)="retrieveAtomFeatures()">
+                  Get Atom
+                </button>
+              </c-input-group>
             </div>
           </div>
         </div>
