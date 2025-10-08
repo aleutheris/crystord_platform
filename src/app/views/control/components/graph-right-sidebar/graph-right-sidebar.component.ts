@@ -256,26 +256,31 @@ export class GraphRightSidebarComponent implements AfterContentInit {
     this.selectedOperationType = ''; // Reset operation type when switching modes
   }
 
-  /**
-   * Handle operation type change from dropdown
-   */
   onOperationTypeChange(type: string) {
     this.selectedOperationType = type;
-    // You can add additional logic here based on the selected operation type
+
+    if (type === '' || !this.atomForUpdate.bonds || this.atomForUpdate.bonds.length < 2) {
+      return;
+    }
+
+    const operatorMap: { [key: string]: string } = {
+      'add': '+',
+      'sub': '-',
+      'mult': '*',
+      'div': '/'
+    };
+
+    const operator = operatorMap[type] || type;
+    const bondNames = this.atomForUpdate.bonds.map(bond => bond.name);
+    const operationString = bondNames.join(` ${operator} `);
+    this.atomForUpdate.properties.nuclearies.operation = operationString;
   }
 
-  /**
-   * Get the current mode label for display
-   */
   get currentModeLabel(): string {
     const option = this.modeOptions.find(opt => opt.value === this.currentMode);
     return option ? option.label : 'Create Atom';
   }
 
-  /**
-   * Check if Create Atom button should be enabled
-   * Button is enabled only when both title and labels have content
-   */
   get isCreateAtomButtonEnabled(): boolean {
     return !!(
       this.newAtom.properties.nuclearies.title?.trim() &&
