@@ -161,32 +161,30 @@
               <!-- Operation with dropdown -->
               <c-input-group class="mb-3">
                 <span cInputGroupText>Operation</span>
-                <c-dropdown class="input-group-dropdown">
+                <c-dropdown class="input-group-dropdown d-flex">
                   <button
                     cButton
                     cDropdownToggle
                     variant="outline"
-                    size="sm"
-                    class="border-0 border-end">
-                    {{ selectedOperationType || 'Type' }}
+                    class="border-0 border-end h-100">
+                    {{ selectedOperationType || '--' }}
                   </button>
                   <ul cDropdownMenu>
-                    <li><button cDropdownItem (click)="onOperationTypeChange('')">None</button></li>
-                    <li><button cDropdownItem (click)="onOperationTypeChange('math')">Math</button></li>
-                    <li><button cDropdownItem (click)="onOperationTypeChange('logic')">Logic</button></li>
-                    <li><button cDropdownItem (click)="onOperationTypeChange('text')">Text</button></li>
-                    <li><button cDropdownItem (click)="onOperationTypeChange('custom')">Custom</button></li>
+                    <li><button cDropdownItem (click)="onOperationTypeChange('add')">add</button></li>
+                    <li><button cDropdownItem (click)="onOperationTypeChange('sub')">sub</button></li>
+                    <li><button cDropdownItem (click)="onOperationTypeChange('mult')">mult</button></li>
+                    <li><button cDropdownItem (click)="onOperationTypeChange('div')">div</button></li>
                   </ul>
                 </c-dropdown>
                 <input
                   *ngIf="!(atomForUpdate.properties.nuclearies.operation ?? '').includes('\n')"
                   cFormControl
-                  placeholder="Enter operation..."
+                  placeholder=""
                   [(ngModel)]="atomForUpdate.properties.nuclearies.operation"/>
                 <textarea
                   *ngIf="(atomForUpdate.properties.nuclearies.operation ?? '').includes('\n')"
                   cFormControl
-                  placeholder="Enter operation..."
+                  placeholder=""
                   [(ngModel)]="atomForUpdate.properties.nuclearies.operation"
                   style="height: 150px;">
                 </textarea>
