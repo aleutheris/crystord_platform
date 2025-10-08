@@ -222,7 +222,7 @@ export class ReteGraphManagerService {
 
       const socket = new ClassicPreset.Socket('socket');
       node.addOutput('output', new ClassicPreset.Output(socket));
-      node.addInput('input', new ClassicPreset.Input(socket, '', true));
+      node.addInput('input', new ClassicPreset.Input(socket, 'Operation', true));
       node.width = LAYOUT_CONSTANTS.NODE_WIDTH;
       node.height = LAYOUT_CONSTANTS.NODE_HEIGHT + 40;
       (node as any).atomUuid = uuid;
@@ -416,7 +416,7 @@ export class ReteGraphManagerService {
         node.addControl('content', contentCtrl);
 
         node.addOutput('output', new ClassicPreset.Output(socket));
-        node.addInput('input', new ClassicPreset.Input(socket, '', true));
+        node.addInput('input', new ClassicPreset.Input(socket, 'Operation', true));
         node.width = LAYOUT_CONSTANTS.NODE_WIDTH;
         node.height = LAYOUT_CONSTANTS.NODE_HEIGHT + 40;
 
