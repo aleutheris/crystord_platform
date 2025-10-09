@@ -67,7 +67,7 @@ export class ControlOverviewComponent {
       narrow: '60px'
     },
     defaultExpanded: true,
-    title: 'Create Atom'
+    title: 'Atom Features'
   };
 
   constructor(

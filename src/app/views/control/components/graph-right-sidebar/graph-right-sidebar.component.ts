@@ -78,6 +78,9 @@ export class GraphRightSidebarComponent implements AfterContentInit {
   // Operation type dropdown
   selectedOperationType: string = '';
 
+  // Label input buffer
+  labelInputValue: string = '';
+
   // Selected atom UUID
   selectedAtomUuid: string | null = null;
 
@@ -91,11 +94,9 @@ export class GraphRightSidebarComponent implements AfterContentInit {
       this.selectedAtomUuid = uuid;
       if (uuid) {
         const atom = this.atomStore.getAtomByUuid(uuid);
-        if (atom) {
-          this.atomForUpdate = atom;
-        } else {
-          this.atomForUpdate = this.initializeUpdateAtom();
-        }
+        this.prepareAtomForUpdate(atom ?? null);
+      } else {
+        this.prepareAtomForUpdate(null);
       }
     });
 
@@ -105,9 +106,7 @@ export class GraphRightSidebarComponent implements AfterContentInit {
       }
 
       const atom = this.atomStore.getAtomByUuid(this.selectedAtomUuid);
-      if (atom) {
-        this.atomForUpdate = atom;
-      }
+      this.prepareAtomForUpdate(atom ?? null);
     });
   }
 
@@ -161,6 +160,125 @@ export class GraphRightSidebarComponent implements AfterContentInit {
    * Notify store when atom properties change
    */
   onAtomPropertyChanged(): void {
+    this.notifyAtomForUpdateChange();
+  }
+
+  onLabelInputKeydown(event: KeyboardEvent): void {
+    const key = event.key;
+
+    if (key === 'Enter' || key === ',' || key === ' ' || key === 'Spacebar') {
+      event.preventDefault();
+      this.addLabelFromInput();
+      return;
+    }
+
+    if (key === 'Backspace' && !this.labelInputValue) {
+      event.preventDefault();
+      this.removeLastLabel();
+    }
+  }
+
+  onLabelInputBlur(): void {
+    this.addLabelFromInput();
+  }
+
+  onLabelInputPaste(event: ClipboardEvent): void {
+    const clipboardData = event.clipboardData?.getData('text') ?? '';
+
+    if (!clipboardData.trim()) {
+      return;
+    }
+
+    event.preventDefault();
+    const combined = `${this.labelInputValue}${clipboardData}`;
+    this.addLabelsFromText(combined);
+    this.labelInputValue = '';
+  }
+
+  removeLabel(index: number): void {
+    if (!Array.isArray(this.atomForUpdate.labels) || index < 0 || index >= this.atomForUpdate.labels.length) {
+      return;
+    }
+
+    this.atomForUpdate.labels = this.atomForUpdate.labels.filter((_, i) => i !== index);
+    this.notifyAtomForUpdateChange();
+  }
+
+  private addLabelFromInput(): void {
+    if (!this.labelInputValue.trim()) {
+      this.labelInputValue = '';
+      return;
+    }
+
+    this.addLabelsFromText(this.labelInputValue);
+    this.labelInputValue = '';
+  }
+
+  private addLabelsFromText(text: string): void {
+    this.splitLabelsString(text).forEach(segment => this.addLabel(segment));
+  }
+
+  private addLabel(label: string): void {
+    const normalized = label.trim();
+    if (!normalized) {
+      return;
+    }
+
+    if (!Array.isArray(this.atomForUpdate.labels)) {
+      this.atomForUpdate.labels = [];
+    }
+
+    const alreadyExists = this.atomForUpdate.labels.some(existing =>
+      typeof existing === 'string' && existing.toLowerCase() === normalized.toLowerCase()
+    );
+
+    if (alreadyExists) {
+      return;
+    }
+
+    this.atomForUpdate.labels = [...this.atomForUpdate.labels, normalized];
+    this.notifyAtomForUpdateChange();
+  }
+
+  private removeLastLabel(): void {
+    if (!Array.isArray(this.atomForUpdate.labels) || this.atomForUpdate.labels.length === 0) {
+      return;
+    }
+
+    this.removeLabel(this.atomForUpdate.labels.length - 1);
+  }
+
+  private splitLabelsString(value: string): string[] {
+    return value
+      .split(/[\s,]+/)
+      .map(part => part.trim())
+      .filter(part => part.length > 0);
+  }
+
+  private sanitizeLabels(labels: unknown): string[] {
+    if (Array.isArray(labels)) {
+      return labels
+        .map(label =>
+          typeof label === 'string' ? label.trim() : (label !== null && label !== undefined ? String(label).trim() : '')
+        )
+        .filter(label => label.length > 0);
+    }
+
+    if (typeof labels === 'string') {
+      return this.splitLabelsString(labels);
+    }
+
+    return [];
+  }
+
+  private prepareAtomForUpdate(atom: Atom | null): void {
+    const target = atom ?? this.initializeUpdateAtom();
+    target.labels = this.sanitizeLabels(target.labels);
+    this.atomForUpdate = target;
+    this.labelInputValue = '';
+  }
+
+  private notifyAtomForUpdateChange(): void {
     if (this.atomForUpdate.properties.shellies.uuid) {
       this.atomStore.updateAtom(this.atomForUpdate);
     }
@@ -221,8 +339,8 @@ export class GraphRightSidebarComponent implements AfterContentInit {
 
     this.atomService.readAtoms(rq).subscribe({
       next: (data) => {
-        this.atomForUpdate = this.atomDataToCamelCase(data['result'][0]);
-        this.atomForUpdate = this.atomDataFeaturesToString(this.atomForUpdate);
+        const loadedAtom = this.atomDataFeaturesToString(this.atomDataToCamelCase(data['result'][0]));
+        this.prepareAtomForUpdate(loadedAtom);
         this.selectedOperationType = ''; // Reset operation type when loading new atom
         console.log('Atom loaded successfully:', this.atomForUpdate);
       },
@@ -330,7 +448,7 @@ export class GraphRightSidebarComponent implements AfterContentInit {
       next: (data) => {
         console.log('Atom destroyed successfully:', data);
         // Reset the atom after successful destruction
-        this.atomForUpdate = this.initializeUpdateAtom();
+        this.prepareAtomForUpdate(null);
       },
       error: (error) => {
         console.error('There was an error destroying the atom:', error);

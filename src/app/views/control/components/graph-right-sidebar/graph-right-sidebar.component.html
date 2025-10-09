@@ -48,36 +48,32 @@
 
       <ng-container *ngIf="!hasProjectedContent">
         <div class="p-3">
-          <!-- Update Atom Mode - Complete Atom Features -->
-          <c-input-group class="mb-3">
-            <span cInputGroupText>Atom UUID</span>
-            <input
-              cFormControl
-              placeholder=""
-              [(ngModel)]="atomForUpdate.properties.shellies.uuid"/>
-            <button
-              cButton
-              color="primary"
-              type="button"
-              variant="outline"
-              (click)="retrieveAtomFeatures()">
-              Get Atom
-            </button>
-          </c-input-group>
-
-          <!-- Stored At (read-only) -->
-          <c-input-group class="mb-3">
-            <span cInputGroupText>Stored At</span>
-            <span cInputGroupText>{{ atomForUpdate.properties.shellies.changeHistory }}</span>
-          </c-input-group>
-
-          <!-- Labels -->
-          <c-input-group class="mb-3">
+          <c-input-group class="mb-3 labels-input-group">
             <span cInputGroupText>Labels</span>
-            <input
-              cFormControl
-              placeholder=""
-              [(ngModel)]="atomForUpdate.labels"/>
+            <div class="form-control label-chip-input d-flex flex-wrap align-items-center gap-2">
+              <span
+                *ngFor="let label of atomForUpdate.labels; let i = index"
+                class="badge bg-secondary d-inline-flex align-items-center gap-1 label-chip">
+                <span class="label-text">{{ label }}</span>
+                <button
+                  type="button"
+                  class="btn btn-sm btn-ghost-light text-white px-1 py-0 label-chip-remove"
+                  (click)="removeLabel(i)"
+                  [attr.aria-label]="'Remove label ' + label">
+                  &times;
+                </button>
+              </span>
+              <input
+                type="text"
+                class="chip-text-input flex-grow-1"
+                placeholder=""
+                autocomplete="off"
+                [(ngModel)]="labelInputValue"
+                [ngModelOptions]="{ standalone: true }"
+                (keydown)="onLabelInputKeydown($event)"
+                (blur)="onLabelInputBlur()"
+                (paste)="onLabelInputPaste($event)"/>
+            </div>
           </c-input-group>
 
           <!-- Bonds -->
@@ -98,16 +94,6 @@
               (ngModelChange)="onAtomPropertyChanged()"/>
           </c-input-group>
 
-          <!-- Description -->
-          <c-input-group class="mb-3">
-            <span cInputGroupText>Description</span>
-            <input
-              cFormControl
-              placeholder=""
-              [(ngModel)]="atomForUpdate.properties.nuclearies.description"/>
-          </c-input-group>
-
-          <!-- Content (with smart text/textarea switching) -->
           <c-input-group class="mb-3">
             <span cInputGroupText>Content</span>
             <input
@@ -126,7 +112,6 @@
             </textarea>
           </c-input-group>
 
-          <!-- Operation with dropdown -->
           <c-input-group class="mb-3">
             <span cInputGroupText>Operation</span>
             <c-dropdown class="input-group-dropdown d-flex">
@@ -158,7 +143,14 @@
             </textarea>
           </c-input-group>
 
-          <!-- Constants (with smart text/textarea switching) -->
+          <c-input-group class="mb-3">
+            <span cInputGroupText>Description</span>
+            <input
+              cFormControl
+              placeholder=""
+              [(ngModel)]="atomForUpdate.properties.nuclearies.description"/>
+          </c-input-group>
+
           <c-input-group class="mb-3">
             <span cInputGroupText>Constants</span>
             <input
@@ -174,6 +166,27 @@
               style="height: 150px;">
             </textarea>
           </c-input-group>
+
+          <c-input-group class="mb-3">
+            <span cInputGroupText>Stored At</span>
+            <span cInputGroupText>{{ atomForUpdate.properties.shellies.changeHistory }}</span>
+          </c-input-group>
+
+          <c-input-group class="mb-3">
+            <span cInputGroupText>Atom UUID</span>
+            <input
+              cFormControl
+              placeholder=""
+              [(ngModel)]="atomForUpdate.properties.shellies.uuid"/>
+            <button
+              cButton
+              color="primary"
+              type="button"
+              variant="outline"
+              (click)="retrieveAtomFeatures()">
+              Get Atom
+            </button>
+          </c-input-group>
         </div>
       </ng-container>
     </div>
@@ -182,7 +195,7 @@
     <div class="sidebar-collapsed-content" *ngIf="!isExpanded">
       <div class="d-flex flex-column align-items-center p-2">
         <!-- Icon-only button for atom creation -->
-        <button type="button" class="btn btn-ghost-light btn-sm mb-2" title="Create Atom">
+        <button type="button" class="btn btn-ghost-light btn-sm mb-2" title="Atom Features">
           <svg cIcon name="cilPlus" size="sm"></svg>
         </button>
       </div>
