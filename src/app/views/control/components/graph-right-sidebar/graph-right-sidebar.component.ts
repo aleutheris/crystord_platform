@@ -21,11 +21,6 @@ import { AtomService } from '../../atomhall/atom.service';
 import { AtomSelectionService } from '../../services/atom-selection.service';
 import { AtomStoreService } from '../../services/atom-store.service';
 
-export enum SidebarMode {
-  CREATE_ATOM = 'create-atom',
-  UPDATE_ATOM = 'update-atom'
-}
-
 export interface GraphSidebarConfig {
   width: {
     expanded: string;
@@ -77,19 +72,7 @@ export class GraphRightSidebarComponent implements AfterContentInit {
   isExpanded: boolean = true;
   hasProjectedContent: boolean = false;
 
-  // Mode selector properties
-  currentMode: SidebarMode = SidebarMode.CREATE_ATOM;
-  SidebarMode = SidebarMode; // Expose enum to template
-
-  modeOptions = [
-    { value: SidebarMode.CREATE_ATOM, label: 'Forming' },
-    { value: SidebarMode.UPDATE_ATOM, label: 'Changing' }
-  ];
-
-  // Atom creation properties (copied from detail component)
-  newAtom: Atom = this.initializeNewAtom();
-
-  // Atom update properties (separate from create mode)
+  // Atom update properties
   atomForUpdate: Atom = this.initializeUpdateAtom();
 
   // Operation type dropdown
@@ -107,8 +90,6 @@ export class GraphRightSidebarComponent implements AfterContentInit {
     this.atomSelection.getSelectedUuid$().subscribe(uuid => {
       this.selectedAtomUuid = uuid;
       if (uuid) {
-        // Switch to Changing mode and update atomForUpdate
-        this.currentMode = SidebarMode.UPDATE_ATOM;
         const atom = this.atomStore.getAtomByUuid(uuid);
         if (atom) {
           this.atomForUpdate = atom;
@@ -139,30 +120,6 @@ export class GraphRightSidebarComponent implements AfterContentInit {
   }
 
   /**
-   * Initialize a new atom with default structure (copied from detail component)
-   */
-  private initializeNewAtom(): Atom {
-    return {
-      labels: [],
-      bonds: [],
-      properties: {
-        shellies: {
-          uuid: '', // Empty string - UUID will be assigned by backend
-          changeHistory: []
-        },
-        nuclearies: {
-          title: '',
-          description: '',
-          content: '',
-          constants: '',
-          operation: ''
-        },
-        ionies: {}
-      }
-    };
-  }
-
-  /**
    * Initialize an atom for update with default structure (copied from detail component)
    */
   private initializeUpdateAtom(): Atom {
@@ -186,47 +143,6 @@ export class GraphRightSidebarComponent implements AfterContentInit {
     };
   }
 
-  /**
-   * Create a new atom (copied exactly from detail component)
-   */
-  formAtoms() {
-    let mq: {
-      modification: string,
-      args: {
-        inputs: {
-          labels: string[],
-          properties: {
-            nuclearies: {
-              title: string
-            }
-          }
-        }
-      }
-    } = {
-      modification: 'form_atoms',
-      args: {
-        inputs: {
-          labels: this.newAtom.labels,
-          properties: {
-            nuclearies: {
-              title: this.newAtom.properties.nuclearies.title
-            }
-          }
-        }
-      }
-    };
-
-    this.atomService.modifyAtoms(mq).subscribe({
-      next: (data) => {
-        this.newAtom = data['result'];
-        console.log('Atom created successfully:', data);
-      },
-      error: (error) => {
-        console.error('There was an error creating the atom:', error);
-      }
-    });
-  }
-
   toggleSidebar() {
     this.isExpanded = !this.isExpanded;
     this.toggleEvent.emit(this.isExpanded);
@@ -242,18 +158,12 @@ export class GraphRightSidebarComponent implements AfterContentInit {
   }
 
   /**
-   * Handle mode change from dropdown
+   * Notify store when atom properties change
    */
-  onModeChange(mode: SidebarMode) {
-    this.currentMode = mode;
-
-    // Both modes use the same title
-    this.config.title = 'Atom Features';
-
-    // Reset atoms when switching modes
-    this.newAtom = this.initializeNewAtom();
-    this.atomForUpdate = this.initializeUpdateAtom();
-    this.selectedOperationType = ''; // Reset operation type when switching modes
+  onAtomPropertyChanged(): void {
+    if (this.atomForUpdate.properties.shellies.uuid) {
+      this.atomStore.updateAtom(this.atomForUpdate);
+    }
   }
 
   onOperationTypeChange(type: string) {
@@ -274,26 +184,6 @@ export class GraphRightSidebarComponent implements AfterContentInit {
     const bondUuids = this.atomForUpdate.bonds.map(bond => bond.uuid);
     const operationString = bondUuids.join(` ${operator} `);
     this.atomForUpdate.properties.nuclearies.operation = operationString;
-  }
-
-  get currentModeLabel(): string {
-    const option = this.modeOptions.find(opt => opt.value === this.currentMode);
-    return option ? option.label : 'Create Atom';
-  }
-
-  get isCreateAtomButtonEnabled(): boolean {
-    return !!(
-      this.newAtom.properties.nuclearies.title?.trim() &&
-      this.newAtom.labels?.length > 0 &&
-      this.newAtom.labels.some(label => label?.trim())
-    );
-  }
-
-  /**
-   * Check if UUID should be shown (only after atom creation)
-   */
-  get shouldShowUuid(): boolean {
-    return !!(this.newAtom.properties.shellies.uuid?.trim());
   }
 
   /**
@@ -446,15 +336,6 @@ export class GraphRightSidebarComponent implements AfterContentInit {
         console.error('There was an error destroying the atom:', error);
       }
     });
-  }
-
-  /**
-   * Notify store when atom properties change
-   */
-  onAtomPropertyChanged(): void {
-    if (this.currentMode === SidebarMode.UPDATE_ATOM && this.atomForUpdate.properties.shellies.uuid) {
-      this.atomStore.updateAtom(this.atomForUpdate);
-    }
   }
 
   // Helper methods (copied from control.detail)

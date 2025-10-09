@@ -11,40 +11,24 @@
       <span *ngIf="isExpanded" class="sidebar-title me-auto">{{ config.title }}</span>
 
       <div *ngIf="isExpanded" class="d-flex gap-2">
-        <ng-container [ngSwitch]="currentMode">
-          <button
-            *ngSwitchCase="SidebarMode.CREATE_ATOM"
-            cButton
-            color="primary"
-            type="button"
-            variant="outline"
-            (click)="formAtoms()"
-            [disabled]="!isCreateAtomButtonEnabled"
-            aria-label="Create Atom">
-            Create
-          </button>
-
-          <ng-container *ngSwitchCase="SidebarMode.UPDATE_ATOM">
-            <button
-              cButton
-              color="primary"
-              type="button"
-              variant="outline"
-              (click)="updateAtomFeatures()"
-              aria-label="Update Atom">
-              Update
-            </button>
-            <button
-              cButton
-              color="primary"
-              type="button"
-              variant="outline"
-              (click)="destroyAtoms()"
-              aria-label="Destroy Atom">
-              Destroy
-            </button>
-          </ng-container>
-        </ng-container>
+        <button
+          cButton
+          color="primary"
+          type="button"
+          variant="outline"
+          (click)="updateAtomFeatures()"
+          aria-label="Update Atom">
+          Update
+        </button>
+        <button
+          cButton
+          color="primary"
+          type="button"
+          variant="outline"
+          (click)="destroyAtoms()"
+          aria-label="Destroy Atom">
+          Destroy
+        </button>
       </div>
 
       <button
@@ -64,178 +48,132 @@
 
       <ng-container *ngIf="!hasProjectedContent">
         <div class="p-3">
-          <div class="mb-3">
-            <c-dropdown class="d-grid">
+          <!-- Update Atom Mode - Complete Atom Features -->
+          <c-input-group class="mb-3">
+            <span cInputGroupText>Atom UUID</span>
+            <input
+              cFormControl
+              placeholder=""
+              [(ngModel)]="atomForUpdate.properties.shellies.uuid"/>
+            <button
+              cButton
+              color="primary"
+              type="button"
+              variant="outline"
+              (click)="retrieveAtomFeatures()">
+              Get Atom
+            </button>
+          </c-input-group>
+
+          <!-- Stored At (read-only) -->
+          <c-input-group class="mb-3">
+            <span cInputGroupText>Stored At</span>
+            <span cInputGroupText>{{ atomForUpdate.properties.shellies.changeHistory }}</span>
+          </c-input-group>
+
+          <!-- Labels -->
+          <c-input-group class="mb-3">
+            <span cInputGroupText>Labels</span>
+            <input
+              cFormControl
+              placeholder=""
+              [(ngModel)]="atomForUpdate.labels"/>
+          </c-input-group>
+
+          <!-- Bonds -->
+          <c-input-group class="mb-3">
+            <span cInputGroupText>Bonds</span>
+            <div class="d-flex flex-wrap gap-1 p-2 border rounded">
+              <span *ngFor="let bond of atomForUpdate.bonds" class="badge bg-secondary">{{ bond.name }}</span>
+            </div>
+          </c-input-group>
+
+          <!-- Title -->
+          <c-input-group class="mb-3">
+            <span cInputGroupText>Title</span>
+            <input
+              cFormControl
+              placeholder=""
+              [(ngModel)]="atomForUpdate.properties.nuclearies.title"
+              (ngModelChange)="onAtomPropertyChanged()"/>
+          </c-input-group>
+
+          <!-- Description -->
+          <c-input-group class="mb-3">
+            <span cInputGroupText>Description</span>
+            <input
+              cFormControl
+              placeholder=""
+              [(ngModel)]="atomForUpdate.properties.nuclearies.description"/>
+          </c-input-group>
+
+          <!-- Content (with smart text/textarea switching) -->
+          <c-input-group class="mb-3">
+            <span cInputGroupText>Content</span>
+            <input
+              *ngIf="!atomForUpdate.properties.nuclearies.content.includes('\n')"
+              cFormControl
+              placeholder=""
+              [(ngModel)]="atomForUpdate.properties.nuclearies.content"
+              (ngModelChange)="onAtomPropertyChanged()"/>
+            <textarea
+              *ngIf="atomForUpdate.properties.nuclearies.content.includes('\n')"
+              cFormControl
+              placeholder=""
+              [(ngModel)]="atomForUpdate.properties.nuclearies.content"
+              (ngModelChange)="onAtomPropertyChanged()"
+              style="height: 150px;">
+            </textarea>
+          </c-input-group>
+
+          <!-- Operation with dropdown -->
+          <c-input-group class="mb-3">
+            <span cInputGroupText>Operation</span>
+            <c-dropdown class="input-group-dropdown d-flex">
               <button
                 cButton
                 cDropdownToggle
                 variant="outline"
-                size="sm"
-                class="w-100">
-                {{ currentModeLabel }}
+                class="border-0 border-end h-100">
+                {{ selectedOperationType || '--' }}
               </button>
-              <ul cDropdownMenu class="w-100">
-                <li *ngFor="let option of modeOptions">
-                  <button
-                    cDropdownItem
-                    (click)="onModeChange(option.value)"
-                    [class.active]="currentMode === option.value">
-                    {{ option.label }}
-                  </button>
-                </li>
+              <ul cDropdownMenu>
+                <li><button cDropdownItem (click)="onOperationTypeChange('add')">add</button></li>
+                <li><button cDropdownItem (click)="onOperationTypeChange('sub')">sub</button></li>
+                <li><button cDropdownItem (click)="onOperationTypeChange('mult')">mult</button></li>
+                <li><button cDropdownItem (click)="onOperationTypeChange('div')">div</button></li>
               </ul>
             </c-dropdown>
-          </div>
+            <input
+              *ngIf="!(atomForUpdate.properties.nuclearies.operation ?? '').includes('\n')"
+              cFormControl
+              placeholder=""
+              [(ngModel)]="atomForUpdate.properties.nuclearies.operation"/>
+            <textarea
+              *ngIf="(atomForUpdate.properties.nuclearies.operation ?? '').includes('\n')"
+              cFormControl
+              placeholder=""
+              [(ngModel)]="atomForUpdate.properties.nuclearies.operation"
+              style="height: 150px;">
+            </textarea>
+          </c-input-group>
 
-          <div [ngSwitch]="currentMode">
-            <div *ngSwitchCase="SidebarMode.CREATE_ATOM">
-
-              <c-input-group class="mb-3">
-                <span cInputGroupText>Title</span>
-                <input
-                  cFormControl
-                  placeholder="Write Atom's title here."
-                  [(ngModel)]="newAtom.properties.nuclearies.title"/>
-              </c-input-group>
-
-              <c-input-group class="mb-3">
-                <span cInputGroupText>Labels</span>
-                <input
-                  cFormControl
-                  placeholder="Write Atom's labels here."
-                  [(ngModel)]="newAtom.labels"
-                  [ngModelOptions]="{ standalone: true }"
-                  (ngModelChange)="newAtom.labels = $event.split(',')"/>
-                </c-input-group>
-
-                <c-input-group class="mb-3" *ngIf="shouldShowUuid">
-                  <span cInputGroupText>Atom UUID</span>
-                  <span cInputGroupText class="text-muted">{{ newAtom.properties.shellies.uuid }}</span>
-                </c-input-group>
-              </div>
-
-              <div *ngSwitchCase="SidebarMode.UPDATE_ATOM">
-
-              <c-input-group class="mb-3">
-                <span cInputGroupText>Labels</span>
-                <input
-                cFormControl
-                placeholder=""
-                [(ngModel)]="atomForUpdate.labels"/>
-              </c-input-group>
-
-              <c-input-group class="mb-3">
-                <span cInputGroupText>Bonds</span>
-                <div class="d-flex flex-wrap gap-1 p-2 border rounded">
-                  <span *ngFor="let bond of atomForUpdate.bonds" class="badge bg-secondary">{{ bond.name }}</span>
-                </div>
-              </c-input-group>
-
-              <c-input-group class="mb-3">
-                <span cInputGroupText>Title</span>
-                <input
-                  cFormControl
-                  placeholder=""
-                  [(ngModel)]="atomForUpdate.properties.nuclearies.title"
-                  (ngModelChange)="onAtomPropertyChanged()"/>
-              </c-input-group>
-
-              <c-input-group class="mb-3">
-                <span cInputGroupText>Content</span>
-                <input
-                  *ngIf="!atomForUpdate.properties.nuclearies.content.includes('\n')"
-                  cFormControl
-                  placeholder=""
-                  [(ngModel)]="atomForUpdate.properties.nuclearies.content"
-                  (ngModelChange)="onAtomPropertyChanged()"/>
-                <textarea
-                  *ngIf="atomForUpdate.properties.nuclearies.content.includes('\n')"
-                  cFormControl
-                  placeholder=""
-                  [(ngModel)]="atomForUpdate.properties.nuclearies.content"
-                  (ngModelChange)="onAtomPropertyChanged()"
-                  style="height: 150px;">
-                </textarea>
-              </c-input-group>
-
-              <!-- Operation with dropdown -->
-              <c-input-group class="mb-3">
-                <span cInputGroupText>Operation</span>
-                <c-dropdown class="input-group-dropdown d-flex">
-                  <button
-                    cButton
-                    cDropdownToggle
-                    variant="outline"
-                    class="border-0 border-end h-100">
-                    {{ selectedOperationType || '--' }}
-                  </button>
-                  <ul cDropdownMenu>
-                    <li><button cDropdownItem (click)="onOperationTypeChange('add')">add</button></li>
-                    <li><button cDropdownItem (click)="onOperationTypeChange('sub')">sub</button></li>
-                    <li><button cDropdownItem (click)="onOperationTypeChange('mult')">mult</button></li>
-                    <li><button cDropdownItem (click)="onOperationTypeChange('div')">div</button></li>
-                  </ul>
-                </c-dropdown>
-                <input
-                  *ngIf="!(atomForUpdate.properties.nuclearies.operation ?? '').includes('\n')"
-                  cFormControl
-                  placeholder=""
-                  [(ngModel)]="atomForUpdate.properties.nuclearies.operation"/>
-                <textarea
-                  *ngIf="(atomForUpdate.properties.nuclearies.operation ?? '').includes('\n')"
-                  cFormControl
-                  placeholder=""
-                  [(ngModel)]="atomForUpdate.properties.nuclearies.operation"
-                  style="height: 150px;">
-                </textarea>
-              </c-input-group>
-
-              <c-input-group class="mb-3">
-                <span cInputGroupText>Description</span>
-                <input
-                  cFormControl
-                  placeholder=""
-                  [(ngModel)]="atomForUpdate.properties.nuclearies.description"/>
-              </c-input-group>
-
-              <c-input-group class="mb-3">
-                <span cInputGroupText>Constants</span>
-                <input
-                  *ngIf="!(atomForUpdate.properties.nuclearies.constants ?? '').includes('\n')"
-                  cFormControl
-                  placeholder=""
-                  [(ngModel)]="atomForUpdate.properties.nuclearies.constants"/>
-                <textarea
-                  *ngIf="(atomForUpdate.properties.nuclearies.constants ?? '').includes('\n')"
-                  cFormControl
-                  placeholder=""
-                  [(ngModel)]="atomForUpdate.properties.nuclearies.constants"
-                  style="height: 150px;">
-                </textarea>
-              </c-input-group>
-
-              <c-input-group class="mb-3">
-                <span cInputGroupText>Stored At</span>
-                <span cInputGroupText>{{ atomForUpdate.properties.shellies.changeHistory }}</span>
-              </c-input-group>
-
-              <c-input-group class="mb-3">
-                <span cInputGroupText>Atom UUID</span>
-                <input
-                  cFormControl
-                  placeholder=""
-                  [(ngModel)]="atomForUpdate.properties.shellies.uuid"/>
-                <button
-                  cButton
-                  color="primary"
-                  type="button"
-                  variant="outline"
-                  (click)="retrieveAtomFeatures()">
-                  Get Atom
-                </button>
-              </c-input-group>
-            </div>
-          </div>
+          <!-- Constants (with smart text/textarea switching) -->
+          <c-input-group class="mb-3">
+            <span cInputGroupText>Constants</span>
+            <input
+              *ngIf="!(atomForUpdate.properties.nuclearies.constants ?? '').includes('\n')"
+              cFormControl
+              placeholder=""
+              [(ngModel)]="atomForUpdate.properties.nuclearies.constants"/>
+            <textarea
+              *ngIf="(atomForUpdate.properties.nuclearies.constants ?? '').includes('\n')"
+              cFormControl
+              placeholder=""
+              [(ngModel)]="atomForUpdate.properties.nuclearies.constants"
+              style="height: 150px;">
+            </textarea>
+          </c-input-group>
         </div>
       </ng-container>
     </div>
