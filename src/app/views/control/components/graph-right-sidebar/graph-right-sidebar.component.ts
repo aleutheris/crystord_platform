@@ -271,8 +271,8 @@ export class GraphRightSidebarComponent implements AfterContentInit {
     };
 
     const operator = operatorMap[type] || type;
-    const bondNames = this.atomForUpdate.bonds.map(bond => bond.name);
-    const operationString = bondNames.join(` ${operator} `);
+    const bondUuids = this.atomForUpdate.bonds.map(bond => bond.uuid);
+    const operationString = bondUuids.join(` ${operator} `);
     this.atomForUpdate.properties.nuclearies.operation = operationString;
   }
 

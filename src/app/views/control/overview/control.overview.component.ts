@@ -102,7 +102,41 @@ export class ControlOverviewComponent {
   }
 
   saveGraph() {
-    console.log('Atom Store:', this.atomStore.getAtomsValue());
+    const atoms = this.atomStore.getAtomsValue();
+
+    // Transform atoms to the format expected by form_atoms API
+    const atomInputs = atoms.map(atom => ({
+      labels: atom.labels,
+      properties: {
+        shellies: {
+          uuid: atom.properties.shellies.uuid,
+          changeHistory: atom.properties.shellies.changeHistory
+        },
+        nuclearies: {
+          title: atom.properties.nuclearies.title,
+          description: atom.properties.nuclearies.description,
+          content: atom.properties.nuclearies.content,
+          constants: atom.properties.nuclearies.constants,
+          operation: atom.properties.nuclearies.operation
+        }
+      }
+    }));
+
+    const mq = {
+      modification: 'form_atoms',
+      args: {
+        inputs: atomInputs
+      }
+    };
+
+    this.atomService.modifyAtoms(mq).subscribe({
+      next: (data) => {
+        console.log('Atoms saved successfully:', data);
+      },
+      error: (error) => {
+        console.error('There was an error saving the atoms:', error);
+      }
+    });
   }
 
   retrieveAtomsFeatures() {
