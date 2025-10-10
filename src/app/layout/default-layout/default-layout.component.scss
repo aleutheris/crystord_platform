@@ -8,6 +8,13 @@
   }
 }
 
+// Force dropdown headers to always use dark mode colors
+.dropdown-header-dark {
+  background-color: #343a40 !important; // Dark background
+  color: #f8f9fa !important; // Light text
+  border-color: #495057 !important; // Dark border
+}
+
 // ng-scrollbar css variables
 //.cui-scrollbar {
 //  --scrollbar-border-radius: 7px;

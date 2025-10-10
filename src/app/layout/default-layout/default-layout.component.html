@@ -15,7 +15,7 @@
     </c-sidebar-brand>
   </c-sidebar-header>
 
-  <div class="sidebar-profile border-bottom d-flex align-items-center justify-content-center px-3 py-2">
+  <div class="sidebar-profile d-flex align-items-center justify-content-center px-3 py-2">
     <ng-container *ngTemplateOutlet="userDropdown" />
   </div>
 
@@ -81,9 +81,9 @@
         alt="User avatar"
       />
     </button>
-    <!-- <ul cDropdownMenu class="pt-0 w-auto">
-      <li>
-        <h6 cDropdownHeader class="bg-body-secondary text-body-secondary fw-semibold py-2 rounded-top">
+    <ul cDropdownMenu class="pt-0 w-auto">
+      <!-- <li>
+        <h6 cDropdownHeader class="dropdown-header-dark fw-semibold py-2 rounded-top">
           Account @if (authService.isDemoMode()) {
             <c-badge color="warning" class="ms-2">DEMO</c-badge>
           }
@@ -118,9 +118,9 @@
           Comments
           <c-badge class="ms-auto" color="warning"> 42</c-badge>
         </a>
-      </li>
+      </li> -->
       <li>
-        <h6 cDropdownHeader class="bg-body-secondary text-body-secondary fw-semibold py-2">
+        <h6 cDropdownHeader class="dropdown-header-dark fw-semibold py-2">
           Settings
         </h6>
       </li>
@@ -137,7 +137,7 @@
           Settings
         </a>
       </li>
-      <li>
+      <!-- <li>
         <a cDropdownItem routerLink="">
           <svg cIcon class="me-2" name="cilCreditCard"></svg>
           Payments
@@ -154,22 +154,22 @@
             42
           </c-badge>
         </a>
-      </li>
+      </li> -->
       <li>
         <hr cDropdownDivider />
       </li>
-      <li>
+      <!-- <li>
         <a cDropdownItem routerLink="">
           <svg cIcon class="me-2" name="cilLockLocked"></svg>
           Lock Account
         </a>
-      </li>
+      </li> -->
       <li>
         <a cDropdownItem (click)="logout()">
           <svg cIcon class="me-2" name="cilAccountLogout"></svg>
           Logout
         </a>
       </li>
-    </ul> -->
+    </ul>
   </c-dropdown>
 </ng-template>

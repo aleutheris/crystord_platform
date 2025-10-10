@@ -7,6 +7,7 @@ import { delay, filter, map, tap } from 'rxjs/operators';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { IconDirective } from '@coreui/icons-angular';
+import { AuthService } from '../../services/auth.service';
 import {
   ColorModeService,
   ContainerComponent,
@@ -76,6 +77,11 @@ export class DefaultLayoutComponent {
 
   readonly #colorModeService = inject(ColorModeService);
   readonly colorMode = this.#colorModeService.colorMode;
+  readonly #authService = inject(AuthService);
+
+  get authService() {
+    return this.#authService;
+  }
 
   readonly colorModes = [
     { name: 'light', text: 'Light', icon: 'cilSun' },
@@ -128,5 +134,10 @@ export class DefaultLayoutComponent {
     // if ($event.verticalUsed) {
     // console.log('verticalUsed', $event.verticalUsed);
     // }
+  }
+
+  logout(): void {
+    this.#authService.logout();
+    this.router.navigate(['/landing']);
   }
 }
