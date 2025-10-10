@@ -1,40 +1,6 @@
 import { INavData } from '@coreui/angular';
 
 export const navItems: INavData[] = [
-  {
-    name: 'Atom Control',
-    url: '/control',
-    iconComponent: { name: 'cil-chart-pie' },
-    children: [
-      {
-        name: 'Detail',
-        url: '/control/detail',
-        icon: 'nav-icon-bullet'
-      },
-      {
-        name: 'Overview',
-        url: '/control/overview',
-        icon: 'nav-icon-bullet'
-      }
-    ]
-  },
-  {
-    name: 'Tables',
-    url: '/tables',
-    iconComponent: { name: 'cil-notes' },
-    children: [
-      {
-        name: 'Search',
-        url: '/tables/table-search',
-        icon: 'nav-icon-bullet'
-      },
-      {
-        name: 'Upload',
-        url: '/tables/table-upload',
-        icon: 'nav-icon-bullet'
-      }
-    ]
-  },
   // {
   //   name: 'Dashboard',
   //   url: '/dashboard',
