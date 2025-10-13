@@ -4,8 +4,8 @@ import argparse
 import subprocess
 from datetime import datetime
 
-SERVER_CHOSEN = "local" # local, nucubuntunl or aleutheris
-SERVER_MODE = "dev"  # dev or prod
+SERVER_CHOSEN = "aleuhouse" # local, nucubuntunl or aleuhouse
+SERVER_MODE = "prod"  # dev or prod
 
 PRESERVED_FOLDER = "/node_modules"
 DATE_FORMAT = "%Y-%m-%d %H:%M:%S"

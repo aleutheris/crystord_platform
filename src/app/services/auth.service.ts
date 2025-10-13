@@ -36,7 +36,6 @@ export class AuthService {
   }
 
   login(email: string, password: string): Observable<boolean> {
-    // Simulate login logic - replace with your actual authentication
     return new Observable(observer => {
       setTimeout(() => {
         // Simple validation for demo purposes
