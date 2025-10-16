@@ -44,11 +44,12 @@ import { IconDirective } from '@coreui/icons-angular';
 })
 export class LandingComponent {
   loginForm = {
-    email: '',
+    username: '',
     password: ''
   };
 
   isLoading = signal(false);
+  demoLoading = signal(false);
   loginError = signal(false);
 
   constructor(
@@ -60,14 +61,10 @@ export class LandingComponent {
     this.isLoading.set(true);
     this.loginError.set(false);
 
-    this.authService.login(this.loginForm.email, this.loginForm.password).subscribe({
-      next: (success) => {
+    this.authService.login(this.loginForm.username, this.loginForm.password).subscribe({
+      next: () => {
         this.isLoading.set(false);
-        if (success) {
-          this.router.navigate(['/dashboard']);
-        } else {
-          this.loginError.set(true);
-        }
+        this.router.navigate(['/control']);
       },
       error: () => {
         this.isLoading.set(false);
@@ -77,8 +74,19 @@ export class LandingComponent {
   }
 
   startDemo(): void {
-    this.authService.startDemo();
-    this.router.navigate(['/control']);
+    this.demoLoading.set(true);
+    this.loginError.set(false);
+
+    this.authService.startDemo().subscribe({
+      next: () => {
+        this.demoLoading.set(false);
+        this.router.navigate(['/control']);
+      },
+      error: () => {
+        this.demoLoading.set(false);
+        this.loginError.set(true);
+      }
+    });
   }
 
   openYouTube(): void {

@@ -10,8 +10,6 @@ services:
       - traefik.http.routers.crystord_web.rule=Host(`crystord.com`)
       - traefik.http.routers.crystord_web.tls=true
       - traefik.http.routers.crystord_web.tls.certresolver=le
-    ports:
-      - "4201:4201"
     networks:
       - reverse_proxy_default
     restart: unless-stopped

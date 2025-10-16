@@ -36,11 +36,11 @@
                     </span>
                     <input
                       cFormControl
-                      [(ngModel)]="loginForm.email"
-                      name="email"
-                      placeholder="Email"
+                      [(ngModel)]="loginForm.username"
+                      name="username"
+                      placeholder="Username"
                       autocomplete="username"
-                      type="email"
+                      type="text"
                       required
                     />
                   </c-input-group>
@@ -77,7 +77,7 @@
                 <div class="text-center mt-3">
                   <small class="text-muted">
                     Don't have an account?
-                    <a href="#" class="text-decoration-none">Contact admin</a>
+                    <a href="mailto:aleutheris@gmail.com" class="text-decoration-none">Contact admin</a>
                   </small>
                 </div>
               </c-card-body>
@@ -124,8 +124,12 @@
                     color="primary"
                     variant="outline"
                     (click)="startDemo()"
+                    [disabled]="demoLoading()"
                     class="px-4"
                   >
+                    @if (demoLoading()) {
+                      <c-spinner size="sm" class="me-2"></c-spinner>
+                    }
                     <svg cIcon name="cilMediaPlay" class="me-2"></svg>
                     Start Demo
                   </button>

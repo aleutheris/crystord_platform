@@ -15,7 +15,7 @@ import { AuthService } from '../../../services/auth.service';
 })
 export class LoginComponent {
   loginForm = {
-    email: '',
+    username: '',
     password: ''
   };
 
@@ -36,14 +36,10 @@ export class LoginComponent {
     this.isLoading.set(true);
     this.loginError.set(false);
 
-    this.authService.login(this.loginForm.email, this.loginForm.password).subscribe({
-      next: (success) => {
+    this.authService.login(this.loginForm.username, this.loginForm.password).subscribe({
+      next: () => {
         this.isLoading.set(false);
-        if (success) {
-          this.router.navigate(['/dashboard']);
-        } else {
-          this.loginError.set(true);
-        }
+        this.router.navigate(['/control']);
       },
       error: () => {
         this.isLoading.set(false);
