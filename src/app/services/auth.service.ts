@@ -1,7 +1,7 @@
 import { Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject, throwError } from 'rxjs';
-import { catchError, map, tap } from 'rxjs/operators';
+import { catchError, map, switchMap, tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -53,6 +53,15 @@ export class AuthService {
 
   login(username: string, password: string): Observable<void> {
     return this.authenticate({ username, password }, false);
+  }
+
+  signup(username: string, password: string): Observable<void> {
+    return this.http.post('/api/signup', { username, password }).pipe(
+      switchMap(() => this.authenticate({ username, password }, false)),
+      catchError(error => {
+        return throwError(() => error);
+      })
+    );
   }
 
   startDemo(): Observable<void> {

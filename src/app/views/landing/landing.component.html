@@ -17,47 +17,115 @@
           <c-col md="6">
             <c-card class="shadow">
               <c-card-body class="p-4">
+                <div class="btn-group w-100 mb-4" role="group" aria-label="Authentication mode">
+                  <button
+                    type="button"
+                    cButton
+                    [color]="authMode() === 'signin' ? 'primary' : 'light'"
+                    class="w-50"
+                    (click)="switchMode('signin')"
+                  >
+                    Sign In
+                  </button>
+                  <button
+                    type="button"
+                    cButton
+                    [color]="authMode() === 'signup' ? 'primary' : 'light'"
+                    class="w-50"
+                    (click)="switchMode('signup')"
+                  >
+                    Sign Up
+                  </button>
+                </div>
+
                 <h4 class="mb-3 text-center">
                   <svg cIcon name="cilUser" class="me-2"></svg>
-                  Sign In
+                  {{ authMode() === 'signin' ? 'Sign In' : 'Create Account' }}
                 </h4>
-                <p class="text-muted text-center mb-4">Access your account to continue</p>
+                <p class="text-muted text-center mb-4">
+                  {{ authMode() === 'signin' ? 'Access your account to continue' : 'Create your account to get started' }}
+                </p>
 
-                @if (loginError()) {
+                @if (authError()) {
                   <c-alert color="danger" [dismissible]="false">
-                    Invalid credentials. Please try again.
+                    {{ authError() }}
                   </c-alert>
                 }
 
-                <form cForm (ngSubmit)="onLogin()">
-                  <c-input-group class="mb-3">
-                    <span cInputGroupText>
-                      <svg cIcon name="cilUser"></svg>
-                    </span>
-                    <input
-                      cFormControl
-                      [(ngModel)]="loginForm.username"
-                      name="username"
-                      placeholder="Username"
-                      autocomplete="username"
-                      type="text"
-                      required
-                    />
-                  </c-input-group>
-                  <c-input-group class="mb-4">
-                    <span cInputGroupText>
-                      <svg cIcon name="cilLockLocked"></svg>
-                    </span>
-                    <input
-                      cFormControl
-                      [(ngModel)]="loginForm.password"
-                      name="password"
-                      placeholder="Password"
-                      autocomplete="current-password"
-                      type="password"
-                      required
-                    />
-                  </c-input-group>
+                <form cForm (ngSubmit)="onSubmit()">
+                  @if (authMode() === 'signin') {
+                    <c-input-group class="mb-3">
+                      <span cInputGroupText>
+                        <svg cIcon name="cilUser"></svg>
+                      </span>
+                      <input
+                        cFormControl
+                        [(ngModel)]="loginForm.username"
+                        name="username"
+                        placeholder="Username"
+                        autocomplete="username"
+                        type="text"
+                        required
+                      />
+                    </c-input-group>
+                    <c-input-group class="mb-4">
+                      <span cInputGroupText>
+                        <svg cIcon name="cilLockLocked"></svg>
+                      </span>
+                      <input
+                        cFormControl
+                        [(ngModel)]="loginForm.password"
+                        name="password"
+                        placeholder="Password"
+                        autocomplete="current-password"
+                        type="password"
+                        required
+                      />
+                    </c-input-group>
+                  } @else {
+                    <c-input-group class="mb-3">
+                      <span cInputGroupText>
+                        <svg cIcon name="cilUser"></svg>
+                      </span>
+                      <input
+                        cFormControl
+                        [(ngModel)]="signupForm.username"
+                        name="signupUsername"
+                        placeholder="Choose a username"
+                        autocomplete="username"
+                        type="text"
+                        required
+                      />
+                    </c-input-group>
+                    <c-input-group class="mb-3">
+                      <span cInputGroupText>
+                        <svg cIcon name="cilLockLocked"></svg>
+                      </span>
+                      <input
+                        cFormControl
+                        [(ngModel)]="signupForm.password"
+                        name="signupPassword"
+                        placeholder="Create a password"
+                        autocomplete="new-password"
+                        type="password"
+                        required
+                      />
+                    </c-input-group>
+                    <c-input-group class="mb-4">
+                      <span cInputGroupText>
+                        <svg cIcon name="cilLockLocked"></svg>
+                      </span>
+                      <input
+                        cFormControl
+                        [(ngModel)]="signupForm.confirmPassword"
+                        name="signupConfirmPassword"
+                        placeholder="Confirm password"
+                        autocomplete="new-password"
+                        type="password"
+                        required
+                      />
+                    </c-input-group>
+                  }
                   <div class="d-grid">
                     <button
                       cButton
@@ -69,15 +137,38 @@
                       @if (isLoading()) {
                         <c-spinner size="sm" class="me-2"></c-spinner>
                       }
-                      Sign In
+                      {{ authMode() === 'signin' ? 'Sign In' : 'Create Account' }}
                     </button>
                   </div>
                 </form>
 
                 <div class="text-center mt-3">
                   <small class="text-muted">
-                    Don't have an account?
-                    <a href="mailto:aleutheris@gmail.com" class="text-decoration-none">Contact admin</a>
+                    @if (authMode() === 'signin') {
+                      Don't have an account?
+                      <button
+                        type="button"
+                        cButton
+                        color="link"
+                        class="p-0 align-baseline"
+                        (click)="switchMode('signup')"
+                      >
+                        Create one
+                      </button>
+                      |
+                      <a href="mailto:aleutheris@gmail.com" class="text-decoration-none">Contact admin</a>
+                    } @else {
+                      Already have an account?
+                      <button
+                        type="button"
+                        cButton
+                        color="link"
+                        class="p-0 align-baseline"
+                        (click)="switchMode('signin')"
+                      >
+                        Sign in
+                      </button>
+                    }
                   </small>
                 </div>
               </c-card-body>

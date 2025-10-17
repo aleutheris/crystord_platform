@@ -48,18 +48,49 @@ export class LandingComponent {
     password: ''
   };
 
+  signupForm = {
+    username: '',
+    password: '',
+    confirmPassword: ''
+  };
+
   isLoading = signal(false);
   demoLoading = signal(false);
-  loginError = signal(false);
+  authMode = signal<'signin' | 'signup'>('signin');
+  authError = signal<string | null>(null);
 
   constructor(
     private authService: AuthService,
     private router: Router
   ) {}
 
-  onLogin(): void {
+  switchMode(mode: 'signin' | 'signup'): void {
+    if (this.authMode() === mode) {
+      return;
+    }
+
+    this.authMode.set(mode);
+    this.authError.set(null);
+    this.isLoading.set(false);
+
+    if (mode === 'signin') {
+      this.signupForm = { username: '', password: '', confirmPassword: '' };
+    } else {
+      this.loginForm = { username: '', password: '' };
+    }
+  }
+
+  onSubmit(): void {
+    if (this.authMode() === 'signin') {
+      this.submitSignIn();
+    } else {
+      this.submitSignUp();
+    }
+  }
+
+  private submitSignIn(): void {
     this.isLoading.set(true);
-    this.loginError.set(false);
+    this.authError.set(null);
 
     this.authService.login(this.loginForm.username, this.loginForm.password).subscribe({
       next: () => {
@@ -68,14 +99,41 @@ export class LandingComponent {
       },
       error: () => {
         this.isLoading.set(false);
-        this.loginError.set(true);
+        this.authError.set('Unable to sign in. Please check your credentials.');
+      }
+    });
+  }
+
+  private submitSignUp(): void {
+    if (this.signupForm.password !== this.signupForm.confirmPassword) {
+      this.authError.set('Passwords do not match.');
+      return;
+    }
+
+    if (!this.signupForm.username || !this.signupForm.password) {
+      this.authError.set('Username and password are required.');
+      return;
+    }
+
+    this.isLoading.set(true);
+    this.authError.set(null);
+
+    this.authService.signup(this.signupForm.username, this.signupForm.password).subscribe({
+      next: () => {
+        this.isLoading.set(false);
+        this.router.navigate(['/control']);
+      },
+      error: (error) => {
+        this.isLoading.set(false);
+        const message = error?.error?.message || 'Unable to create account. Please try again.';
+        this.authError.set(message);
       }
     });
   }
 
   startDemo(): void {
     this.demoLoading.set(true);
-    this.loginError.set(false);
+    this.authError.set(null);
 
     this.authService.startDemo().subscribe({
       next: () => {
@@ -84,7 +142,7 @@ export class LandingComponent {
       },
       error: () => {
         this.demoLoading.set(false);
-        this.loginError.set(true);
+        this.authError.set('Unable to start demo. Please try again later.');
       }
     });
   }
