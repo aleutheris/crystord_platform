@@ -3,10 +3,21 @@
 }
 
 .df-node {
+  position: relative;
   padding: 0.5rem;
   border-radius: 0.25rem;
   border: 1px solid var(--cui-border-color, #dee2e6);
   background: var(--cui-body-bg, #fff);
+  transition: box-shadow 0.2s ease;
+}
+
+.df-node__content {
+  display: flex;
+  flex-direction: column;
+}
+
+.df-node--selected {
+  box-shadow: 0 0 0 6px rgba(50, 31, 219, 0.15);
 }
 
 .df-node__title-row {
@@ -35,24 +46,23 @@
   border-radius: 0.25rem;
 }
 
-.df-node__ports {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 0.5rem;
-}
-
 .df-node__port {
+  position: absolute;
+  top: 50%;
   width: 0.75rem;
   height: 0.75rem;
   border-radius: 50%;
   background: var(--cui-primary, #321fdb);
   display: inline-block;
+  transform: translateY(-50%);
 }
 
 .df-node__port--in {
+  left: -0.375rem;
   background: var(--cui-info, #39f);
 }
 
 .df-node__port--out {
+  right: -0.375rem;
   background: var(--cui-success, #2eb85c);
 }

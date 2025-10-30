@@ -1,8 +1,16 @@
-:host { display: block; height: 100%; }
+:host {
+  display: block;
+  height: 100%;
+}
+
 .graph-canvas {
   position: relative;
   overflow: auto;
   background: var(--cui-light, #f8f9fa);
-  border-radius: .25rem;
+  border-radius: 0.25rem;
 }
-.graph-node { position: absolute; }
+
+.graph-node {
+  position: absolute;
+  cursor: grab;
+}

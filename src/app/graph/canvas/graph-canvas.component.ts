@@ -26,12 +26,19 @@ export class GraphCanvasComponent {
   private draggingIndex: number | null = null;
   private dragOffsetX = 0;
   private dragOffsetY = 0;
+  selectedIndex: number | null = null;
 
-  onMouseDown(event: MouseEvent, index: number): void {
+  onCanvasMouseDown(): void {
+    this.selectedIndex = null;
+  }
+
+  onNodeMouseDown(event: MouseEvent, index: number): void {
     this.draggingIndex = index;
+    this.selectedIndex = index;
     this.dragOffsetX = event.clientX - this.nodes[index].x;
     this.dragOffsetY = event.clientY - this.nodes[index].y;
     event.preventDefault();
+    event.stopPropagation();
   }
 
   onMouseMove(event: MouseEvent): void {
