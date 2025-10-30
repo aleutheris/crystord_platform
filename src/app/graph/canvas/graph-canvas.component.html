@@ -1,0 +1,10 @@
+<div class="graph-canvas" [style.height.%]="100" (document:mousemove)="onMouseMove($event)" (document:mouseup)="onMouseUp()">
+  <div class="graph-node" *ngFor="let node of nodes; let i = index" [style.left.px]="node.x" [style.top.px]="node.y" (mousedown)="onMouseDown($event, i)">
+    <df-node-arithmetic
+      [title]="node.data.title"
+      [content]="node.data.content"
+      (titleChange)="node.data.title = $event"
+      (contentChange)="node.data.content = $event"
+    ></df-node-arithmetic>
+  </div>
+</div>

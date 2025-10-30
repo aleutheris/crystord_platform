@@ -43,9 +43,8 @@
           (visibleChange)="rightSidebarVisible = $event">
         </app-graph-right-sidebar>
 
-        <!-- Graph Canvas Area (replaces former Rete container) -->
         <div style="height: 500px; margin-top: 10px;">
-          <app-graph-canvas [node]="demoNode"></app-graph-canvas>
+          <app-graph-canvas [nodes]="demoNodes"></app-graph-canvas>
         </div>
       </c-card-body>
     </c-card>

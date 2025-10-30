@@ -7,31 +7,41 @@ export interface GraphNodeData {
   content: string;
 }
 
+export interface GraphNode {
+  x: number;
+  y: number;
+  data: GraphNodeData;
+}
+
 @Component({
   selector: 'app-graph-canvas',
   standalone: true,
   imports: [CommonModule, ArithmeticNodeComponent],
-  template: `
-    <div class="graph-canvas" [style.height.%]="100">
-      <div class="graph-node" [style.left.px]="nodeX" [style.top.px]="nodeY">
-        <df-node-arithmetic
-          [title]="node.title"
-          [content]="node.content"
-          (titleChange)="node.title = $event"
-          (contentChange)="node.content = $event"
-        ></df-node-arithmetic>
-      </div>
-    </div>
-  `,
-  styles: [
-    `:host { display: block; height: 100%; }
-     .graph-canvas { position: relative; overflow: auto; background: var(--cui-light, #f8f9fa); border-radius: .25rem; }
-     .graph-node { position: absolute; }
-    `
-  ]
+  templateUrl: './graph-canvas.component.html',
+  styleUrls: ['./graph-canvas.component.scss']
 })
 export class GraphCanvasComponent {
-  @Input() node: GraphNodeData = { title: 'Arithmetic', content: 'demo' };
-  @Input() nodeX = 120;
-  @Input() nodeY = 100;
+  @Input() nodes: GraphNode[] = [];
+
+  private draggingIndex: number | null = null;
+  private dragOffsetX = 0;
+  private dragOffsetY = 0;
+
+  onMouseDown(event: MouseEvent, index: number): void {
+    this.draggingIndex = index;
+    this.dragOffsetX = event.clientX - this.nodes[index].x;
+    this.dragOffsetY = event.clientY - this.nodes[index].y;
+    event.preventDefault();
+  }
+
+  onMouseMove(event: MouseEvent): void {
+    if (this.draggingIndex !== null) {
+      this.nodes[this.draggingIndex].x = event.clientX - this.dragOffsetX;
+      this.nodes[this.draggingIndex].y = event.clientY - this.dragOffsetY;
+    }
+  }
+
+  onMouseUp(): void {
+    this.draggingIndex = null;
+  }
 }

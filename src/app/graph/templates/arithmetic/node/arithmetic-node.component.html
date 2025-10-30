@@ -1,0 +1,15 @@
+<div class="df-node df-node--arithmetic">
+  <div class="df-node__title-row">
+    <input id="titleInput" type="text" class="df-node__title-input" [value]="title"
+           (input)="onTitleChange($any($event.target).value)" placeholder="Title" />
+  </div>
+  <div class="df-node__body">
+    <label class="df-node__label" for="contentInput">Content</label>
+    <input id="contentInput" type="text" class="df-node__input" [value]="content"
+           (input)="onContentChange($any($event.target).value)" placeholder="Enter content..." />
+  </div>
+  <div class="df-node__ports">
+    <span class="df-node__port df-node__port--in" title="input"></span>
+    <span class="df-node__port df-node__port--out" title="output"></span>
+  </div>
+</div>

@@ -17,11 +17,9 @@ import { Atom } from '../atomhall/atom.model';
 import { AtomService } from '../atomhall/atom.service';
 import { AtomStoreService } from '../services/atom-store.service';
 
-// Import refactored services and models
 import { NodeElement, AtomTexted, UpdateQuery } from '../models/atom-models';
 import { AtomSearchService } from '../services/atom-search.service';
 import { AtomTransformerService } from '../services/atom-transformer.service';
-// Removed Rete-specific services
 import { GraphControlsService } from '../services/graph-controls.service';
 import { GraphRightSidebarComponent, GraphSidebarConfig } from '../components/graph-right-sidebar';
 import { GraphCanvasComponent } from '../../../graph/canvas/graph-canvas.component';
@@ -50,7 +48,6 @@ import { GraphCanvasComponent } from '../../../graph/canvas/graph-canvas.compone
   ]
 })
 export class ControlOverviewComponent {
-  // ngOnInit removed: no Rete initialization
   searchText: string;
   isSearchTextValid: boolean | undefined = undefined;
   searchKey: string;
@@ -58,7 +55,6 @@ export class ControlOverviewComponent {
   atomsIndexed: Record<string, NodeElement>;
   atomsFeaturesTexted: AtomTexted[];
 
-  // Right sidebar properties
   rightSidebarVisible: boolean = true;
   rightSidebarConfig: GraphSidebarConfig = {
     width: {
@@ -69,18 +65,18 @@ export class ControlOverviewComponent {
     title: 'Atom Features'
   };
 
-  // Demo node data for canvas preview
-  demoNode = { title: 'Arithmetic', content: 'demo' };
+  demoNodes = [
+    { x: 120, y: 100, data: { title: 'Arithmetic', content: 'demo' } },
+    { x: 6 * 120, y: 100, data: { title: 'Arithmetic 2', content: 'second' } }
+  ];
 
   constructor(
     private atomService: AtomService,
     private searchService: AtomSearchService,
     private transformerService: AtomTransformerService,
-  // Rete services removed from constructor
     private graphControlsService: GraphControlsService,
   private atomStore: AtomStoreService
   ) {
-    // this.searchText = 'uuid=cc249313-1d09-4614-ae53-e8d7826b0ba2';
     this.searchText = 'labels=groceries';
     this.isSearchTextValid = undefined;
     this.searchKey = '';
@@ -94,12 +90,9 @@ export class ControlOverviewComponent {
     this.retrieveAtomsFeatures();
   }
 
-  // rearrangeGraph removed with Rete
-
   saveGraph() {
     const atoms = this.atomStore.getAtomsValue();
 
-    // Transform atoms to the format expected by form_atoms API
     const atomInputs = atoms.map(atom => ({
       labels: atom.labels,
       properties: {
@@ -194,9 +187,6 @@ export class ControlOverviewComponent {
     });
   }
 
-  /**
-   * Handle right sidebar toggle event
-   */
   onRightSidebarToggle(expanded: boolean): void {
     this.graphControlsService.setSidebarExpanded(expanded);
     console.log('Right sidebar toggled:', expanded ? 'expanded' : 'collapsed');
