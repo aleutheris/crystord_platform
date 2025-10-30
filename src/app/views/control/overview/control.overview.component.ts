@@ -21,10 +21,10 @@ import { AtomStoreService } from '../services/atom-store.service';
 import { NodeElement, AtomTexted, UpdateQuery } from '../models/atom-models';
 import { AtomSearchService } from '../services/atom-search.service';
 import { AtomTransformerService } from '../services/atom-transformer.service';
-import { GraphLayoutService } from '../services/graph-layout.service';
-import { ReteGraphManagerService } from '../services/rete-graph-manager.service';
+// Removed Rete-specific services
 import { GraphControlsService } from '../services/graph-controls.service';
 import { GraphRightSidebarComponent, GraphSidebarConfig } from '../components/graph-right-sidebar';
+import { GraphCanvasComponent } from '../../../graph/canvas/graph-canvas.component';
 
 
 @Component({
@@ -45,13 +45,12 @@ import { GraphRightSidebarComponent, GraphSidebarConfig } from '../components/gr
     ButtonDirective,
     TableDirective,
     IconDirective,
-    GraphRightSidebarComponent
+    GraphRightSidebarComponent,
+    GraphCanvasComponent
   ]
 })
 export class ControlOverviewComponent {
-  async ngOnInit() {
-    await this.reteManager.initializeReteEditor();
-  }
+  // ngOnInit removed: no Rete initialization
   searchText: string;
   isSearchTextValid: boolean | undefined = undefined;
   searchKey: string;
@@ -70,12 +69,14 @@ export class ControlOverviewComponent {
     title: 'Atom Features'
   };
 
+  // Demo node data for canvas preview
+  demoNode = { title: 'Arithmetic', content: 'demo' };
+
   constructor(
     private atomService: AtomService,
     private searchService: AtomSearchService,
     private transformerService: AtomTransformerService,
-    private layoutService: GraphLayoutService,
-    private reteManager: ReteGraphManagerService,
+  // Rete services removed from constructor
     private graphControlsService: GraphControlsService,
   private atomStore: AtomStoreService
   ) {
@@ -93,13 +94,7 @@ export class ControlOverviewComponent {
     this.retrieveAtomsFeatures();
   }
 
-  rearrangeGraph() {
-    if (!this.reteManager.isInitialized()) {
-      return;
-    }
-
-    this.layoutService.rearrangeGraph(this.reteManager.getEditor(), this.reteManager.getArea());
-  }
+  // rearrangeGraph removed with Rete
 
   saveGraph() {
     const atoms = this.atomStore.getAtomsValue();
@@ -159,18 +154,11 @@ export class ControlOverviewComponent {
   }
 
   handleRetrievedData() {
-    this.atomsIndexed = this.transformerService.getIndexedAtoms(this.atomsFeatures);
-    this.atomsFeaturesTexted = this.transformerService.atomsContentToString(this.atomsFeatures, this.atomsIndexed);
-    this.createReteGraph();
+  this.atomsIndexed = this.transformerService.getIndexedAtoms(this.atomsFeatures);
+  this.atomsFeaturesTexted = this.transformerService.atomsContentToString(this.atomsFeatures, this.atomsIndexed);
   }
 
-  private async createReteGraph() {
-    const initialized = await this.reteManager.initializeReteEditor();
-    if (initialized) {
-      await this.reteManager.createReteGraph(this.atomsFeatures);
-      this.layoutService.rearrangeGraph(this.reteManager.getEditor(), this.reteManager.getArea());
-    }
-  }
+  // createReteGraph removed with Rete
 
   updateAtomFeatures(index: number): void {
     const mq: UpdateQuery = {
