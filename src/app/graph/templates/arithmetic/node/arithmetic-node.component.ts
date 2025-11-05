@@ -13,6 +13,10 @@ export class ArithmeticNodeComponent {
   @Output() titleChange = new EventEmitter<string>();
   @Output() contentChange = new EventEmitter<string>();
 
+  private static nextId = 0;
+  titleInputId = `df-arithmetic-title-${ArithmeticNodeComponent.nextId++}`;
+  contentInputId = `df-arithmetic-content-${ArithmeticNodeComponent.nextId++}`;
+
   onTitleChange(val: string) {
     this.title = val;
     this.titleChange.emit(val);

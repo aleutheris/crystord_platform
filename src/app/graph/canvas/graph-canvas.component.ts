@@ -33,10 +33,23 @@ export class GraphCanvasComponent {
   }
 
   onNodeMouseDown(event: MouseEvent, index: number): void {
-    this.draggingIndex = index;
     this.selectedIndex = index;
+    const target = event.target as HTMLElement | null;
+    const tag = target?.tagName.toLowerCase();
+    const isEditable = tag === 'input' || tag === 'textarea' || target?.isContentEditable;
+
+    if (isEditable) {
+      // Allow native focus/selection behaviour for editable controls.
+      return;
+    }
+
+    this.draggingIndex = index;
     this.dragOffsetX = event.clientX - this.nodes[index].x;
     this.dragOffsetY = event.clientY - this.nodes[index].y;
+    const active = document.activeElement as HTMLElement | null;
+    if (active && (active.tagName.toLowerCase() === 'input' || active.tagName.toLowerCase() === 'textarea' || active.isContentEditable)) {
+      active.blur();
+    }
     event.preventDefault();
     event.stopPropagation();
   }
