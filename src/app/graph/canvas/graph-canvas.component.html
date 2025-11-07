@@ -6,16 +6,26 @@
 	(document:pointerup)="onPointerUp($event)"
 >
 	<svg class="graph-canvas__links">
+		<defs>
+			<marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+				<polygon points="0 0, 10 3.5, 0 7" fill="var(--cui-primary, #3f8cff)" />
+			</marker>
+			<marker id="arrowhead-preview" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+				<polygon points="0 0, 10 3.5, 0 7" fill="var(--cui-primary, #3f8cff)" opacity="0.6" />
+			</marker>
+		</defs>
 		<ng-container *ngFor="let connection of connections">
 			<path
 				class="graph-canvas__link"
 				[attr.d]="buildConnectionPath(connection)"
+				marker-end="url(#arrowhead)"
 			></path>
 		</ng-container>
 		<path
 			*ngIf="dragConnection"
 			class="graph-canvas__link graph-canvas__link--preview"
 			[attr.d]="buildDragPath()"
+			marker-end="url(#arrowhead-preview)"
 		></path>
 	</svg>
 
