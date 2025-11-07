@@ -40,3 +40,35 @@
 .graph-node--selected {
 	filter: drop-shadow(0 0 0.75rem rgba(63, 140, 255, 0.45));
 }
+
+.graph-world {
+	position: absolute;
+	inset: 0;
+	transform-origin: 0 0;
+}
+
+.graph-zoom-controls {
+	position: absolute;
+	left: 12px;
+	bottom: 12px;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	z-index: 20;
+}
+
+.graph-zoom-btn {
+	width: 36px;
+	height: 36px;
+	border-radius: 6px;
+	border: 1px solid rgba(255,255,255,0.2);
+	background: rgba(0, 0, 0, 0.35);
+	color: #fff;
+	font-size: 20px;
+	line-height: 1;
+	cursor: pointer;
+}
+
+.graph-zoom-btn:hover {
+	background: rgba(0, 0, 0, 0.5);
+}

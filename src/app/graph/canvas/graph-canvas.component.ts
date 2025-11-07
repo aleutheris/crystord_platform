@@ -51,6 +51,12 @@ interface DragConnection {
 	currentPoint: Point;
 }
 
+interface ViewportState {
+	scale: number; // zoom level
+	x: number;     // pan offset X (in screen px)
+	y: number;     // pan offset Y
+}
+
 const DEFAULT_NODES: GraphNode[] = [
 	{
 		id: 'node-1',
@@ -97,6 +103,13 @@ export class GraphCanvasComponent implements AfterViewInit, AfterViewChecked {
 	dragConnection: DragConnection | null = null;
 	selectedIndex: number | null = null;
 
+	// Viewport (pan + zoom) state
+	viewport: ViewportState = { scale: 1, x: 0, y: 0 };
+
+	private isPanning = false;
+	private panStart: Point | null = null;
+	private viewportStart: Point | null = null;
+
 	private hoveredPort: PortRef | null = null;
 	private draggingNodeIndex: number | null = null;
 	private dragOffsetX = 0;
@@ -123,6 +136,10 @@ export class GraphCanvasComponent implements AfterViewInit, AfterViewChecked {
 			this.selectedIndex = null;
 			this.hoveredPort = null;
 			this.blurActiveEditable();
+			// Begin panning
+			this.isPanning = true;
+			this.panStart = { x: event.clientX, y: event.clientY };
+			this.viewportStart = { x: this.viewport.x, y: this.viewport.y };
 		}
 	}
 
@@ -225,6 +242,13 @@ export class GraphCanvasComponent implements AfterViewInit, AfterViewChecked {
 	onPointerMove(event: PointerEvent): void {
 		if (!this.canvasRef) return;
 
+		if (this.isPanning && this.panStart && this.viewportStart) {
+			const dx = event.clientX - this.panStart.x;
+			const dy = event.clientY - this.panStart.y;
+			this.viewport.x = this.viewportStart.x + dx;
+			this.viewport.y = this.viewportStart.y + dy;
+		}
+
 		if (this.draggingNodeIndex !== null) {
 			this.updateCanvasRect();
 			const pointer = this.getPointerPosition(event);
@@ -243,6 +267,9 @@ export class GraphCanvasComponent implements AfterViewInit, AfterViewChecked {
 
 	onPointerUp(event: PointerEvent): void {
 		this.draggingNodeIndex = null;
+		this.isPanning = false;
+		this.panStart = null;
+		this.viewportStart = null;
 
 		if (!this.dragConnection) {
 			return;
@@ -342,20 +369,56 @@ export class GraphCanvasComponent implements AfterViewInit, AfterViewChecked {
 			return null;
 		}
 		const canvasEl = this.canvasRef.nativeElement;
-		return {
-			x: rect.left - canvasRect.left + rect.width / 2 + canvasEl.scrollLeft,
-			y: rect.top - canvasRect.top + rect.height / 2 + canvasEl.scrollTop
-		};
+		// Screen/local coords of port center
+		const screenX = rect.left - canvasRect.left + rect.width / 2 + canvasEl.scrollLeft;
+		const screenY = rect.top - canvasRect.top + rect.height / 2 + canvasEl.scrollTop;
+		// Convert to world
+		return this.screenToWorld(screenX, screenY);
 	}
 
 	private getPointerPosition(event: PointerEvent): Point {
 		this.updateCanvasRect();
 		const canvasRect = this.canvasRect!;
 		const canvasEl = this.canvasRef.nativeElement;
+		// Convert screen to canvas local, then to world (inverse viewport transform)
+		const localX = event.clientX - canvasRect.left + canvasEl.scrollLeft;
+		const localY = event.clientY - canvasRect.top + canvasEl.scrollTop;
+		return this.screenToWorld(localX, localY);
+	}
+
+	// Coordinate transforms
+	private worldToScreen(x: number, y: number): Point {
 		return {
-			x: event.clientX - canvasRect.left + canvasEl.scrollLeft,
-			y: event.clientY - canvasRect.top + canvasEl.scrollTop
+			x: (x * this.viewport.scale) + this.viewport.x,
+			y: (y * this.viewport.scale) + this.viewport.y
 		};
+	}
+
+	private screenToWorld(x: number, y: number): Point {
+		return {
+			x: (x - this.viewport.x) / this.viewport.scale,
+			y: (y - this.viewport.y) / this.viewport.scale
+		};
+	}
+
+	zoomIn() { this.applyZoom(1.1); }
+	zoomOut() { this.applyZoom(1/1.1); }
+
+	private applyZoom(factor: number) {
+		const prev = this.viewport.scale;
+		let next = prev * factor;
+		next = Math.min(3, Math.max(0.25, next));
+		// Zoom towards center of canvas
+		const canvasRect = this.canvasRef.nativeElement.getBoundingClientRect();
+		const cx = canvasRect.width / 2;
+		const cy = canvasRect.height / 2;
+		// world point at center before
+		const worldBefore = this.screenToWorld(cx, cy);
+		this.viewport.scale = next;
+		// adjust pan so that the same world point stays at center
+		const screenAfter = this.worldToScreen(worldBefore.x, worldBefore.y);
+		this.viewport.x += (cx - screenAfter.x);
+		this.viewport.y += (cy - screenAfter.y);
 	}
 
 	private updateCanvasRect(): void {
