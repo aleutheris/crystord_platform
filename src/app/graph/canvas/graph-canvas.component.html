@@ -1,23 +1,42 @@
 <div
-  class="graph-canvas"
-  [style.height.%]="100"
-  (mousedown)="onCanvasMouseDown()"
-  (document:mousemove)="onMouseMove($event)"
-  (document:mouseup)="onMouseUp()"
+	#canvasRef
+	class="graph-canvas"
+	(pointerdown)="onCanvasPointerDown($event)"
+	(document:pointermove)="onPointerMove($event)"
+	(document:pointerup)="onPointerUp($event)"
 >
-  <div
-    class="graph-node"
-    *ngFor="let node of nodes; let i = index"
-    [style.left.px]="node.x"
-    [style.top.px]="node.y"
-    (mousedown)="onNodeMouseDown($event, i)"
-  >
-    <df-node-arithmetic
-      [title]="node.data.title"
-      [content]="node.data.content"
-      [selected]="i === selectedIndex"
-      (titleChange)="node.data.title = $event"
-      (contentChange)="node.data.content = $event"
-    ></df-node-arithmetic>
-  </div>
+	<svg class="graph-canvas__links">
+		<ng-container *ngFor="let connection of connections">
+			<path
+				class="graph-canvas__link"
+				[attr.d]="buildConnectionPath(connection)"
+			></path>
+		</ng-container>
+		<path
+			*ngIf="dragConnection"
+			class="graph-canvas__link graph-canvas__link--preview"
+			[attr.d]="buildDragPath()"
+		></path>
+	</svg>
+
+	<div
+		class="graph-node"
+		*ngFor="let node of nodes; index as i; trackBy: trackNode"
+		[style.left.px]="node.x"
+		[style.top.px]="node.y"
+		[class.graph-node--selected]="i === selectedIndex"
+		(pointerdown)="onNodePointerDown($event, i)"
+		(pointerup)="onNodePointerUp()"
+	>
+		<df-node-arithmetic
+			[title]="node.data.title"
+			[content]="node.data.content"
+			[selected]="i === selectedIndex"
+			(titleChange)="node.data.title = $event"
+			(contentChange)="node.data.content = $event"
+			(portPointerDown)="onPortPointerDown($event, i)"
+			(portPointerEnter)="onPortPointerEnter($event, i)"
+			(portPointerLeave)="onPortPointerLeave($event, i)"
+		></df-node-arithmetic>
+	</div>
 </div>

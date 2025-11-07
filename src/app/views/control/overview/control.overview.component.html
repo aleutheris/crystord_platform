@@ -22,7 +22,15 @@
             style="margin-left: auto; margin-right: 0.5rem;">
             <svg cIcon name="cil-media-play" size="lg"></svg>
           </button>
-
+          <button
+            cButton
+            color="primary"
+            type="button"
+            variant="outline"
+            (click)="rearrangeGraph()"
+            aria-label="Rearrange">
+            <svg cIcon name="cil-applications-settings" size="lg"></svg>
+          </button>
           <button
             cButton
             color="secondary"
@@ -33,7 +41,7 @@
             <svg cIcon name="cil-save" size="lg"></svg>
           </button>
         </div>
-
+  <app-graph-canvas [nodes]="graphNodes" style="height:600px; width:100%; display:block;"></app-graph-canvas>
 
         <!-- Right Sidebar for Graph Controls -->
         <app-graph-right-sidebar
@@ -42,10 +50,6 @@
           (toggleEvent)="onRightSidebarToggle($event)"
           (visibleChange)="rightSidebarVisible = $event">
         </app-graph-right-sidebar>
-
-        <div style="height: 500px; margin-top: 10px;">
-          <app-graph-canvas [nodes]="demoNodes"></app-graph-canvas>
-        </div>
       </c-card-body>
     </c-card>
   </c-col>

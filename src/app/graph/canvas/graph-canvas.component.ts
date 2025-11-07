@@ -1,67 +1,389 @@
+import {
+	AfterViewChecked,
+	AfterViewInit,
+	Component,
+	ElementRef,
+	Input,
+	QueryList,
+	ViewChild,
+	ViewChildren,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
-import { ArithmeticNodeComponent } from '../templates/arithmetic/node/arithmetic-node.component';
+import {
+	ArithmeticNodeComponent,
+	NodePortPointerEvent,
+	NodePortType,
+} from '../templates/arithmetic/node/arithmetic-node.component';
 
 export interface GraphNodeData {
-  title: string;
-  content: string;
+	title: string;
+	content: string;
 }
 
 export interface GraphNode {
-  x: number;
-  y: number;
-  data: GraphNodeData;
+	id: string;
+	x: number;
+	y: number;
+	data: GraphNodeData;
 }
 
+interface PortRef {
+	nodeId: string;
+	portId: string;
+	type: NodePortType;
+}
+
+interface Connection {
+	id: number;
+	from: PortRef; // output
+	to: PortRef;   // input
+}
+
+interface Point {
+	x: number;
+	y: number;
+}
+
+interface DragConnection {
+	startPort: PortRef;
+	originConnectionId?: number;
+	startPoint: Point;
+	currentPoint: Point;
+}
+
+const DEFAULT_NODES: GraphNode[] = [
+	{
+		id: 'node-1',
+		x: 120,
+		y: 120,
+		data: { title: 'Arithmetic', content: 'demo' }
+	},
+	{
+		id: 'node-2',
+		x: 360,
+		y: 140,
+		data: { title: 'Arithmetic 2', content: 'second' }
+	}
+];
+
 @Component({
-  selector: 'app-graph-canvas',
-  standalone: true,
-  imports: [CommonModule, ArithmeticNodeComponent],
-  templateUrl: './graph-canvas.component.html',
-  styleUrls: ['./graph-canvas.component.scss']
+	selector: 'app-graph-canvas',
+	templateUrl: './graph-canvas.component.html',
+	styleUrls: ['./graph-canvas.component.scss'],
+	standalone: true,
+	imports: [CommonModule, ArithmeticNodeComponent]
 })
-export class GraphCanvasComponent {
-  @Input() nodes: GraphNode[] = [];
+export class GraphCanvasComponent implements AfterViewInit, AfterViewChecked {
+	private _nodes: GraphNode[] = DEFAULT_NODES.map(node => ({ ...node, data: { ...node.data } }));
 
-  private draggingIndex: number | null = null;
-  private dragOffsetX = 0;
-  private dragOffsetY = 0;
-  selectedIndex: number | null = null;
+	@Input() set nodes(value: GraphNode[] | null | undefined) {
+		// Fallback to demo nodes when consumer provides no nodes or an empty list
+		this._nodes = (value && value.length)
+			? value
+			: DEFAULT_NODES.map(node => ({ ...node, data: { ...node.data } }));
+	}
 
-  onCanvasMouseDown(): void {
-    this.selectedIndex = null;
-  }
+	get nodes(): GraphNode[] {
+		return this._nodes;
+	}
 
-  onNodeMouseDown(event: MouseEvent, index: number): void {
-    this.selectedIndex = index;
-    const target = event.target as HTMLElement | null;
-    const tag = target?.tagName.toLowerCase();
-    const isEditable = tag === 'input' || tag === 'textarea' || target?.isContentEditable;
+	@ViewChild('canvasRef', { static: true })
+	private canvasRef!: ElementRef<HTMLDivElement>;
 
-    if (isEditable) {
-      // Allow native focus/selection behaviour for editable controls.
-      return;
-    }
+	@ViewChildren(ArithmeticNodeComponent)
+	private nodeComponents!: QueryList<ArithmeticNodeComponent>;
 
-    this.draggingIndex = index;
-    this.dragOffsetX = event.clientX - this.nodes[index].x;
-    this.dragOffsetY = event.clientY - this.nodes[index].y;
-    const active = document.activeElement as HTMLElement | null;
-    if (active && (active.tagName.toLowerCase() === 'input' || active.tagName.toLowerCase() === 'textarea' || active.isContentEditable)) {
-      active.blur();
-    }
-    event.preventDefault();
-    event.stopPropagation();
-  }
+	connections: Connection[] = [];
+	dragConnection: DragConnection | null = null;
+	selectedIndex: number | null = null;
 
-  onMouseMove(event: MouseEvent): void {
-    if (this.draggingIndex !== null) {
-      this.nodes[this.draggingIndex].x = event.clientX - this.dragOffsetX;
-      this.nodes[this.draggingIndex].y = event.clientY - this.dragOffsetY;
-    }
-  }
+	private hoveredPort: PortRef | null = null;
+	private draggingNodeIndex: number | null = null;
+	private dragOffsetX = 0;
+	private dragOffsetY = 0;
+	private nextConnectionId = 1;
+	private nodeComponentMap = new Map<string, ArithmeticNodeComponent>();
+	private canvasRect?: DOMRect;
 
-  onMouseUp(): void {
-    this.draggingIndex = null;
-  }
+	ngAfterViewInit(): void {
+		this.syncNodeComponentMap();
+		this.updateCanvasRect();
+	}
+
+	ngAfterViewChecked(): void {
+		this.syncNodeComponentMap();
+	}
+
+	trackNode(index: number, node: GraphNode): string {
+		return node.id ?? String(index);
+	}
+
+	onCanvasPointerDown(event: PointerEvent): void {
+		if (event.target === this.canvasRef.nativeElement) {
+			this.selectedIndex = null;
+			this.hoveredPort = null;
+			this.blurActiveEditable();
+		}
+	}
+
+	onNodePointerDown(event: PointerEvent, index: number): void {
+		if (!this.nodes[index]) return;
+		this.selectedIndex = index;
+		this.updateCanvasRect();
+
+		const pointer = this.getPointerPosition(event);
+		const node = this.nodes[index];
+		this.draggingNodeIndex = index;
+		this.dragOffsetX = pointer.x - node.x;
+		this.dragOffsetY = pointer.y - node.y;
+
+		this.blurActiveEditable();
+		event.preventDefault();
+		event.stopPropagation();
+	}
+
+	onNodePointerUp(): void {
+		this.draggingNodeIndex = null;
+	}
+
+	onPortPointerDown(payload: NodePortPointerEvent, nodeIndex: number): void {
+		const node = this.nodes[nodeIndex];
+		if (!node) return;
+
+		const portRef: PortRef = {
+			nodeId: node.id,
+			portId: payload.portId,
+			type: payload.type
+		};
+
+		// Prevent node drag when starting from a port
+		this.draggingNodeIndex = null;
+		this.selectedIndex = nodeIndex;
+		this.updateCanvasRect();
+
+		if (payload.type === 'input') {
+			const existing = this.findConnectionTo(portRef);
+			if (!existing) {
+				return; // inputs without connection cannot initiate a drag
+			}
+			this.removeConnection(existing.id);
+			const fromPort = existing.from;
+			const startPoint = this.getPortCenter(fromPort);
+			if (!startPoint) {
+				return;
+			}
+			this.dragConnection = {
+				startPort: fromPort,
+				originConnectionId: existing.id,
+				startPoint,
+				currentPoint: startPoint
+			};
+			this.blurActiveEditable();
+			payload.event.preventDefault();
+			payload.event.stopPropagation();
+			return;
+		}
+
+		// Start a brand-new connection from an output port
+		const startPoint = this.getPortCenter(portRef);
+		if (!startPoint) {
+			return;
+		}
+		this.dragConnection = {
+			startPort: portRef,
+			startPoint,
+			currentPoint: startPoint
+		};
+		this.blurActiveEditable();
+		payload.event.preventDefault();
+		payload.event.stopPropagation();
+	}
+
+	onPortPointerEnter(payload: Omit<NodePortPointerEvent, 'event'>, nodeIndex: number): void {
+		const node = this.nodes[nodeIndex];
+		if (!node) return;
+		this.hoveredPort = {
+			nodeId: node.id,
+			portId: payload.portId,
+			type: payload.type
+		};
+	}
+
+	onPortPointerLeave(payload: Omit<NodePortPointerEvent, 'event'>, nodeIndex: number): void {
+		if (!this.hoveredPort) return;
+		const node = this.nodes[nodeIndex];
+		if (!node) return;
+		if (
+			this.hoveredPort.nodeId === node.id &&
+			this.hoveredPort.portId === payload.portId &&
+			this.hoveredPort.type === payload.type
+		) {
+			this.hoveredPort = null;
+		}
+	}
+
+	onPointerMove(event: PointerEvent): void {
+		if (!this.canvasRef) return;
+
+		if (this.draggingNodeIndex !== null) {
+			this.updateCanvasRect();
+			const pointer = this.getPointerPosition(event);
+			const node = this.nodes[this.draggingNodeIndex];
+			node.x = pointer.x - this.dragOffsetX;
+			node.y = pointer.y - this.dragOffsetY;
+			event.preventDefault();
+		}
+
+		if (this.dragConnection) {
+			this.updateCanvasRect();
+			this.dragConnection.currentPoint = this.getPointerPosition(event);
+			event.preventDefault();
+		}
+	}
+
+	onPointerUp(event: PointerEvent): void {
+		this.draggingNodeIndex = null;
+
+		if (!this.dragConnection) {
+			return;
+		}
+
+		const dropPort = this.hoveredPort;
+		if (dropPort && this.isValidConnection(this.dragConnection.startPort, dropPort)) {
+			const { outputPort, inputPort } = this.normalizePorts(this.dragConnection.startPort, dropPort);
+			if (!outputPort || !inputPort) {
+				this.dragConnection = null;
+				this.hoveredPort = null;
+				return;
+			}
+
+			// Enforce single connection per input port (Rete-style behaviour)
+			const existing = this.findConnectionTo(inputPort);
+			if (existing) {
+				this.removeConnection(existing.id);
+			}
+
+			const id = this.dragConnection.originConnectionId ?? this.nextConnectionId++;
+			this.connections.push({ id, from: outputPort, to: inputPort });
+		}
+
+		// If drop target invalid and we detached an existing connection, it remains removed.
+		this.dragConnection = null;
+		this.hoveredPort = null;
+		this.blurActiveEditable();
+		if (event.type === 'pointerup') {
+			event.preventDefault();
+		}
+	}
+
+	buildConnectionPath(connection: Connection): string {
+		const start = this.getPortCenter(connection.from);
+		const end = this.getPortCenter(connection.to);
+		if (!start || !end) {
+			return '';
+		}
+		return this.buildCurve(start, end);
+	}
+
+	buildDragPath(): string {
+		if (!this.dragConnection) {
+			return '';
+		}
+		const start = this.dragConnection.startPoint;
+		const end = this.hoveredPort ? (this.getPortCenter(this.hoveredPort) ?? this.dragConnection.currentPoint) : this.dragConnection.currentPoint;
+		return this.buildCurve(start, end);
+	}
+
+	private buildCurve(start: Point, end: Point): string {
+		const dx = Math.max(Math.abs(end.x - start.x), 40);
+		const controlOffset = dx * 0.5;
+		const c1x = start.x + controlOffset;
+		const c2x = end.x - controlOffset;
+		return `M ${start.x} ${start.y} C ${c1x} ${start.y}, ${c2x} ${end.y}, ${end.x} ${end.y}`;
+	}
+
+	private normalizePorts(start: PortRef, target: PortRef): { outputPort?: PortRef; inputPort?: PortRef } {
+		if (start.type === 'output' && target.type === 'input') {
+			return { outputPort: start, inputPort: target };
+		}
+		if (start.type === 'input' && target.type === 'output') {
+			return { outputPort: target, inputPort: start };
+		}
+		return {};
+	}
+
+	private isValidConnection(start: PortRef, target: PortRef): boolean {
+		if (start.nodeId === target.nodeId && start.type === target.type) {
+			return false;
+		}
+		return (start.type === 'output' && target.type === 'input') || (start.type === 'input' && target.type === 'output');
+	}
+
+	private findConnectionTo(port: PortRef): Connection | undefined {
+		return this.connections.find(conn => conn.to.nodeId === port.nodeId && conn.to.portId === port.portId);
+	}
+
+	private removeConnection(id: number): void {
+		this.connections = this.connections.filter(conn => conn.id !== id);
+	}
+
+	private getPortCenter(portRef: PortRef): Point | null {
+		const component = this.nodeComponentMap.get(portRef.nodeId);
+		if (!component) {
+			return null;
+		}
+		const rect = component.getPortRect(portRef.type);
+		if (!rect) {
+			return null;
+		}
+		this.updateCanvasRect();
+		const canvasRect = this.canvasRect;
+		if (!canvasRect) {
+			return null;
+		}
+		const canvasEl = this.canvasRef.nativeElement;
+		return {
+			x: rect.left - canvasRect.left + rect.width / 2 + canvasEl.scrollLeft,
+			y: rect.top - canvasRect.top + rect.height / 2 + canvasEl.scrollTop
+		};
+	}
+
+	private getPointerPosition(event: PointerEvent): Point {
+		this.updateCanvasRect();
+		const canvasRect = this.canvasRect!;
+		const canvasEl = this.canvasRef.nativeElement;
+		return {
+			x: event.clientX - canvasRect.left + canvasEl.scrollLeft,
+			y: event.clientY - canvasRect.top + canvasEl.scrollTop
+		};
+	}
+
+	private updateCanvasRect(): void {
+		this.canvasRect = this.canvasRef?.nativeElement.getBoundingClientRect();
+	}
+
+	private syncNodeComponentMap(): void {
+		if (!this.nodeComponents) {
+			return;
+		}
+		const components = this.nodeComponents.toArray();
+		this.nodeComponentMap.clear();
+		components.forEach((component, index) => {
+			const node = this.nodes[index];
+			if (node) {
+				this.nodeComponentMap.set(node.id, component);
+			}
+		});
+	}
+
+	private blurActiveEditable(): void {
+		const active = document.activeElement as HTMLElement | null;
+		if (!active) {
+			return;
+		}
+		const tag = active.tagName.toLowerCase();
+		if (tag === 'input' || tag === 'textarea' || active.isContentEditable) {
+			active.blur();
+		}
+	}
 }

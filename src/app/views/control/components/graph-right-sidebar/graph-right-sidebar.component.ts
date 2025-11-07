@@ -17,7 +17,9 @@ import {
   DropdownItemDirective
 } from '@coreui/angular';
 import { Atom } from '../../atomhall/atom.model';
-import { GraphFacadeService } from '../../services/graph-facade.service';
+import { AtomService } from '../../atomhall/atom.service';
+import { AtomSelectionService } from '../../services/atom-selection.service';
+import { AtomStoreService } from '../../services/atom-store.service';
 
 export interface GraphSidebarConfig {
   width: {
@@ -82,10 +84,28 @@ export class GraphRightSidebarComponent implements AfterContentInit {
   // Selected atom UUID
   selectedAtomUuid: string | null = null;
 
-  constructor(private graph: GraphFacadeService) {
-    // Keep sidebar in sync with current selection and store changes
-    this.graph.selectedAtom$().subscribe(atom => {
-      this.selectedAtomUuid = atom?.properties?.shellies?.uuid ?? null;
+  constructor(
+    private atomService: AtomService,
+    private atomSelection: AtomSelectionService,
+    private atomStore: AtomStoreService
+  ) {
+    // Subscribe to selection changes
+    this.atomSelection.getSelectedUuid$().subscribe(uuid => {
+      this.selectedAtomUuid = uuid;
+      if (uuid) {
+        const atom = this.atomStore.getAtomByUuid(uuid);
+        this.prepareAtomForUpdate(atom ?? null);
+      } else {
+        this.prepareAtomForUpdate(null);
+      }
+    });
+
+    this.atomStore.getAtoms$().subscribe(() => {
+      if (!this.selectedAtomUuid) {
+        return;
+      }
+
+      const atom = this.atomStore.getAtomByUuid(this.selectedAtomUuid);
       this.prepareAtomForUpdate(atom ?? null);
     });
   }
@@ -260,7 +280,7 @@ export class GraphRightSidebarComponent implements AfterContentInit {
 
   private notifyAtomForUpdateChange(): void {
     if (this.atomForUpdate.properties.shellies.uuid) {
-      this.graph.updateLocalAtom(this.atomForUpdate);
+      this.atomStore.updateAtom(this.atomForUpdate);
     }
   }
 
@@ -319,7 +339,7 @@ export class GraphRightSidebarComponent implements AfterContentInit {
       }
     };
 
-    this.graph.loadAtom(this.atomForUpdate.properties.shellies.uuid).subscribe({
+    this.atomService.readAtoms(rq).subscribe({
       next: (data) => {
         const loadedAtom = this.atomDataFeaturesToString(this.atomDataToCamelCase(data['result'][0]));
         this.prepareAtomForUpdate(loadedAtom);
@@ -383,7 +403,7 @@ export class GraphRightSidebarComponent implements AfterContentInit {
       }
     };
 
-    this.graph.updateAtomFeatures(this.atomForUpdate).subscribe({
+    this.atomService.modifyAtoms(mq).subscribe({
       next: (data) => {
         console.log('Atom data updated successfully:', data);
       },
@@ -426,7 +446,7 @@ export class GraphRightSidebarComponent implements AfterContentInit {
       }
     };
 
-    this.graph.destroyAtom(this.atomForUpdate.properties.shellies.uuid).subscribe({
+    this.atomService.modifyAtoms(mq).subscribe({
       next: (data) => {
         console.log('Atom destroyed successfully:', data);
         // Reset the atom after successful destruction

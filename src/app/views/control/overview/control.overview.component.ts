@@ -17,12 +17,13 @@ import { Atom } from '../atomhall/atom.model';
 import { AtomService } from '../atomhall/atom.service';
 import { AtomStoreService } from '../services/atom-store.service';
 
+// Import refactored services and models
 import { NodeElement, AtomTexted, UpdateQuery } from '../models/atom-models';
 import { AtomSearchService } from '../services/atom-search.service';
 import { AtomTransformerService } from '../services/atom-transformer.service';
+import { GraphCanvasComponent, GraphNode } from '../../../graph/canvas/graph-canvas.component';
 import { GraphControlsService } from '../services/graph-controls.service';
 import { GraphRightSidebarComponent, GraphSidebarConfig } from '../components/graph-right-sidebar';
-import { GraphCanvasComponent } from '../../../graph/canvas/graph-canvas.component';
 
 
 @Component({
@@ -48,13 +49,16 @@ import { GraphCanvasComponent } from '../../../graph/canvas/graph-canvas.compone
   ]
 })
 export class ControlOverviewComponent {
+  async ngOnInit() {}
   searchText: string;
   isSearchTextValid: boolean | undefined = undefined;
   searchKey: string;
   atomsFeatures: Atom[];
   atomsIndexed: Record<string, NodeElement>;
   atomsFeaturesTexted: AtomTexted[];
+  graphNodes: GraphNode[] = [];
 
+  // Right sidebar properties
   rightSidebarVisible: boolean = true;
   rightSidebarConfig: GraphSidebarConfig = {
     width: {
@@ -65,11 +69,6 @@ export class ControlOverviewComponent {
     title: 'Atom Features'
   };
 
-  demoNodes = [
-    { x: 120, y: 100, data: { title: 'Arithmetic', content: 'demo' } },
-    { x: 6 * 120, y: 100, data: { title: 'Arithmetic 2', content: 'second' } }
-  ];
-
   constructor(
     private atomService: AtomService,
     private searchService: AtomSearchService,
@@ -77,6 +76,7 @@ export class ControlOverviewComponent {
     private graphControlsService: GraphControlsService,
   private atomStore: AtomStoreService
   ) {
+    // this.searchText = 'uuid=cc249313-1d09-4614-ae53-e8d7826b0ba2';
     this.searchText = 'labels=groceries';
     this.isSearchTextValid = undefined;
     this.searchKey = '';
@@ -90,9 +90,22 @@ export class ControlOverviewComponent {
     this.retrieveAtomsFeatures();
   }
 
+  rearrangeGraph() {
+    // Simple auto-layout for Drawflow canvas: arrange nodes in a grid
+    const cols = Math.max(1, Math.ceil(Math.sqrt(this.graphNodes.length)));
+    const cellW = 220;
+    const cellH = 160;
+    this.graphNodes = this.graphNodes.map((n, idx) => {
+      const r = Math.floor(idx / cols);
+      const c = idx % cols;
+      return { ...n, x: 120 + c * cellW, y: 120 + r * cellH };
+    });
+  }
+
   saveGraph() {
     const atoms = this.atomStore.getAtomsValue();
 
+    // Transform atoms to the format expected by form_atoms API
     const atomInputs = atoms.map(atom => ({
       labels: atom.labels,
       properties: {
@@ -147,11 +160,32 @@ export class ControlOverviewComponent {
   }
 
   handleRetrievedData() {
-  this.atomsIndexed = this.transformerService.getIndexedAtoms(this.atomsFeatures);
-  this.atomsFeaturesTexted = this.transformerService.atomsContentToString(this.atomsFeatures, this.atomsIndexed);
+    this.atomsIndexed = this.transformerService.getIndexedAtoms(this.atomsFeatures);
+    this.atomsFeaturesTexted = this.transformerService.atomsContentToString(this.atomsFeatures, this.atomsIndexed);
+    this.updateGraphNodes();
   }
 
-  // createReteGraph removed with Rete
+  private updateGraphNodes() {
+    // Map atoms to GraphCanvas nodes
+    const baseX = 120;
+    const baseY = 120;
+    const dx = 240;
+    const dy = 180;
+    this.graphNodes = this.atomsFeatures.map((atom, i) => ({
+      id: atom.properties.shellies.uuid,
+      x: baseX + (i % 4) * dx,
+      y: baseY + Math.floor(i / 4) * dy,
+      data: {
+        title: atom.properties.nuclearies.title || 'Atom',
+        content: typeof atom.properties.nuclearies.content === 'string'
+          ? atom.properties.nuclearies.content
+          : JSON.stringify(atom.properties.nuclearies.content)
+      }
+    }));
+
+    // Trigger change detection by reassigning array (already done) and log for debugging
+    console.debug('[Graph] Nodes updated:', this.graphNodes.length);
+  }
 
   updateAtomFeatures(index: number): void {
     const mq: UpdateQuery = {
@@ -187,6 +221,9 @@ export class ControlOverviewComponent {
     });
   }
 
+  /**
+   * Handle right sidebar toggle event
+   */
   onRightSidebarToggle(expanded: boolean): void {
     this.graphControlsService.setSidebarExpanded(expanded);
     console.log('Right sidebar toggled:', expanded ? 'expanded' : 'collapsed');

@@ -1,6 +1,20 @@
 <div class="df-node df-node--arithmetic" [class.df-node--selected]="selected">
-  <span class="df-node__port df-node__port--in" title="input"></span>
-  <span class="df-node__port df-node__port--out" title="output"></span>
+  <span
+    #inputPort
+    class="df-node__port df-node__port--in"
+    title="input"
+    (pointerdown)="handlePortPointerDown($event, 'input', 'default')"
+    (pointerenter)="handlePortPointerEnter('input', 'default')"
+    (pointerleave)="handlePortPointerLeave('input', 'default')"
+  ></span>
+  <span
+    #outputPort
+    class="df-node__port df-node__port--out"
+    title="output"
+    (pointerdown)="handlePortPointerDown($event, 'output', 'default')"
+    (pointerenter)="handlePortPointerEnter('output', 'default')"
+    (pointerleave)="handlePortPointerLeave('output', 'default')"
+  ></span>
 
   <div class="df-node__content">
     <div class="df-node__title-row">
