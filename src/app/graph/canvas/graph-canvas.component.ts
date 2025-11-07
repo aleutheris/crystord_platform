@@ -132,11 +132,11 @@ export class GraphCanvasComponent implements AfterViewInit, AfterViewChecked {
 	}
 
 	onCanvasPointerDown(event: PointerEvent): void {
-		if (event.target === this.canvasRef.nativeElement) {
+		// Start panning only if the click is on a blank area (not on a node or port)
+		if (this.isBlankArea(event)) {
 			this.selectedIndex = null;
 			this.hoveredPort = null;
 			this.blurActiveEditable();
-			// Begin panning
 			this.isPanning = true;
 			this.panStart = { x: event.clientX, y: event.clientY };
 			this.viewportStart = { x: this.viewport.x, y: this.viewport.y };
@@ -448,5 +448,15 @@ export class GraphCanvasComponent implements AfterViewInit, AfterViewChecked {
 		if (tag === 'input' || tag === 'textarea' || active.isContentEditable) {
 			active.blur();
 		}
+	}
+
+	private isBlankArea(event: PointerEvent): boolean {
+		const path = (event.composedPath?.() ?? []) as Array<EventTarget>;
+		for (const t of path) {
+			if (!(t instanceof HTMLElement)) continue;
+			if (t.classList.contains('graph-node')) return false;
+			if (t.classList.contains('df-node__port')) return false;
+		}
+		return true;
 	}
 }
