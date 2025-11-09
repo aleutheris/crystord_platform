@@ -22,6 +22,7 @@ import { NodeElement, AtomTexted, UpdateQuery } from '../models/atom-models';
 import { AtomSearchService } from '../services/atom-search.service';
 import { AtomTransformerService } from '../services/atom-transformer.service';
 import { GraphCanvasComponent, GraphNode } from '../../../graph/canvas/graph-canvas.component';
+import { computeDagreLayout } from '../../../graph/layout/dagre-layout';
 import { ViewChild } from '@angular/core';
 import { GraphControlsService } from '../services/graph-controls.service';
 import { GraphRightSidebarComponent, GraphSidebarConfig } from '../components/graph-right-sidebar';
@@ -147,15 +148,9 @@ export class ControlOverviewComponent {
   }
 
   private updateGraphNodes() {
-    // Map atoms to GraphCanvas nodes
-    const baseX = 120;
-    const baseY = 120;
-    const dx = 240;
-    const dy = 180;
-    this.graphNodes = this.atomsFeatures.map((atom, i) => ({
+    // Map atoms to GraphCanvas nodes data
+    const nodes = this.atomsFeatures.map(atom => ({
       id: atom.properties.shellies.uuid,
-      x: baseX + (i % 4) * dx,
-      y: baseY + Math.floor(i / 4) * dy,
       data: {
         title: atom.properties.nuclearies.title || 'Atom',
         content: typeof atom.properties.nuclearies.content === 'string'
@@ -163,6 +158,41 @@ export class ControlOverviewComponent {
           : JSON.stringify(atom.properties.nuclearies.content)
       }
     }));
+
+    // Edges from bonds
+    const edges = this.atomsFeatures.flatMap(atom => {
+      const fromId = atom.properties.shellies.uuid;
+      const bonds = atom.bonds ?? [];
+      return bonds.map(b => b.direction === 'from' ? { from: b.uuid, to: fromId } : { from: fromId, to: b.uuid });
+    });
+
+    // Compute layout with Dagre (assume node size roughly 220x140)
+    try {
+      const positioned = computeDagreLayout(
+        nodes.map(n => ({ id: n.id, width: 220, height: 140 })),
+        edges,
+        { rankdir: 'LR', nodesep: 80, ranksep: 140, marginx: 60, marginy: 60 }
+      );
+      const posMap = new Map(positioned.map(p => [p.id, p] as const));
+      this.graphNodes = nodes.map(n => ({
+        id: n.id,
+        x: (posMap.get(n.id)?.x ?? 0) + 60,
+        y: (posMap.get(n.id)?.y ?? 0) + 60,
+        data: n.data
+      }));
+    } catch (e) {
+      console.warn('[Graph] Dagre layout failed, falling back to grid:', e);
+      const baseX = 120;
+      const baseY = 120;
+      const dx = 240;
+      const dy = 180;
+      this.graphNodes = nodes.map((node, i) => ({
+        id: node.id,
+        x: baseX + (i % 4) * dx,
+        y: baseY + Math.floor(i / 4) * dy,
+        data: node.data
+      }));
+    }
 
     // Trigger change detection by reassigning array (already done) and log for debugging
     console.debug('[Graph] Nodes updated:', this.graphNodes.length);
