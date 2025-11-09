@@ -69,7 +69,7 @@ export class AuthService {
   }
 
   startDemo(): Observable<void> {
-    return this.signup('demo', 'demo', true);
+    return this.authenticate({ username: 'demo', password: 'demo' }, true);
   }
 
   logout(): void {

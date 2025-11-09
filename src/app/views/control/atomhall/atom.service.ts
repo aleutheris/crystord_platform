@@ -21,12 +21,15 @@ export class AtomService {
           bonds { uuid name direction }
           properties {
             shellies { uuid changes { date description } }
-            nuclearies { title content description operation constants }
+            # Narrow nuclearies selection to fields known to resolve without server errors.
+            # "constants" previously triggered "Expected Iterable" errors; likely a list type with non-iterable resolver value.
+            # We omit description/operation/constants for now, matching the working playground example (title, content).
+            nuclearies { title content }
           }
         }
       }
     `;
-    return this.apollo.query({ query: RETRIEVE, variables: { labels, uuid }, fetchPolicy: 'no-cache' }).pipe(
+    return this.apollo.query({ query: RETRIEVE, variables: { labels, uuid }, fetchPolicy: 'no-cache', errorPolicy: 'all' }).pipe(
       map((res: any) => {
         // Normalize GraphQL shape to legacy REST-like `{ result: Atom[] }`
         const payload = res?.data?.retrieve;
@@ -79,6 +82,9 @@ export class AtomService {
   }
 
   private extractSelector(data: any): { labels?: string[]; uuid?: string } {
+    if (data.uuid) {
+      return { uuid: data.uuid };
+    }
     const selector = data?.args?.selector || data?.selector || {};
     const labels = selector.labels || selector?.properties?.labels || undefined;
     const uuid = selector?.properties?.shellies?.uuid || selector.uuid || undefined;
@@ -97,6 +103,10 @@ export class AtomService {
     // Map GraphQL fields to legacy Atom shape
     const shellies = raw.properties?.shellies || {};
     const nuclearies = raw.properties?.nuclearies || {};
+    // Handle constants defensively: ensure array -> string join, else empty string.
+    const constantsValue = Array.isArray(nuclearies.constants)
+      ? (nuclearies.constants as any[]).join(', ')
+      : (typeof nuclearies.constants === 'string' ? nuclearies.constants : '');
     return {
       labels: raw.labels || [],
       bonds: (raw.bonds || []).map((b: any) => ({ uuid: b.uuid, name: b.name, direction: b.direction })),
@@ -107,10 +117,10 @@ export class AtomService {
         },
         nuclearies: {
           title: nuclearies.title || '',
-          description: nuclearies.description || '',
+          description: nuclearies.description || '', // omitted from query currently; fallback empty
           content: nuclearies.content || '',
-          constants: nuclearies.constants || '',
-          operation: nuclearies.operation || ''
+          constants: constantsValue,
+          operation: nuclearies.operation || '' // omitted from query currently; fallback empty
         },
         ionies: {}
       }

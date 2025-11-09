@@ -102,61 +102,39 @@ export class ControlOverviewComponent {
     });
   }
 
-  saveGraph() {
-    const atoms = this.atomStore.getAtomsValue();
-
-    // Transform atoms to the format expected by form_atoms API
-    const atomInputs = atoms.map(atom => ({
-      labels: atom.labels,
-      properties: {
-        shellies: {
-          uuid: atom.properties.shellies.uuid,
-          changeHistory: atom.properties.shellies.changeHistory
-        },
-        nuclearies: {
-          title: atom.properties.nuclearies.title,
-          description: atom.properties.nuclearies.description,
-          content: atom.properties.nuclearies.content,
-          constants: atom.properties.nuclearies.constants,
-          operation: atom.properties.nuclearies.operation
-        }
-      }
-    }));
-
-    const mq = {
-      modification: 'form_atoms',
-      args: {
-        inputs: atomInputs
-      }
-    };
-
-    this.atomService.modifyAtoms(mq).subscribe({
-      next: (data) => {
-        console.log('Atoms saved successfully:', data);
-      },
-      error: (error) => {
-        console.error('There was an error saving the atoms:', error);
-      }
-    });
-  }
-
   retrieveAtomsFeatures() {
     this.searchKey = this.searchService.updateSearchKey(this.searchText);
-    const retrievalInteraction = this.searchService.chooseRetrievalInteraction(this.searchKey);
-    const query = this.searchService.parseSearchTextIntoQuery(this.searchText, retrievalInteraction);
+    if (this.searchKey === 'uuid') {
+      const uuid = this.searchText.split('=')[1];
+      this.atomService.readAtoms({ uuid }).subscribe({
+        next: (data) => {
+          this.atomsFeatures = data['result'];
+          this.atomStore.setAtoms(this.atomsFeatures); // update atom store
+          this.handleRetrievedData();
+          this.isSearchTextValid = true;
+        },
+        error: (error) => {
+          console.error('There was an error retrieving the atom:', error);
+          this.isSearchTextValid = false;
+        }
+      });
+    } else {
+      const retrievalInteraction = this.searchService.chooseRetrievalInteraction(this.searchKey);
+      const query = this.searchService.parseSearchTextIntoQuery(this.searchText, retrievalInteraction);
 
-    this.atomService.readAtoms(query).subscribe({
-      next: (data) => {
-        this.atomsFeatures = data['result'];
-        this.atomStore.setAtoms(this.atomsFeatures); // update atom store
-        this.handleRetrievedData();
-        this.isSearchTextValid = true;
-      },
-      error: (error) => {
-        console.error('There was an error searching for atoms:', error);
-        this.isSearchTextValid = false;
-      }
-    });
+      this.atomService.readAtoms(query).subscribe({
+        next: (data) => {
+          this.atomsFeatures = data['result'];
+          this.atomStore.setAtoms(this.atomsFeatures); // update atom store
+          this.handleRetrievedData();
+          this.isSearchTextValid = true;
+        },
+        error: (error) => {
+          console.error('There was an error searching for atoms:', error);
+          this.isSearchTextValid = false;
+        }
+      });
+    }
   }
 
   handleRetrievedData() {
