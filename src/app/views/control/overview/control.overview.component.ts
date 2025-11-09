@@ -95,15 +95,8 @@ export class ControlOverviewComponent {
   }
 
   rearrangeGraph() {
-    // Simple auto-layout for Drawflow canvas: arrange nodes in a grid
-    const cols = Math.max(1, Math.ceil(Math.sqrt(this.graphNodes.length)));
-    const cellW = 220;
-    const cellH = 160;
-    this.graphNodes = this.graphNodes.map((n, idx) => {
-      const r = Math.floor(idx / cols);
-      const c = idx % cols;
-      return { ...n, x: 120 + c * cellW, y: 120 + r * cellH };
-    });
+    // Re-run auto layout on current atoms and bonds
+    this.updateGraphNodes();
   }
 
   retrieveAtomsFeatures() {
