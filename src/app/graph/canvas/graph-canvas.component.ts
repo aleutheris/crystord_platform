@@ -35,8 +35,8 @@ interface PortRef {
 
 interface Connection {
 	id: number;
-	from: PortRef; // output
-	to: PortRef;   // input
+	from: PortRef;
+	to: PortRef;
 }
 
 interface Point {
@@ -52,9 +52,9 @@ interface DragConnection {
 }
 
 interface ViewportState {
-	scale: number; // zoom level
-	x: number;     // pan offset X (in screen px)
-	y: number;     // pan offset Y
+	scale: number;
+	x: number;
+	y: number;
 }
 
 const DEFAULT_NODES: GraphNode[] = [
@@ -83,7 +83,6 @@ export class GraphCanvasComponent implements AfterViewInit, AfterViewChecked {
 	private _nodes: GraphNode[] = DEFAULT_NODES.map(node => ({ ...node, data: { ...node.data } }));
 
 	@Input() set nodes(value: GraphNode[] | null | undefined) {
-		// Fallback to demo nodes when consumer provides no nodes or an empty list
 		this._nodes = (value && value.length)
 			? value
 			: DEFAULT_NODES.map(node => ({ ...node, data: { ...node.data } }));
@@ -103,7 +102,6 @@ export class GraphCanvasComponent implements AfterViewInit, AfterViewChecked {
 	dragConnection: DragConnection | null = null;
 	selectedIndex: number | null = null;
 
-	// Viewport (pan + zoom) state
 	viewport: ViewportState = { scale: 1, x: 0, y: 0 };
 
 	private isPanning = false;
@@ -132,7 +130,6 @@ export class GraphCanvasComponent implements AfterViewInit, AfterViewChecked {
 	}
 
 	onCanvasPointerDown(event: PointerEvent): void {
-		// Start panning only if the click is on a blank area (not on a node or port)
 		if (this.isBlankArea(event)) {
 			this.selectedIndex = null;
 			this.hoveredPort = null;

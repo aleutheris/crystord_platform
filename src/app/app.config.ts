@@ -1,4 +1,7 @@
 import { ApplicationConfig, importProvidersFrom } from '@angular/core';
+import { APOLLO_OPTIONS, ApolloModule } from 'apollo-angular';
+import { apolloOptionsFactory } from './graphql/apollo-angular.config';
+import { HttpLink } from 'apollo-angular/http';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import {
@@ -27,11 +30,13 @@ export const appConfig: ApplicationConfig = {
       withEnabledBlockingInitialNavigation(),
       withViewTransitions()
     ),
-    importProvidersFrom(SidebarModule, DropdownModule),
+  importProvidersFrom(SidebarModule, DropdownModule, ApolloModule),
     IconSetService,
     provideAnimations(),
     provideHttpClient(
       withInterceptors([authInterceptor])
-    )
+    ),
+    // Apollo GraphQL client (ApolloClientOptions via factory)
+    { provide: APOLLO_OPTIONS, useFactory: apolloOptionsFactory, deps: [HttpLink] }
   ]
 };

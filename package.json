@@ -46,6 +46,9 @@
     "konva": "^9.3.18",
     "lodash-es": "^4.17.21",
     "ngx-scrollbar": "^13.0.3",
+  "apollo-angular": "^7.0.0",
+  "@apollo/client": "^3.9.11",
+  "graphql": "^16.8.1",
 
     "rxjs": "~7.8.1",
     "tslib": "^2.6.3",

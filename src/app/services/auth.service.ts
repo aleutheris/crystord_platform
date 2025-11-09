@@ -1,7 +1,7 @@
 import { Injectable, signal } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject, throwError } from 'rxjs';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
+import { Apollo, gql } from 'apollo-angular';
 
 @Injectable({
   providedIn: 'root'
@@ -21,7 +21,7 @@ export class AuthService {
   isAuthenticated = signal<boolean>(false);
   isDemoMode = signal<boolean>(false);
 
-  constructor(private http: HttpClient) {
+  constructor(private apollo: Apollo) {
     const storedToken = this.getToken();
     const wasDemoMode = localStorage.getItem(this.DEMO_STATE_KEY) === 'true';
     const storedUsername = localStorage.getItem(this.USERNAME_KEY);
@@ -55,17 +55,21 @@ export class AuthService {
     return this.authenticate({ username, password }, false);
   }
 
-  signup(username: string, password: string): Observable<void> {
-    return this.http.post('/api/signup', { username, password }).pipe(
-      switchMap(() => this.authenticate({ username, password }, false)),
-      catchError(error => {
-        return throwError(() => error);
-      })
+  signup(username: string, password: string, isDemo: boolean = false): Observable<void> {
+    // Map username -> email for GraphQL schema compatibility
+    const SIGNUP = gql`
+      mutation Signup($email: String!, $password: String!, $username: String) {
+        signup(email: $email, password: $password, username: $username)
+      }
+    `;
+    return this.apollo.mutate({ mutation: SIGNUP, variables: { email: username, password, username } }).pipe(
+      switchMap(() => this.authenticate({ username, password }, isDemo)),
+      catchError(error => throwError(() => error))
     );
   }
 
   startDemo(): Observable<void> {
-    return this.authenticate({ username: 'dummy', password: 'dummy' }, true);
+    return this.signup('demo', 'demo', true);
   }
 
   logout(): void {
@@ -84,14 +88,15 @@ export class AuthService {
     credentials: { username: string; password: string },
     isDemo: boolean
   ): Observable<void> {
-    return this.http.post<AuthResponse>('/api/signin', credentials).pipe(
-      tap(response => {
-        const token = response?.token ?? response?.access_token;
-
-        if (!token) {
-          throw new Error('Authentication token missing in response');
-        }
-
+    const SIGNIN = gql`
+      mutation Signin($email: String!, $password: String!) {
+        signin(email: $email, password: $password)
+      }
+    `;
+    return this.apollo.mutate<{ signin: string }>({ mutation: SIGNIN, variables: { email: credentials.username, password: credentials.password } }).pipe(
+      tap(res => {
+        const token = res.data?.signin;
+        if (!token) throw new Error('Authentication token missing in response');
         const username = isDemo ? 'Demo User' : credentials.username;
         this.persistAuthState(token, isDemo, username);
       }),
@@ -141,7 +146,4 @@ export class AuthService {
   }
 }
 
-interface AuthResponse {
-  token?: string;
-  access_token?: string;
-}
+// GraphQL returns a string token from signin/signup
