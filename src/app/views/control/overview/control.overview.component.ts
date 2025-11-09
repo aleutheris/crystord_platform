@@ -22,6 +22,7 @@ import { NodeElement, AtomTexted, UpdateQuery } from '../models/atom-models';
 import { AtomSearchService } from '../services/atom-search.service';
 import { AtomTransformerService } from '../services/atom-transformer.service';
 import { GraphCanvasComponent, GraphNode } from '../../../graph/canvas/graph-canvas.component';
+import { ViewChild } from '@angular/core';
 import { GraphControlsService } from '../services/graph-controls.service';
 import { GraphRightSidebarComponent, GraphSidebarConfig } from '../components/graph-right-sidebar';
 
@@ -49,6 +50,7 @@ import { GraphRightSidebarComponent, GraphSidebarConfig } from '../components/gr
   ]
 })
 export class ControlOverviewComponent {
+  @ViewChild(GraphCanvasComponent) private graphCanvas?: GraphCanvasComponent; // still available if needed later
   async ngOnInit() {}
   searchText: string;
   isSearchTextValid: boolean | undefined = undefined;
@@ -57,6 +59,7 @@ export class ControlOverviewComponent {
   atomsIndexed: Record<string, NodeElement>;
   atomsFeaturesTexted: AtomTexted[];
   graphNodes: GraphNode[] = [];
+  graphConnections: { from: string; to: string }[] = [];
 
   // Right sidebar properties
   rightSidebarVisible: boolean = true;
@@ -163,6 +166,39 @@ export class ControlOverviewComponent {
 
     // Trigger change detection by reassigning array (already done) and log for debugging
     console.debug('[Graph] Nodes updated:', this.graphNodes.length);
+    // Also build connection pairs for template binding
+    this.updateGraphConnections();
+  }
+
+  private updateGraphConnections(): void {
+    // Build a quick lookup of whether a node exists to avoid ghost connections
+    const nodeIds = new Set(this.graphNodes.map(n => n.id));
+    const pairs: { from: string; to: string }[] = [];
+    for (const atom of this.atomsFeatures) {
+      const fromId = atom.properties.shellies.uuid;
+      if (!fromId || !nodeIds.has(fromId)) continue;
+      const bonds = atom.bonds ?? [];
+      for (const bond of bonds) {
+        const toId = bond.uuid;
+        if (!toId || !nodeIds.has(toId)) continue;
+        // Interpret direction: 'to' means from current atom to the bonded uuid.
+        // 'from' means the arrow comes from bonded uuid to current atom.
+        if (bond.direction === 'from') {
+          pairs.push({ from: toId, to: fromId });
+        } else {
+          pairs.push({ from: fromId, to: toId });
+        }
+      }
+    }
+    // Deduplicate identical pairs
+    const key = (p: {from:string;to:string}) => p.from + '::' + p.to;
+    const seen = new Set<string>();
+    this.graphConnections = pairs.filter(p => {
+      const k = key(p);
+      if (seen.has(k)) return false;
+      seen.add(k);
+      return true;
+    });
   }
 
   updateAtomFeatures(index: number): void {

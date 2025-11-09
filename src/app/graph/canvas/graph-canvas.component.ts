@@ -116,6 +116,26 @@ export class GraphCanvasComponent implements AfterViewInit, AfterViewChecked {
 	private nodeComponentMap = new Map<string, ArithmeticNodeComponent>();
 	private canvasRect?: DOMRect;
 
+	/**
+	 * Bindable input: list of directed edges as node id pairs.
+	 * Each pair links the output port ('default') of `from` node to the input port ('default') of `to` node.
+	 */
+	@Input() set autoConnections(pairs: { from: string; to: string }[] | null | undefined) {
+		this.applyConnectionPairs(pairs ?? []);
+	}
+
+	private applyConnectionPairs(pairs: { from: string; to: string }[]): void {
+		const nodeIds = new Set(this.nodes.map(n => n.id));
+		this.connections = [];
+		pairs.forEach(pair => {
+			if (!pair.from || !pair.to || pair.from === pair.to) return;
+			if (!nodeIds.has(pair.from) || !nodeIds.has(pair.to)) return;
+			const fromPort: PortRef = { nodeId: pair.from, portId: 'default', type: 'output' };
+			const toPort: PortRef = { nodeId: pair.to, portId: 'default', type: 'input' };
+			this.connections.push({ id: this.nextConnectionId++, from: fromPort, to: toPort });
+		});
+	}
+
 	ngAfterViewInit(): void {
 		this.syncNodeComponentMap();
 		this.updateCanvasRect();

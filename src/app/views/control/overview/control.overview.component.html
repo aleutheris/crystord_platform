@@ -32,7 +32,11 @@
             <svg cIcon name="cil-applications-settings" size="lg"></svg>
           </button>
         </div>
-  <app-graph-canvas [nodes]="graphNodes" style="height:600px; width:100%; display:block;"></app-graph-canvas>
+  <app-graph-canvas
+    [nodes]="graphNodes"
+    [autoConnections]="graphConnections"
+    style="height:600px; width:100%; display:block;"
+  ></app-graph-canvas>
 
         <!-- Right Sidebar for Graph Controls -->
         <app-graph-right-sidebar
