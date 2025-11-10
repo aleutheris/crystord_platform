@@ -4,7 +4,9 @@ import {
 	ChangeDetectorRef,
 	Component,
 	ElementRef,
+	EventEmitter,
 	Input,
+	Output,
 	QueryList,
 	ViewChild,
 	ViewChildren,
@@ -103,6 +105,8 @@ export class GraphCanvasComponent implements AfterViewInit, AfterViewChecked {
 	dragConnection: DragConnection | null = null;
 	selectedIndex: number | null = null;
 
+	@Output() nodeSelected = new EventEmitter<string | null>();
+
 	viewport: ViewportState = { scale: 1, x: 0, y: 0 };
 
 	private isPanning = false;
@@ -168,6 +172,8 @@ export class GraphCanvasComponent implements AfterViewInit, AfterViewChecked {
 			this.isPanning = true;
 			this.panStart = { x: event.clientX, y: event.clientY };
 			this.viewportStart = { x: this.viewport.x, y: this.viewport.y };
+			// Deselection - keep last selected atom visible
+			// this.nodeSelected.emit(null);
 		}
 	}
 
@@ -181,6 +187,10 @@ export class GraphCanvasComponent implements AfterViewInit, AfterViewChecked {
 		this.draggingNodeIndex = index;
 		this.dragOffsetX = pointer.x - node.x;
 		this.dragOffsetY = pointer.y - node.y;
+
+		// Emit the selected node ID
+		console.log('[GraphCanvas] Node selected, emitting ID:', node.id);
+		this.nodeSelected.emit(node.id);
 
 		this.blurActiveEditable();
 		event.preventDefault();

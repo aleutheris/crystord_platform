@@ -35,6 +35,7 @@
   <app-graph-canvas
     [nodes]="graphNodes"
     [autoConnections]="graphConnections"
+    (nodeSelected)="onNodeSelected($event)"
     style="height:600px; width:100%; display:block;"
   ></app-graph-canvas>
 
@@ -45,56 +46,6 @@
           (toggleEvent)="onRightSidebarToggle($event)"
           (visibleChange)="rightSidebarVisible = $event">
         </app-graph-right-sidebar>
-      </c-card-body>
-    </c-card>
-  </c-col>
-</c-row>
-
-<c-row>
-  <c-col xs="12">
-    <c-card class="mb-4">
-      <c-card-header>
-        <strong>List</strong>
-      </c-card-header>
-      <c-card-body [ngStyle]="{ 'white-space': 'nowrap', 'overflow': 'auto' }">
-        <table [hover]="true" cTable>
-          <thead>
-            <tr>
-              <th scope="col"></th>
-              <th scope="col">Title</th>
-              <th scope="col">Operation</th>
-              <th scope="col">Bonds</th>
-              <th scope="col">UUID</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let atom of atomsFeaturesTexted; let i = index" (click)="searchClickedAtom(atom)">
-              <td>
-                <button cButton
-                  color="primary"
-                  id="inputGroupFileAddon03"
-                  type="button"
-                  variant="outline"
-                  (click)="updateAtomFeatures(i)">
-                  Update
-                </button>
-              </td>
-              <td>{{ atom.properties.nuclearies.title }}</td>
-              <td>
-                <input aria-label="default input example"
-                  cFormControl
-                  placeholder="add operation"
-                  type="text"
-                  [(ngModel)]="atom.properties.nuclearies.operation"
-                  [ngStyle]="{ 'min-width': '200px', 'max-width': '400px' }"/>
-              </td>
-              <td>
-                <span *ngFor="let bond_name of atom.bonds" class="badge bg-secondary rounded-pill me-1">{{ bond_name }}</span>
-              </td>
-              <td>{{ atom.properties.shellies.uuid }}</td>
-            </tr>
-          </tbody>
-        </table>
       </c-card-body>
     </c-card>
   </c-col>
