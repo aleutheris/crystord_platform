@@ -74,6 +74,8 @@ export class GraphRightSidebarComponent implements AfterContentInit {
 
   // Atom update properties
   atomForUpdate: Atom = this.initializeUpdateAtom();
+  originalAtomState: Atom | null = null;
+  private isUpdatingFromBlur: boolean = false;
 
   // Operation type dropdown
   selectedOperationType: string = '';
@@ -101,7 +103,7 @@ export class GraphRightSidebarComponent implements AfterContentInit {
     });
 
     this.atomStore.getAtoms$().subscribe(() => {
-      if (!this.selectedAtomUuid) {
+      if (!this.selectedAtomUuid || this.isUpdatingFromBlur) {
         return;
       }
 
@@ -161,6 +163,47 @@ export class GraphRightSidebarComponent implements AfterContentInit {
    */
   onAtomPropertyChanged(): void {
     this.notifyAtomForUpdateChange();
+  }
+
+  /**
+   * Auto-save when field loses focus, but only if values actually changed
+   */
+  onFieldBlur(): void {
+    // Use setTimeout to ensure ngModel has updated the model
+    setTimeout(() => {
+      if (!this.originalAtomState) {
+        console.log('[Sidebar] No original state to compare against');
+        return;
+      }
+
+      // Compare key properties that can be edited
+      const current = this.atomForUpdate;
+      const original = this.originalAtomState;
+
+      console.log('[Sidebar] Comparing states:');
+      console.log('  Title - Current:', current.properties.nuclearies.title, 'Original:', original.properties.nuclearies.title);
+      console.log('  Content - Current:', current.properties.nuclearies.content, 'Original:', original.properties.nuclearies.content);
+      console.log('  Operation - Current:', current.properties.nuclearies.operation, 'Original:', original.properties.nuclearies.operation);
+
+      const hasChanged =
+        current.properties.nuclearies.title !== original.properties.nuclearies.title ||
+        current.properties.nuclearies.content !== original.properties.nuclearies.content ||
+        current.properties.nuclearies.operation !== original.properties.nuclearies.operation ||
+        current.properties.nuclearies.description !== original.properties.nuclearies.description ||
+        current.properties.nuclearies.constants !== original.properties.nuclearies.constants ||
+        JSON.stringify(current.labels) !== JSON.stringify(original.labels);
+
+      console.log('[Sidebar] Has changed:', hasChanged);
+
+      if (hasChanged) {
+        console.log('[Sidebar] Field blur - values changed, auto-saving atom');
+        this.isUpdatingFromBlur = true;
+        this.updateAtomFeatures();
+        // Note: originalAtomState will be updated in updateAtomFeatures() on success
+      } else {
+        console.log('[Sidebar] Field blur - no changes detected, skipping save');
+      }
+    }, 0);
   }
 
   onLabelInputKeydown(event: KeyboardEvent): void {
@@ -272,9 +315,14 @@ export class GraphRightSidebarComponent implements AfterContentInit {
   }
 
   private prepareAtomForUpdate(atom: Atom | null): void {
-    const target = atom ?? this.initializeUpdateAtom();
+    // Create a deep copy to avoid reference issues
+    const source = atom ?? this.initializeUpdateAtom();
+    const target = JSON.parse(JSON.stringify(source));
     target.labels = this.sanitizeLabels(target.labels);
     this.atomForUpdate = target;
+    // Store a deep copy of the original state for change detection
+    this.originalAtomState = JSON.parse(JSON.stringify(target));
+    console.log('[Sidebar] Prepared atom for update, original state set:', this.originalAtomState);
     this.labelInputValue = '';
   }
 
@@ -406,9 +454,13 @@ export class GraphRightSidebarComponent implements AfterContentInit {
     this.atomService.modifyAtoms(mq).subscribe({
       next: (data) => {
         console.log('Atom data updated successfully:', data);
+        // Update original state after successful save
+        this.originalAtomState = JSON.parse(JSON.stringify(this.atomForUpdate));
+        this.isUpdatingFromBlur = false;
       },
       error: (error) => {
         console.error('There was an error updating the atom data:', error);
+        this.isUpdatingFromBlur = false;
       }
     });
   }

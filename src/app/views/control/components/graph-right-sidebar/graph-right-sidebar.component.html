@@ -91,7 +91,7 @@
               cFormControl
               placeholder=""
               [(ngModel)]="atomForUpdate.properties.nuclearies.title"
-              (ngModelChange)="onAtomPropertyChanged()"/>
+              (blur)="onFieldBlur()"/>
           </c-input-group>
 
           <c-input-group class="mb-3">
@@ -101,13 +101,13 @@
               cFormControl
               placeholder=""
               [(ngModel)]="atomForUpdate.properties.nuclearies.content"
-              (ngModelChange)="onAtomPropertyChanged()"/>
+              (blur)="onFieldBlur()"/>
             <textarea
               *ngIf="atomForUpdate.properties.nuclearies.content.includes('\n')"
               cFormControl
               placeholder=""
               [(ngModel)]="atomForUpdate.properties.nuclearies.content"
-              (ngModelChange)="onAtomPropertyChanged()"
+              (blur)="onFieldBlur()"
               style="height: 150px;">
             </textarea>
           </c-input-group>
@@ -133,12 +133,14 @@
               *ngIf="!(atomForUpdate.properties.nuclearies.operation ?? '').includes('\n')"
               cFormControl
               placeholder=""
-              [(ngModel)]="atomForUpdate.properties.nuclearies.operation"/>
+              [(ngModel)]="atomForUpdate.properties.nuclearies.operation"
+              (blur)="onFieldBlur()"/>
             <textarea
               *ngIf="(atomForUpdate.properties.nuclearies.operation ?? '').includes('\n')"
               cFormControl
               placeholder=""
               [(ngModel)]="atomForUpdate.properties.nuclearies.operation"
+              (blur)="onFieldBlur()"
               style="height: 150px;">
             </textarea>
           </c-input-group>
@@ -148,7 +150,8 @@
             <input
               cFormControl
               placeholder=""
-              [(ngModel)]="atomForUpdate.properties.nuclearies.description"/>
+              [(ngModel)]="atomForUpdate.properties.nuclearies.description"
+              (blur)="onFieldBlur()"/>
           </c-input-group>
 
           <c-input-group class="mb-3">
@@ -157,12 +160,14 @@
               *ngIf="!(atomForUpdate.properties.nuclearies.constants ?? '').includes('\n')"
               cFormControl
               placeholder=""
-              [(ngModel)]="atomForUpdate.properties.nuclearies.constants"/>
+              [(ngModel)]="atomForUpdate.properties.nuclearies.constants"
+              (blur)="onFieldBlur()"/>
             <textarea
               *ngIf="(atomForUpdate.properties.nuclearies.constants ?? '').includes('\n')"
               cFormControl
               placeholder=""
               [(ngModel)]="atomForUpdate.properties.nuclearies.constants"
+              (blur)="onFieldBlur()"
               style="height: 150px;">
             </textarea>
           </c-input-group>
