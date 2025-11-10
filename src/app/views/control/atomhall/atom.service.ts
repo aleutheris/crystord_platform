@@ -21,10 +21,7 @@ export class AtomService {
           bonds { uuid name direction }
           properties {
             shellies { uuid changes { date description } }
-            # Narrow nuclearies selection to fields known to resolve without server errors.
-            # "constants" previously triggered "Expected Iterable" errors; likely a list type with non-iterable resolver value.
-            # We omit description/operation/constants for now, matching the working playground example (title, content).
-            nuclearies { title content }
+            nuclearies { title description content constants operation }
           }
         }
       }
@@ -117,10 +114,10 @@ export class AtomService {
         },
         nuclearies: {
           title: nuclearies.title || '',
-          description: nuclearies.description || '', // omitted from query currently; fallback empty
+          description: nuclearies.description || '',
           content: nuclearies.content || '',
           constants: constantsValue,
-          operation: nuclearies.operation || '' // omitted from query currently; fallback empty
+          operation: nuclearies.operation || ''
         },
         ionies: {}
       }

@@ -96,8 +96,8 @@ export class GraphRightSidebarComponent implements AfterContentInit {
     this.atomSelection.getSelectedUuid$().subscribe(uuid => {
       this.selectedAtomUuid = uuid;
       if (uuid) {
-        const atom = this.atomStore.getAtomByUuid(uuid);
-        this.prepareAtomForUpdate(atom ?? null);
+        // Always fetch complete atom data for editing
+        this.retrieveAtomFeatures(uuid);
       } else {
         this.prepareAtomForUpdate(null);
       }
@@ -341,8 +341,9 @@ export class GraphRightSidebarComponent implements AfterContentInit {
   /**
    * Load atom features for updating (copied from control.detail)
    */
-  retrieveAtomFeatures() {
-    if (!this.atomForUpdate.properties.shellies.uuid) {
+  retrieveAtomFeatures(uuid?: string) {
+    const targetUuid = uuid || this.atomForUpdate.properties.shellies.uuid;
+    if (!targetUuid) {
       console.error('UUID is required to load atom for update');
       return;
     }
@@ -364,7 +365,7 @@ export class GraphRightSidebarComponent implements AfterContentInit {
         selector: {
           properties: {
             shellies: {
-              uuid: this.atomForUpdate.properties.shellies.uuid
+              uuid: targetUuid
             }
           }
         }
@@ -376,6 +377,8 @@ export class GraphRightSidebarComponent implements AfterContentInit {
         const loadedAtom = this.atomDataFeaturesToString(this.atomDataToCamelCase(data['result'][0]));
         this.prepareAtomForUpdate(loadedAtom);
         this.selectedOperationType = ''; // Reset operation type when loading new atom
+        // Update atom store with the complete atom data
+        this.atomStore.updateAtom(loadedAtom);
       },
       error: (error) => {
         console.error('There was an error retrieving the atom data:', error);
