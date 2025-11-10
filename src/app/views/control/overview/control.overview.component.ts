@@ -361,4 +361,68 @@ export class ControlOverviewComponent {
     }
     return result;
   }
+
+  onConnectionCreated(connection: {from: string, to: string}): void {
+    // Update bonds for both atoms in the browser session only (no backend call)
+    const fromAtom = this.atomsFeatures.find(a => a.properties.shellies.uuid === connection.from);
+    const toAtom = this.atomsFeatures.find(a => a.properties.shellies.uuid === connection.to);
+
+    if (fromAtom) {
+      // Add bond to fromAtom (outgoing bond)
+      if (!fromAtom.bonds) {
+        fromAtom.bonds = [];
+      }
+      // Check if bond already exists to avoid duplicates
+      const bondExists = fromAtom.bonds.some(b => b.uuid === connection.to && b.direction === 'to');
+      if (!bondExists) {
+        const toAtomName = toAtom?.properties.nuclearies.title || '';
+        fromAtom.bonds.push({
+          uuid: connection.to,
+          name: toAtomName,
+          direction: 'to'
+        });
+        // Update atom store
+        this.atomStore.updateAtom(fromAtom);
+      }
+    }
+
+    if (toAtom) {
+      // Add bond to toAtom (incoming bond)
+      if (!toAtom.bonds) {
+        toAtom.bonds = [];
+      }
+      // Check if bond already exists to avoid duplicates
+      const bondExists = toAtom.bonds.some(b => b.uuid === connection.from && b.direction === 'from');
+      if (!bondExists) {
+        const fromAtomName = fromAtom?.properties.nuclearies.title || '';
+        toAtom.bonds.push({
+          uuid: connection.from,
+          name: fromAtomName,
+          direction: 'from'
+        });
+        // Update atom store
+        this.atomStore.updateAtom(toAtom);
+      }
+    }
+  }
+
+  onConnectionRemoved(connection: {from: string, to: string}): void {
+    // Remove bonds for both atoms in the browser session only (no backend call)
+    const fromAtom = this.atomsFeatures.find(a => a.properties.shellies.uuid === connection.from);
+    const toAtom = this.atomsFeatures.find(a => a.properties.shellies.uuid === connection.to);
+
+    if (fromAtom && fromAtom.bonds) {
+      // Remove bond from fromAtom
+      fromAtom.bonds = fromAtom.bonds.filter(b => !(b.uuid === connection.to && b.direction === 'to'));
+      // Update atom store
+      this.atomStore.updateAtom(fromAtom);
+    }
+
+    if (toAtom && toAtom.bonds) {
+      // Remove bond from toAtom
+      toAtom.bonds = toAtom.bonds.filter(b => !(b.uuid === connection.from && b.direction === 'from'));
+      // Update atom store
+      this.atomStore.updateAtom(toAtom);
+    }
+  }
 }

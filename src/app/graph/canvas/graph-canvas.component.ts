@@ -107,6 +107,8 @@ export class GraphCanvasComponent implements AfterViewInit, AfterViewChecked {
 
 	@Output() nodeSelected = new EventEmitter<string | null>();
 	@Output() nodeDataChanged = new EventEmitter<{nodeId: string, title?: string, content?: string}>();
+	@Output() connectionCreated = new EventEmitter<{from: string, to: string}>();
+	@Output() connectionRemoved = new EventEmitter<{from: string, to: string}>();
 
 	viewport: ViewportState = { scale: 1, x: 0, y: 0 };
 
@@ -221,6 +223,9 @@ export class GraphCanvasComponent implements AfterViewInit, AfterViewChecked {
 				return; // inputs without connection cannot initiate a drag
 			}
 			this.removeConnection(existing.id);
+			// Emit removal event for atom bond updates
+			this.connectionRemoved.emit({ from: existing.from.nodeId, to: existing.to.nodeId });
+
 			const fromPort = existing.from;
 			const startPoint = this.getPortCenter(fromPort);
 			if (!startPoint) {
@@ -313,6 +318,12 @@ export class GraphCanvasComponent implements AfterViewInit, AfterViewChecked {
 		}
 
 		const dropPort = this.hoveredPort;
+		const wasReconnecting = !!this.dragConnection.originConnectionId;
+		const originalConnection = wasReconnecting ? {
+			from: this.dragConnection.startPort.nodeId,
+			to: dropPort?.nodeId || ''
+		} : null;
+
 		if (dropPort && this.isValidConnection(this.dragConnection.startPort, dropPort)) {
 			const { outputPort, inputPort } = this.normalizePorts(this.dragConnection.startPort, dropPort);
 			if (!outputPort || !inputPort) {
@@ -321,14 +332,15 @@ export class GraphCanvasComponent implements AfterViewInit, AfterViewChecked {
 				return;
 			}
 
-			// Enforce single connection per input port (Rete-style behaviour)
-			const existing = this.findConnectionTo(inputPort);
-			if (existing) {
-				this.removeConnection(existing.id);
-			}
-
+			// Allow multiple connections per input port
 			const id = this.dragConnection.originConnectionId ?? this.nextConnectionId++;
 			this.connections.push({ id, from: outputPort, to: inputPort });
+
+			// Emit connection created event for atom bond updates
+			this.connectionCreated.emit({ from: outputPort.nodeId, to: inputPort.nodeId });
+		} else if (wasReconnecting && originalConnection) {
+			// Connection was removed but not reconnected - emit removal
+			this.connectionRemoved.emit(originalConnection);
 		}
 
 		// If drop target invalid and we detached an existing connection, it remains removed.

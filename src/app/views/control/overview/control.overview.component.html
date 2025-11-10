@@ -37,6 +37,8 @@
     [autoConnections]="graphConnections"
     (nodeSelected)="onNodeSelected($event)"
     (nodeDataChanged)="onNodeDataChanged($event)"
+    (connectionCreated)="onConnectionCreated($event)"
+    (connectionRemoved)="onConnectionRemoved($event)"
     style="height:600px; width:100%; display:block;"
   ></app-graph-canvas>
 
