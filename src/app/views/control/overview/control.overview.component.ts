@@ -141,7 +141,6 @@ export class ControlOverviewComponent {
   }
 
   private updateGraphNodes() {
-    // Map atoms to GraphCanvas nodes data
     const nodes = this.atomsFeatures.map(atom => ({
       id: atom.properties.shellies.uuid,
       data: {
@@ -152,19 +151,17 @@ export class ControlOverviewComponent {
       }
     }));
 
-    // Edges from bonds
     const edges = this.atomsFeatures.flatMap(atom => {
       const fromId = atom.properties.shellies.uuid;
       const bonds = atom.bonds ?? [];
       return bonds.map(b => b.direction === 'from' ? { from: b.uuid, to: fromId } : { from: fromId, to: b.uuid });
     });
 
-    // Compute layout with Dagre (assume node size roughly 220x140)
     try {
       const positioned = computeDagreLayout(
         nodes.map(n => ({ id: n.id, width: 220, height: 140 })),
         edges,
-        { rankdir: 'LR', nodesep: 80, ranksep: 140, marginx: 60, marginy: 60 }
+        { rankdir: 'LR', nodesep: 30, ranksep: 100, marginx: 60, marginy: 60 }
       );
       const posMap = new Map(positioned.map(p => [p.id, p] as const));
       this.graphNodes = nodes.map(n => ({
@@ -187,14 +184,13 @@ export class ControlOverviewComponent {
       }));
     }
 
-    // Trigger change detection by reassigning array (already done) and log for debugging
     console.debug('[Graph] Nodes updated:', this.graphNodes.length);
-    // Also build connection pairs for template binding
+    // Fit the view to show all nodes
+    this.graphCanvas?.fitToView();
     this.updateGraphConnections();
   }
 
   private updateGraphConnections(): void {
-    // Build a quick lookup of whether a node exists to avoid ghost connections
     const nodeIds = new Set(this.graphNodes.map(n => n.id));
     const pairs: { from: string; to: string }[] = [];
     for (const atom of this.atomsFeatures) {
@@ -204,8 +200,6 @@ export class ControlOverviewComponent {
       for (const bond of bonds) {
         const toId = bond.uuid;
         if (!toId || !nodeIds.has(toId)) continue;
-        // Interpret direction: 'to' means from current atom to the bonded uuid.
-        // 'from' means the arrow comes from bonded uuid to current atom.
         if (bond.direction === 'from') {
           pairs.push({ from: toId, to: fromId });
         } else {
@@ -213,7 +207,6 @@ export class ControlOverviewComponent {
         }
       }
     }
-    // Deduplicate identical pairs
     const key = (p: {from:string;to:string}) => p.from + '::' + p.to;
     const seen = new Set<string>();
     this.graphConnections = pairs.filter(p => {
@@ -258,9 +251,6 @@ export class ControlOverviewComponent {
     });
   }
 
-  /**
-   * Handle right sidebar toggle event
-   */
   onRightSidebarToggle(expanded: boolean): void {
     this.graphControlsService.setSidebarExpanded(expanded);
     console.log('Right sidebar toggled:', expanded ? 'expanded' : 'collapsed');

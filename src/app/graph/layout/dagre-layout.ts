@@ -32,7 +32,7 @@ export function computeDagreLayout(nodes: LayoutNode[], edges: LayoutEdge[], opt
   g.setGraph({
     rankdir: options.rankdir ?? 'LR',
     nodesep: options.nodesep ?? 40,
-    ranksep: options.ranksep ?? 80,
+    ranksep: options.ranksep ?? 100,
     marginx: options.marginx ?? 40,
     marginy: options.marginy ?? 40
   });

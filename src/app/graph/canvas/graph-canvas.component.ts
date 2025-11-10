@@ -1,6 +1,7 @@
 import {
 	AfterViewChecked,
 	AfterViewInit,
+	ChangeDetectorRef,
 	Component,
 	ElementRef,
 	Input,
@@ -116,12 +117,22 @@ export class GraphCanvasComponent implements AfterViewInit, AfterViewChecked {
 	private nodeComponentMap = new Map<string, ArithmeticNodeComponent>();
 	private canvasRect?: DOMRect;
 
+	constructor(private cdr: ChangeDetectorRef) {}
+
 	/**
 	 * Bindable input: list of directed edges as node id pairs.
 	 * Each pair links the output port ('default') of `from` node to the input port ('default') of `to` node.
 	 */
 	@Input() set autoConnections(pairs: { from: string; to: string }[] | null | undefined) {
-		this.applyConnectionPairs(pairs ?? []);
+		// Apply connections asynchronously so change-detection completes first.
+		// Prevents ExpressionChangedAfterItHasBeenCheckedError when parent updates
+		// nodes and connections in the same tick (e.g. after a search).
+		const snapshot = pairs ?? [];
+		setTimeout(() => {
+			this.applyConnectionPairs(snapshot);
+			// mark for check so OnPush or default CD picks up the change
+			try { this.cdr.detectChanges(); } catch { /* swallow - safe fallback */ }
+		}, 0);
 	}
 
 	private applyConnectionPairs(pairs: { from: string; to: string }[]): void {
@@ -436,6 +447,57 @@ export class GraphCanvasComponent implements AfterViewInit, AfterViewChecked {
 		const screenAfter = this.worldToScreen(worldBefore.x, worldBefore.y);
 		this.viewport.x += (cx - screenAfter.x);
 		this.viewport.y += (cy - screenAfter.y);
+	}
+
+	fitToView(): void {
+		if (!this.nodes.length) return;
+		this.updateCanvasRect();
+		if (!this.canvasRect) return;
+
+		// Node dimensions (from layout)
+		const nodeWidth = 220;
+		const nodeHeight = 140;
+		const padding = 40; // pixels of padding around the bounding box
+
+		// Calculate bounding box
+		let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+		for (const node of this.nodes) {
+			minX = Math.min(minX, node.x);
+			minY = Math.min(minY, node.y);
+			maxX = Math.max(maxX, node.x + nodeWidth);
+			maxY = Math.max(maxY, node.y + nodeHeight);
+		}
+
+		// Add padding
+		minX -= padding;
+		minY -= padding;
+		maxX += padding;
+		maxY += padding;
+
+		const bboxWidth = maxX - minX;
+		const bboxHeight = maxY - minY;
+
+		// Canvas size
+		const canvasWidth = this.canvasRect.width;
+		const canvasHeight = this.canvasRect.height;
+
+		// Calculate scale to fit
+		const scaleX = canvasWidth / bboxWidth;
+		const scaleY = canvasHeight / bboxHeight;
+		const scale = Math.min(scaleX, scaleY, 1); // Don't zoom in beyond 1:1
+
+		// Clamp scale to reasonable bounds
+		this.viewport.scale = Math.min(1, Math.max(0.1, scale));
+
+		// Center the bounding box
+		const bboxCenterX = (minX + maxX) / 2;
+		const bboxCenterY = (minY + maxY) / 2;
+		const canvasCenterX = canvasWidth / 2;
+		const canvasCenterY = canvasHeight / 2;
+
+		// Pan so that bbox center is at canvas center
+		this.viewport.x = canvasCenterX - (bboxCenterX * this.viewport.scale);
+		this.viewport.y = canvasCenterY - (bboxCenterY * this.viewport.scale);
 	}
 
 	private updateCanvasRect(): void {
