@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, Output, ViewChild, OnChanges } from '@angular/core';
 
 export type NodePortType = 'input' | 'output';
 
@@ -14,7 +14,7 @@ export interface NodePortPointerEvent {
   styleUrls: ['./arithmetic-node.component.scss'],
   standalone: true
 })
-export class ArithmeticNodeComponent {
+export class ArithmeticNodeComponent implements OnChanges {
   @Input() title = '';
   @Input() content = '';
   @Input() selected = false;
@@ -28,20 +28,47 @@ export class ArithmeticNodeComponent {
   titleInputId = `df-arithmetic-title-${ArithmeticNodeComponent.nextId++}`;
   contentInputId = `df-arithmetic-content-${ArithmeticNodeComponent.nextId++}`;
 
+  private pendingTitle = '';
+  private pendingContent = '';
+  private originalTitle = '';
+  private originalContent = '';
+
   @ViewChild('inputPort', { static: true, read: ElementRef })
   private inputPort?: ElementRef<HTMLElement>;
 
   @ViewChild('outputPort', { static: true, read: ElementRef })
   private outputPort?: ElementRef<HTMLElement>;
 
-  onTitleChange(val: string) {
-    this.title = val;
-    this.titleChange.emit(val);
+  ngOnChanges() {
+    // Sync original values when inputs change
+    this.originalTitle = this.title;
+    this.originalContent = this.content;
+    this.pendingTitle = this.title;
+    this.pendingContent = this.content;
   }
 
-  onContentChange(val: string) {
-    this.content = val;
-    this.contentChange.emit(val);
+  onTitleInput(val: string) {
+    this.pendingTitle = val;
+  }
+
+  onTitleBlur() {
+    if (this.pendingTitle !== this.originalTitle) {
+      this.title = this.pendingTitle;
+      this.originalTitle = this.pendingTitle;
+      this.titleChange.emit(this.pendingTitle);
+    }
+  }
+
+  onContentInput(val: string) {
+    this.pendingContent = val;
+  }
+
+  onContentBlur() {
+    if (this.pendingContent !== this.originalContent) {
+      this.content = this.pendingContent;
+      this.originalContent = this.pendingContent;
+      this.contentChange.emit(this.pendingContent);
+    }
   }
 
   handlePortPointerDown(event: PointerEvent, type: NodePortType, portId: string): void {

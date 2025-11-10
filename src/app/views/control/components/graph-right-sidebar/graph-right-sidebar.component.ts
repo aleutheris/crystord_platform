@@ -66,6 +66,7 @@ export class GraphRightSidebarComponent implements AfterContentInit {
   @Input() visible: boolean = true;
   @Output() visibleChange = new EventEmitter<boolean>();
   @Output() toggleEvent = new EventEmitter<boolean>();
+  @Output() atomUpdated = new EventEmitter<Atom>();
 
   @ContentChild(TemplateRef) contentTemplate!: TemplateRef<any>;
 
@@ -169,41 +170,21 @@ export class GraphRightSidebarComponent implements AfterContentInit {
    * Auto-save when field loses focus, but only if values actually changed
    */
   onFieldBlur(): void {
-    // Use setTimeout to ensure ngModel has updated the model
-    setTimeout(() => {
-      if (!this.originalAtomState) {
-        console.log('[Sidebar] No original state to compare against');
-        return;
-      }
+    if (this.isUpdatingFromBlur) {
+      return;
+    }
+    this.isUpdatingFromBlur = true;
 
-      // Compare key properties that can be edited
-      const current = this.atomForUpdate;
-      const original = this.originalAtomState;
+    // Compare current state with original state
+    const hasChanges = this.hasAtomChanged(this.originalAtomState, this.atomForUpdate);
 
-      console.log('[Sidebar] Comparing states:');
-      console.log('  Title - Current:', current.properties.nuclearies.title, 'Original:', original.properties.nuclearies.title);
-      console.log('  Content - Current:', current.properties.nuclearies.content, 'Original:', original.properties.nuclearies.content);
-      console.log('  Operation - Current:', current.properties.nuclearies.operation, 'Original:', original.properties.nuclearies.operation);
-
-      const hasChanged =
-        current.properties.nuclearies.title !== original.properties.nuclearies.title ||
-        current.properties.nuclearies.content !== original.properties.nuclearies.content ||
-        current.properties.nuclearies.operation !== original.properties.nuclearies.operation ||
-        current.properties.nuclearies.description !== original.properties.nuclearies.description ||
-        current.properties.nuclearies.constants !== original.properties.nuclearies.constants ||
-        JSON.stringify(current.labels) !== JSON.stringify(original.labels);
-
-      console.log('[Sidebar] Has changed:', hasChanged);
-
-      if (hasChanged) {
-        console.log('[Sidebar] Field blur - values changed, auto-saving atom');
-        this.isUpdatingFromBlur = true;
-        this.updateAtomFeatures();
-        // Note: originalAtomState will be updated in updateAtomFeatures() on success
-      } else {
-        console.log('[Sidebar] Field blur - no changes detected, skipping save');
-      }
-    }, 0);
+    if (hasChanges) {
+      // Update the atom via service
+      this.updateAtomFeatures();
+    } else {
+      // No changes detected, skip save
+      this.isUpdatingFromBlur = false;
+    }
   }
 
   onLabelInputKeydown(event: KeyboardEvent): void {
@@ -322,8 +303,11 @@ export class GraphRightSidebarComponent implements AfterContentInit {
     this.atomForUpdate = target;
     // Store a deep copy of the original state for change detection
     this.originalAtomState = JSON.parse(JSON.stringify(target));
-    console.log('[Sidebar] Prepared atom for update, original state set:', this.originalAtomState);
     this.labelInputValue = '';
+  }
+
+  private hasAtomChanged(original: any, current: any): boolean {
+    return JSON.stringify(original) !== JSON.stringify(current);
   }
 
   private notifyAtomForUpdateChange(): void {
@@ -392,7 +376,6 @@ export class GraphRightSidebarComponent implements AfterContentInit {
         const loadedAtom = this.atomDataFeaturesToString(this.atomDataToCamelCase(data['result'][0]));
         this.prepareAtomForUpdate(loadedAtom);
         this.selectedOperationType = ''; // Reset operation type when loading new atom
-        console.log('Atom loaded successfully:', this.atomForUpdate);
       },
       error: (error) => {
         console.error('There was an error retrieving the atom data:', error);
@@ -453,10 +436,11 @@ export class GraphRightSidebarComponent implements AfterContentInit {
 
     this.atomService.modifyAtoms(mq).subscribe({
       next: (data) => {
-        console.log('Atom data updated successfully:', data);
         // Update original state after successful save
         this.originalAtomState = JSON.parse(JSON.stringify(this.atomForUpdate));
         this.isUpdatingFromBlur = false;
+        // Emit the updated atom for bidirectional sync
+        this.atomUpdated.emit(this.atomForUpdate);
       },
       error: (error) => {
         console.error('There was an error updating the atom data:', error);
@@ -500,7 +484,6 @@ export class GraphRightSidebarComponent implements AfterContentInit {
 
     this.atomService.modifyAtoms(mq).subscribe({
       next: (data) => {
-        console.log('Atom destroyed successfully:', data);
         // Reset the atom after successful destruction
         this.prepareAtomForUpdate(null);
       },

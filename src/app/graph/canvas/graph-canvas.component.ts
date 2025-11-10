@@ -106,6 +106,7 @@ export class GraphCanvasComponent implements AfterViewInit, AfterViewChecked {
 	selectedIndex: number | null = null;
 
 	@Output() nodeSelected = new EventEmitter<string | null>();
+	@Output() nodeDataChanged = new EventEmitter<{nodeId: string, title?: string, content?: string}>();
 
 	viewport: ViewportState = { scale: 1, x: 0, y: 0 };
 
@@ -188,8 +189,6 @@ export class GraphCanvasComponent implements AfterViewInit, AfterViewChecked {
 		this.dragOffsetX = pointer.x - node.x;
 		this.dragOffsetY = pointer.y - node.y;
 
-		// Emit the selected node ID
-		console.log('[GraphCanvas] Node selected, emitting ID:', node.id);
 		this.nodeSelected.emit(node.id);
 
 		this.blurActiveEditable();
@@ -547,5 +546,25 @@ export class GraphCanvasComponent implements AfterViewInit, AfterViewChecked {
 			if (t.classList.contains('df-node__port')) return false;
 		}
 		return true;
+	}
+
+	onNodeTitleChange(nodeId: string, newTitle: string): void {
+		// Update the node data
+		const node = this.nodes.find(n => n.id === nodeId);
+		if (node) {
+			node.data.title = newTitle;
+		}
+		// Emit change event for bidirectional sync
+		this.nodeDataChanged.emit({ nodeId, title: newTitle });
+	}
+
+	onNodeContentChange(nodeId: string, newContent: string): void {
+		// Update the node data
+		const node = this.nodes.find(n => n.id === nodeId);
+		if (node) {
+			node.data.content = newContent;
+		}
+		// Emit change event for bidirectional sync
+		this.nodeDataChanged.emit({ nodeId, content: newContent });
 	}
 }

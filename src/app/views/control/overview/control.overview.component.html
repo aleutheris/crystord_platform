@@ -36,6 +36,7 @@
     [nodes]="graphNodes"
     [autoConnections]="graphConnections"
     (nodeSelected)="onNodeSelected($event)"
+    (nodeDataChanged)="onNodeDataChanged($event)"
     style="height:600px; width:100%; display:block;"
   ></app-graph-canvas>
 
@@ -44,7 +45,8 @@
           [visible]="rightSidebarVisible"
           [config]="rightSidebarConfig"
           (toggleEvent)="onRightSidebarToggle($event)"
-          (visibleChange)="rightSidebarVisible = $event">
+          (visibleChange)="rightSidebarVisible = $event"
+          (atomUpdated)="onAtomUpdated($event)">
         </app-graph-right-sidebar>
       </c-card-body>
     </c-card>

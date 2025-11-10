@@ -259,14 +259,106 @@ export class ControlOverviewComponent {
   }
 
   onNodeSelected(nodeId: string | null): void {
-    console.log('[Control] onNodeSelected called with:', nodeId);
     if (!nodeId) {
       // Deselection - keep last selected atom
       return;
     }
     // Notify the selection service which the sidebar listens to
     this.atomSelection.selectAtom(nodeId);
-    console.log('[Control] Selection service notified with UUID:', nodeId);
   }
 
+  onAtomUpdated(updatedAtom: Atom): void {
+    // Update the atom in our local arrays and the corresponding graph node
+    const uuid = updatedAtom.properties.shellies.uuid;
+
+    // Update in atomsFeatures array
+    const atomIndex = this.atomsFeatures.findIndex(atom => atom.properties.shellies.uuid === uuid);
+    if (atomIndex >= 0) {
+      this.atomsFeatures[atomIndex] = updatedAtom;
+    }
+
+    // Update in atomsFeaturesTexted array
+    const textedIndex = this.atomsFeaturesTexted.findIndex(atom => atom.properties.shellies.uuid === uuid);
+    if (textedIndex >= 0) {
+      this.atomsFeaturesTexted[textedIndex] = this.transformerService.atomsContentToString([updatedAtom], this.atomsIndexed)[0];
+    }
+
+    // Update the corresponding graph node
+    const nodeIndex = this.graphNodes.findIndex(node => node.id === uuid);
+    if (nodeIndex >= 0) {
+      this.graphNodes[nodeIndex].data.title = updatedAtom.properties.nuclearies.title || 'Atom';
+      this.graphNodes[nodeIndex].data.content = typeof updatedAtom.properties.nuclearies.content === 'string'
+        ? updatedAtom.properties.nuclearies.content
+        : JSON.stringify(updatedAtom.properties.nuclearies.content);
+    }
+
+    // Update atom store
+    this.atomStore.updateAtom(updatedAtom);
+  }
+
+  onNodeDataChanged(change: {nodeId: string, title?: string, content?: string}): void {
+    // Find the corresponding atom and update it
+    const atom = this.atomsFeatures.find(a => a.properties.shellies.uuid === change.nodeId);
+    if (!atom) return;
+
+    // Update the atom properties
+    if (change.title !== undefined) {
+      atom.properties.nuclearies.title = change.title;
+    }
+    if (change.content !== undefined) {
+      atom.properties.nuclearies.content = change.content;
+    }
+
+    // Update the corresponding entry in atomsFeaturesTexted
+    const textedIndex = this.atomsFeaturesTexted.findIndex(a => a.properties.shellies.uuid === change.nodeId);
+    if (textedIndex >= 0) {
+      this.atomsFeaturesTexted[textedIndex] = this.transformerService.atomsContentToString([atom], this.atomsIndexed)[0];
+    }
+
+    // Update atom store
+    this.atomStore.updateAtom(atom);
+
+    // Save the changes to backend
+    const mq = {
+      modification: 'update_atom_features',
+      args: {
+        selector: {
+          properties: {
+            shellies: {
+              uuid: change.nodeId
+            }
+          }
+        },
+        inputs: {
+          labels: atom.labels,
+          properties: {
+            nuclearies: {
+              title: atom.properties.nuclearies.title,
+              description: atom.properties.nuclearies.description,
+              content: this.str2json(atom.properties.nuclearies.content),
+              constants: atom.properties.nuclearies.constants,
+              operation: this.str2json(atom.properties.nuclearies.operation)
+            }
+          }
+        }
+      }
+    };
+
+    this.atomService.modifyAtoms(mq).subscribe({
+      next: (data) => {
+        // Successfully saved
+      },
+      error: (error) => {
+        console.error('Error saving node data changes:', error);
+      }
+    });
+  }
+
+  private str2json(value: any) {
+    let result = value;
+    if (typeof value === 'string' && (value.startsWith('{') || value.startsWith('['))) {
+      result = JSON.parse(value);
+    }
+    return result;
+  }
 }

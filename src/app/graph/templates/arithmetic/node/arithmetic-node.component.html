@@ -23,7 +23,8 @@
         type="text"
         class="df-node__title-input"
         [value]="title"
-        (input)="onTitleChange($any($event.target).value)"
+        (input)="onTitleInput($any($event.target).value)"
+        (blur)="onTitleBlur()"
         placeholder="Title"
       />
     </div>
@@ -34,7 +35,8 @@
         type="text"
         class="df-node__input"
         [value]="content"
-        (input)="onContentChange($any($event.target).value)"
+        (input)="onContentInput($any($event.target).value)"
+        (blur)="onContentBlur()"
         placeholder="Enter content..."
       />
     </div>
