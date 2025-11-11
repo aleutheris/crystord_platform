@@ -68,6 +68,7 @@ export class GraphRightSidebarComponent implements AfterContentInit {
   @Output() toggleEvent = new EventEmitter<boolean>();
   @Output() atomUpdated = new EventEmitter<Atom>();
   @Output() atomCreated = new EventEmitter<Atom>();
+  @Output() atomDeleted = new EventEmitter<string>();
 
   @ContentChild(TemplateRef) contentTemplate!: TemplateRef<any>;
 
@@ -564,30 +565,26 @@ export class GraphRightSidebarComponent implements AfterContentInit {
       modification: string,
       args: {
         selector: {
-          properties: {
-            shellies: {
-              uuid: string
-            }
-          }
+          uuids: string[]
         }
       }
     } = {
       modification: 'destroy_atoms',
       args: {
         selector: {
-          properties: {
-            shellies: {
-              uuid: this.atomForUpdate.properties.shellies.uuid
-            }
-          }
+          uuids: [this.atomForUpdate.properties.shellies.uuid]
         }
       }
     };
 
     this.atomService.modifyAtoms(mq).subscribe({
       next: (data) => {
+        // Emit event to notify parent component about atom deletion
+        this.atomDeleted.emit(this.atomForUpdate.properties.shellies.uuid);
         // Reset the atom after successful destruction
         this.prepareAtomForUpdate(null);
+        // Clear the selection since the atom no longer exists
+        this.atomSelection.selectAtom(null);
       },
       error: (error) => {
         console.error('There was an error destroying the atom:', error);

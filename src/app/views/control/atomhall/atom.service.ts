@@ -78,14 +78,15 @@ export class AtomService {
     );
   }
 
-  private extractSelector(data: any): { labels?: string[]; uuid?: string } {
+  private extractSelector(data: any): { labels?: string[]; uuid?: string; uuids?: string[] } {
     if (data.uuid) {
       return { uuid: data.uuid };
     }
     const selector = data?.args?.selector || data?.selector || {};
     const labels = selector.labels || selector?.properties?.labels || undefined;
     const uuid = selector?.properties?.shellies?.uuid || selector.uuid || undefined;
-    return { labels, uuid };
+    const uuids = selector.uuids || undefined;
+    return { labels, uuid, uuids };
   }
 
   private extractInputs(inputs: any): any[] {

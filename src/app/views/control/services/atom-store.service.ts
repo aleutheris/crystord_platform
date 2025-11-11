@@ -48,6 +48,15 @@ export class AtomStoreService {
     this.atomsSubject.next(newAtoms);
   }
 
+  /**
+   * Remove an atom from the store by UUID
+   */
+  removeAtom(uuid: string): void {
+    const atoms = this.atomsSubject.getValue();
+    const newAtoms = atoms.filter(atom => atom.properties.shellies.uuid !== uuid);
+    this.atomsSubject.next(newAtoms);
+  }
+
   addBond(atomUuid: string, bondUuid: string, direction: 'to' | 'from', name = ''): void {
     const atoms = this.atomsSubject.getValue();
     let changed = false;

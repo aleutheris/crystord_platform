@@ -177,17 +177,9 @@ export class ControlOverviewComponent {
         data: n.data
       }));
     } catch (e) {
-      console.warn('[Graph] Dagre layout failed, falling back to grid:', e);
-      const baseX = 120;
-      const baseY = 120;
-      const dx = 240;
-      const dy = 180;
-      this.graphNodes = nodes.map((node, i) => ({
-        id: node.id,
-        x: baseX + (i % 4) * dx,
-        y: baseY + Math.floor(i / 4) * dy,
-        data: node.data
-      }));
+      console.warn('[Graph] Dagre layout failed:', e);
+      // No fallback nodes - just leave graphNodes empty
+      this.graphNodes = [];
     }
 
     console.debug('[Graph] Nodes updated:', this.graphNodes.length);
@@ -313,6 +305,24 @@ export class ControlOverviewComponent {
 
     // Update graph nodes and connections
     this.updateGraphNodes();
+  }
+
+  onAtomDeleted(deletedUuid: string): void {
+    // Remove the atom from our local arrays
+    this.atomsFeatures = this.atomsFeatures.filter(atom => atom.properties.shellies.uuid !== deletedUuid);
+
+    // Update indexed atoms
+    this.atomsIndexed = this.transformerService.getIndexedAtoms(this.atomsFeatures);
+
+    // Update texted atoms
+    const allTexted = this.transformerService.atomsContentToString(this.atomsFeatures, this.atomsIndexed);
+    this.atomsFeaturesTexted = allTexted;
+
+    // Update graph nodes and connections
+    this.updateGraphNodes();
+
+    // Update atom store
+    this.atomStore.removeAtom(deletedUuid);
   }
 
   onNodeDataChanged(change: {nodeId: string, title?: string, content?: string}): void {

@@ -60,21 +60,6 @@ interface ViewportState {
 	y: number;
 }
 
-const DEFAULT_NODES: GraphNode[] = [
-	{
-		id: 'node-1',
-		x: 120,
-		y: 120,
-		data: { title: 'Arithmetic', content: 'demo' }
-	},
-	{
-		id: 'node-2',
-		x: 360,
-		y: 140,
-		data: { title: 'Arithmetic 2', content: 'second' }
-	}
-];
-
 @Component({
 	selector: 'app-graph-canvas',
 	templateUrl: './graph-canvas.component.html',
@@ -83,7 +68,7 @@ const DEFAULT_NODES: GraphNode[] = [
 	imports: [CommonModule, ArithmeticNodeComponent]
 })
 export class GraphCanvasComponent implements AfterViewInit, AfterViewChecked {
-	private _nodes: GraphNode[] = DEFAULT_NODES.map(node => ({ ...node, data: { ...node.data } }));
+	private _nodes: GraphNode[] = [];
   private _autoConnectionPairs: { from: string; to: string }[] = [];
 
 	@Input() set nodes(value: GraphNode[] | null | undefined) {
@@ -91,7 +76,7 @@ export class GraphCanvasComponent implements AfterViewInit, AfterViewChecked {
     this.connections = [];
 		this._nodes = (value && value.length)
 			? value
-			: DEFAULT_NODES.map(node => ({ ...node, data: { ...node.data } }));
+			: [];
 
     // Defer connection re-application to a microtask to ensure nodes are rendered.
     Promise.resolve().then(() => {
