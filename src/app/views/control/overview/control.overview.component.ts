@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, ViewChild, AfterViewChecked } from '@angular/core';
 import {
   RowComponent,
   ColComponent,
@@ -24,10 +24,11 @@ import { AtomSearchService } from '../services/atom-search.service';
 import { AtomTransformerService } from '../services/atom-transformer.service';
 import { GraphCanvasComponent, GraphNode } from '../../../graph/canvas/graph-canvas.component';
 import { computeDagreLayout } from '../../../graph/layout/dagre-layout';
-import { ViewChild } from '@angular/core';
 import { GraphControlsService } from '../services/graph-controls.service';
 import { GraphRightSidebarComponent, GraphSidebarConfig } from '../components/graph-right-sidebar';
 
+// rxjs imports
+import { lastValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-control',
@@ -105,33 +106,33 @@ export class ControlOverviewComponent {
     this.searchKey = this.searchService.updateSearchKey(this.searchText);
     if (this.searchKey === 'uuid') {
       const uuid = this.searchText.split('=')[1];
-      this.atomService.readAtoms({ uuid }).subscribe({
-        next: (data) => {
-          this.atomsFeatures = data['result'];
-          this.atomStore.setAtoms(this.atomsFeatures); // update atom store
+      lastValueFrom(this.atomService.readAtoms({ uuid })).then((data) => {
+        this.atomsFeatures = data['result'];
+        this.atomStore.setAtoms(this.atomsFeatures); // update atom store
+        // Defer graph updates to avoid ExpressionChangedAfterItHasBeenCheckedError
+        Promise.resolve().then(() => {
           this.handleRetrievedData();
-          this.isSearchTextValid = true;
-        },
-        error: (error) => {
-          console.error('There was an error retrieving the atom:', error);
-          this.isSearchTextValid = false;
-        }
+        });
+        this.isSearchTextValid = true;
+      }).catch((error) => {
+        console.error('There was an error retrieving the atom:', error);
+        this.isSearchTextValid = false;
       });
     } else {
       const retrievalInteraction = this.searchService.chooseRetrievalInteraction(this.searchKey);
       const query = this.searchService.parseSearchTextIntoQuery(this.searchText, retrievalInteraction);
 
-      this.atomService.readAtoms(query).subscribe({
-        next: (data) => {
-          this.atomsFeatures = data['result'];
-          this.atomStore.setAtoms(this.atomsFeatures); // update atom store
+      lastValueFrom(this.atomService.readAtoms(query)).then((data) => {
+        this.atomsFeatures = data['result'];
+        this.atomStore.setAtoms(this.atomsFeatures); // update atom store
+        // Defer graph updates to avoid ExpressionChangedAfterItHasBeenCheckedError
+        Promise.resolve().then(() => {
           this.handleRetrievedData();
-          this.isSearchTextValid = true;
-        },
-        error: (error) => {
-          console.error('There was an error searching for atoms:', error);
-          this.isSearchTextValid = false;
-        }
+        });
+        this.isSearchTextValid = true;
+      }).catch((error) => {
+        console.error('There was an error searching for atoms:', error);
+        this.isSearchTextValid = false;
       });
     }
   }
@@ -139,7 +140,10 @@ export class ControlOverviewComponent {
   handleRetrievedData() {
     this.atomsIndexed = this.transformerService.getIndexedAtoms(this.atomsFeatures);
     this.atomsFeaturesTexted = this.transformerService.atomsContentToString(this.atomsFeatures, this.atomsIndexed);
-    this.updateGraphNodes();
+    // Defer graph updates to avoid ExpressionChangedAfterItHasBeenCheckedError
+    Promise.resolve().then(() => {
+      this.updateGraphNodes();
+    });
   }
 
   private updateGraphNodes() {

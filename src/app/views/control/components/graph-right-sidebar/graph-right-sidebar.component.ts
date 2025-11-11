@@ -96,8 +96,13 @@ export class GraphRightSidebarComponent implements AfterContentInit {
     this.atomSelection.getSelectedUuid$().subscribe(uuid => {
       this.selectedAtomUuid = uuid;
       if (uuid) {
-        // Always fetch complete atom data for editing
-        this.retrieveAtomFeatures(uuid);
+        const atom = this.atomStore.getAtomByUuid(uuid);
+        if (atom) {
+          this.prepareAtomForUpdate(atom);
+        } else {
+          // If not in store, fetch from backend
+          this.retrieveAtomFeatures(uuid);
+        }
       } else {
         this.prepareAtomForUpdate(null);
       }
@@ -386,16 +391,24 @@ export class GraphRightSidebarComponent implements AfterContentInit {
     });
   }
 
+  onCleanButtonClick(): void {
+    this.prepareAtomForUpdate(null);
+    this.atomSelection.selectAtom(null);
+  }
+
   /**
    * Update atom features (copied from control.detail)
    */
-  updateAtomFeatures() {
+  private updateAtomFeatures() {
     if (!this.atomForUpdate.properties.shellies.uuid) {
       console.error('UUID is required to update atom');
       return;
     }
 
-    let mq: {
+    // Only update if there is at least one label
+    if (this.atomForUpdate.labels.length === 0) {
+      return;
+    }    let mq: {
       modification: string,
       args: {
         selector: {

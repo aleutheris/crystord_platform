@@ -84,11 +84,20 @@ const DEFAULT_NODES: GraphNode[] = [
 })
 export class GraphCanvasComponent implements AfterViewInit, AfterViewChecked {
 	private _nodes: GraphNode[] = DEFAULT_NODES.map(node => ({ ...node, data: { ...node.data } }));
+  private _autoConnectionPairs: { from: string; to: string }[] = [];
 
 	@Input() set nodes(value: GraphNode[] | null | undefined) {
+    // When nodes change, connections must be cleared and recalculated.
+    this.connections = [];
 		this._nodes = (value && value.length)
 			? value
 			: DEFAULT_NODES.map(node => ({ ...node, data: { ...node.data } }));
+
+    // Defer connection re-application to a microtask to ensure nodes are rendered.
+    Promise.resolve().then(() => {
+      this.applyConnectionPairs(this._autoConnectionPairs);
+      try { this.cdr.detectChanges(); } catch { /* swallow */ }
+    });
 	}
 
 	get nodes(): GraphNode[] {
@@ -123,6 +132,7 @@ export class GraphCanvasComponent implements AfterViewInit, AfterViewChecked {
 	private nextConnectionId = 1;
 	private nodeComponentMap = new Map<string, ArithmeticNodeComponent>();
 	private canvasRect?: DOMRect;
+	private dragAnimationFrame: number | null = null;
 
 	constructor(private cdr: ChangeDetectorRef) {}
 
@@ -131,6 +141,7 @@ export class GraphCanvasComponent implements AfterViewInit, AfterViewChecked {
 	 * Each pair links the output port ('default') of `from` node to the input port ('default') of `to` node.
 	 */
 	@Input() set autoConnections(pairs: { from: string; to: string }[] | null | undefined) {
+    this._autoConnectionPairs = pairs ?? [];
 		// Apply connections asynchronously so change-detection completes first.
 		// Prevents ExpressionChangedAfterItHasBeenCheckedError when parent updates
 		// nodes and connections in the same tick (e.g. after a search).
@@ -292,11 +303,21 @@ export class GraphCanvasComponent implements AfterViewInit, AfterViewChecked {
 		}
 
 		if (this.draggingNodeIndex !== null) {
-			this.updateCanvasRect();
-			const pointer = this.getPointerPosition(event);
-			const node = this.nodes[this.draggingNodeIndex];
-			node.x = pointer.x - this.dragOffsetX;
-			node.y = pointer.y - this.dragOffsetY;
+			// Cancel any pending animation frame to avoid multiple updates per frame
+			if (this.dragAnimationFrame !== null) {
+				cancelAnimationFrame(this.dragAnimationFrame);
+			}
+
+			// Schedule position update for next animation frame to batch updates
+			this.dragAnimationFrame = requestAnimationFrame(() => {
+				this.updateCanvasRect();
+				const pointer = this.getPointerPosition(event);
+				const node = this.nodes[this.draggingNodeIndex!];
+				node.x = pointer.x - this.dragOffsetX;
+				node.y = pointer.y - this.dragOffsetY;
+				this.cdr.detectChanges();
+				this.dragAnimationFrame = null;
+			});
 			event.preventDefault();
 		}
 
@@ -308,6 +329,12 @@ export class GraphCanvasComponent implements AfterViewInit, AfterViewChecked {
 	}
 
 	onPointerUp(event: PointerEvent): void {
+		// Cancel any pending drag animation frame
+		if (this.dragAnimationFrame !== null) {
+			cancelAnimationFrame(this.dragAnimationFrame);
+			this.dragAnimationFrame = null;
+		}
+
 		this.draggingNodeIndex = null;
 		this.isPanning = false;
 		this.panStart = null;
