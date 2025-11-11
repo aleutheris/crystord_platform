@@ -317,6 +317,32 @@ export class GraphRightSidebarComponent implements AfterContentInit {
     // Store a deep copy of the original state for change detection
     this.originalAtomState = JSON.parse(JSON.stringify(target));
     this.labelInputValue = '';
+
+    // Update the selected operation type based on the operation string
+    this.updateSelectedOperationType();
+  }
+
+  private updateSelectedOperationType(): void {
+    const operation = this.atomForUpdate.properties.nuclearies.operation || '';
+
+    if (!operation.trim()) {
+      this.selectedOperationType = 'none';
+      return;
+    }
+
+    // Check for operation types in order of specificity
+    if (operation.includes(' / ')) {
+      this.selectedOperationType = 'div';
+    } else if (operation.includes(' * ')) {
+      this.selectedOperationType = 'mult';
+    } else if (operation.includes(' - ')) {
+      this.selectedOperationType = 'sub';
+    } else if (operation.includes(' + ')) {
+      this.selectedOperationType = 'add';
+    } else {
+      // If it contains operators but not the expected patterns, set to none
+      this.selectedOperationType = 'none';
+    }
   }
 
   private hasAtomChanged(original: any, current: any): boolean {
@@ -331,6 +357,13 @@ export class GraphRightSidebarComponent implements AfterContentInit {
 
   onOperationTypeChange(type: string) {
     this.selectedOperationType = type;
+
+    // Handle "none" option - set operation to empty string
+    if (type === 'none') {
+      this.atomForUpdate.properties.nuclearies.operation = '';
+      this.updateAtomFeatures();
+      return;
+    }
 
     if (type === '' || !this.atomForUpdate.bonds || this.atomForUpdate.bonds.length < 2) {
       return;

@@ -133,6 +133,7 @@
                 {{ selectedOperationType || '--' }}
               </button>
               <ul cDropdownMenu>
+                <li><button cDropdownItem (click)="onOperationTypeChange('none')">none</button></li>
                 <li><button cDropdownItem (click)="onOperationTypeChange('add')">add</button></li>
                 <li><button cDropdownItem (click)="onOperationTypeChange('sub')">sub</button></li>
                 <li><button cDropdownItem (click)="onOperationTypeChange('mult')">mult</button></li>
