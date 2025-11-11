@@ -78,6 +78,12 @@ export class GraphRightSidebarComponent implements AfterContentInit {
   originalAtomState: Atom | null = null;
   private isUpdatingFromBlur: boolean = false;
 
+  // Helper method to get constants as string for template
+  getConstantsAsString(): string {
+    const constants = this.atomForUpdate.properties.nuclearies.constants;
+    return typeof constants === 'string' ? constants : (typeof constants === 'object' ? JSON.stringify(constants) : '');
+  }
+
   // Operation type dropdown
   selectedOperationType: string = '';
 
@@ -142,7 +148,7 @@ export class GraphRightSidebarComponent implements AfterContentInit {
           title: '',
           description: '',
           content: '',
-          constants: '',
+          constants: {},
           operation: ''
         },
         ionies: {}
@@ -516,38 +522,39 @@ export class GraphRightSidebarComponent implements AfterContentInit {
     return data;
   }
 
-  private atomDataFeaturesToString(atom: Atom) {
-    if (typeof atom.properties.nuclearies.content === 'object') {
-      if (atom.properties.nuclearies.content) {
-        atom.properties.nuclearies.content = JSON.stringify(atom.properties.nuclearies.content, null, 2);
+  private atomDataFeaturesToString(atom: Atom): any {
+    // Create a display-friendly copy for form fields
+    const displayAtom = JSON.parse(JSON.stringify(atom));
+
+    if (typeof displayAtom.properties.nuclearies.content === 'object') {
+      if (displayAtom.properties.nuclearies.content) {
+        displayAtom.properties.nuclearies.content = JSON.stringify(displayAtom.properties.nuclearies.content, null, 2);
       } else {
-        atom.properties.nuclearies.content = '';
+        displayAtom.properties.nuclearies.content = '';
       }
     } else {
-      atom.properties.nuclearies.content = atom.properties.nuclearies.content.toString();
+      displayAtom.properties.nuclearies.content = displayAtom.properties.nuclearies.content.toString();
     }
 
-    if (typeof atom.properties.nuclearies.operation === 'object') {
-      if (atom.properties.nuclearies.operation) {
-        atom.properties.nuclearies.operation = JSON.stringify(atom.properties.nuclearies.operation, null, 2);
+    if (typeof displayAtom.properties.nuclearies.operation === 'object') {
+      if (displayAtom.properties.nuclearies.operation) {
+        displayAtom.properties.nuclearies.operation = JSON.stringify(displayAtom.properties.nuclearies.operation, null, 2);
       } else {
-        atom.properties.nuclearies.operation = '';
+        displayAtom.properties.nuclearies.operation = '';
       }
     } else {
-      atom.properties.nuclearies.operation = atom.properties.nuclearies.operation.toString();
+      displayAtom.properties.nuclearies.operation = displayAtom.properties.nuclearies.operation.toString();
     }
 
-    if (typeof atom.properties.nuclearies.constants === 'object') {
-      if (atom.properties.nuclearies.constants) {
-        atom.properties.nuclearies.constants = JSON.stringify(atom.properties.nuclearies.constants, null, 2);
+    if (typeof displayAtom.properties.nuclearies.constants === 'object') {
+      if (displayAtom.properties.nuclearies.constants && Object.keys(displayAtom.properties.nuclearies.constants).length > 0) {
+        displayAtom.properties.nuclearies.constants = JSON.stringify(displayAtom.properties.nuclearies.constants, null, 2);
       } else {
-        atom.properties.nuclearies.constants = '';
+        displayAtom.properties.nuclearies.constants = '';
       }
-    } else {
-      atom.properties.nuclearies.constants = atom.properties.nuclearies.constants.toString();
     }
 
-    return atom;
+    return displayAtom;
   }
 
   private str2json(value: any) {

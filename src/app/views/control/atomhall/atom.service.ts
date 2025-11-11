@@ -100,10 +100,10 @@ export class AtomService {
     // Map GraphQL fields to legacy Atom shape
     const shellies = raw.properties?.shellies || {};
     const nuclearies = raw.properties?.nuclearies || {};
-    // Handle constants defensively: ensure array -> string join, else empty string.
-    const constantsValue = Array.isArray(nuclearies.constants)
-      ? (nuclearies.constants as any[]).join(', ')
-      : (typeof nuclearies.constants === 'string' ? nuclearies.constants : '');
+    // Handle constants: preserve as JSON object, default to empty object
+    const constantsValue = nuclearies.constants && typeof nuclearies.constants === 'object'
+      ? nuclearies.constants
+      : {};
     return {
       labels: raw.labels || [],
       bonds: (raw.bonds || []).map((b: any) => ({ uuid: b.uuid, name: b.name, direction: b.direction })),

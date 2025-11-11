@@ -38,7 +38,7 @@ export class AtomInterface {
               title: string,
               description: string,
               content: number,
-              constants: string[],
+              constants: Record<string, any>,
               operation: string
             }
           }
