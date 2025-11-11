@@ -349,6 +349,9 @@ export class GraphRightSidebarComponent implements AfterContentInit {
       .map(bond => bond.uuid);
     const operationString = bondUuids.join(` ${operator} `);
     this.atomForUpdate.properties.nuclearies.operation = operationString;
+
+    // Send the updated atom data to the backend
+    this.updateAtomFeatures();
   }
 
   /**
