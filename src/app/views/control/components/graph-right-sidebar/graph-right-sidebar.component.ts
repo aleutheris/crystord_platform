@@ -67,6 +67,7 @@ export class GraphRightSidebarComponent implements AfterContentInit {
   @Output() visibleChange = new EventEmitter<boolean>();
   @Output() toggleEvent = new EventEmitter<boolean>();
   @Output() atomUpdated = new EventEmitter<Atom>();
+  @Output() atomCreated = new EventEmitter<Atom>();
 
   @ContentChild(TemplateRef) contentTemplate!: TemplateRef<any>;
 
@@ -399,7 +400,86 @@ export class GraphRightSidebarComponent implements AfterContentInit {
 
   onCleanButtonClick(): void {
     this.prepareAtomForUpdate(null);
-    this.atomSelection.selectAtom(null);
+  }
+
+  onFormButtonClick(): void {
+    if (!this.canFormAtom()) {
+      return;
+    }
+
+    // Prepare the atom input for the mutation
+    const atomInput = {
+      labels: this.atomForUpdate.labels,
+      properties: {
+        nuclearies: {
+          title: this.atomForUpdate.properties.nuclearies.title,
+          description: this.atomForUpdate.properties.nuclearies.description,
+          content: this.atomForUpdate.properties.nuclearies.content,
+          operation: this.atomForUpdate.properties.nuclearies.operation,
+          constants: this.atomForUpdate.properties.nuclearies.constants
+        }
+      }
+    };
+
+    // Call the change mutation without selector to create new atom
+    const mq = {
+      args: {
+        inputs: [atomInput]
+      }
+    };
+
+    this.atomService.modifyAtoms(mq).subscribe({
+      next: (data) => {
+        console.log('New atom created successfully:', data);
+        // The response should contain the new UUID
+        if (data.result && data.result.length > 0) {
+          const newUuid = data.result[0];
+          // Fetch the newly created atom to get complete data
+          this.fetchAndIntegrateNewAtom(newUuid);
+        }
+      },
+      error: (error) => {
+        console.error('There was an error creating the new atom:', error);
+      }
+    });
+  }
+
+  canFormAtom(): boolean {
+    return this.atomForUpdate.labels.length > 0 &&
+           this.atomForUpdate.properties.nuclearies.title.trim() !== '';
+  }
+
+  private fetchAndIntegrateNewAtom(newUuid: string): void {
+    // Fetch the newly created atom
+    const rq = {
+      readout: 'retrieve_atom_features_nested',
+      args: {
+        selector: {
+          properties: {
+            shellies: {
+              uuid: newUuid
+            }
+          }
+        }
+      }
+    };
+
+    this.atomService.readAtoms(rq).subscribe({
+      next: (data) => {
+        if (data.result && data.result.length > 0) {
+          const newAtom = data.result[0];
+          // Update the atom store with the new atom
+          this.atomStore.updateAtom(newAtom);
+          // Emit event to notify parent component about new atom
+          this.atomCreated.emit(newAtom);
+          // Auto-select the new atom (this will trigger sidebar refresh)
+          this.atomSelection.selectAtom(newUuid);
+        }
+      },
+      error: (error) => {
+        console.error('There was an error fetching the newly created atom:', error);
+      }
+    });
   }
 
   /**

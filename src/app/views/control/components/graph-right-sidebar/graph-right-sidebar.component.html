@@ -22,6 +22,16 @@
         </button>
         <button
           cButton
+          color="success"
+          type="button"
+          variant="outline"
+          (click)="onFormButtonClick()"
+          [disabled]="!canFormAtom()"
+          aria-label="Form New Atom">
+          Form
+        </button>
+        <button
+          cButton
           color="primary"
           type="button"
           variant="outline"

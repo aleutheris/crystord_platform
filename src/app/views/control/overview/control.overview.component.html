@@ -48,7 +48,8 @@
           [config]="rightSidebarConfig"
           (toggleEvent)="onRightSidebarToggle($event)"
           (visibleChange)="rightSidebarVisible = $event"
-          (atomUpdated)="onAtomUpdated($event)">
+          (atomUpdated)="onAtomUpdated($event)"
+          (atomCreated)="onAtomCreated($event)">
         </app-graph-right-sidebar>
       </c-card-body>
     </c-card>

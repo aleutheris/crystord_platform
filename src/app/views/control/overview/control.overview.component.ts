@@ -300,6 +300,21 @@ export class ControlOverviewComponent {
     this.atomStore.updateAtom(updatedAtom);
   }
 
+  onAtomCreated(newAtom: Atom): void {
+    // Add the new atom to our local arrays
+    this.atomsFeatures.push(newAtom);
+
+    // Update indexed atoms
+    this.atomsIndexed = this.transformerService.getIndexedAtoms(this.atomsFeatures);
+
+    // Update texted atoms
+    const allTexted = this.transformerService.atomsContentToString(this.atomsFeatures, this.atomsIndexed);
+    this.atomsFeaturesTexted = allTexted;
+
+    // Update graph nodes and connections
+    this.updateGraphNodes();
+  }
+
   onNodeDataChanged(change: {nodeId: string, title?: string, content?: string}): void {
     // Find the corresponding atom and update it
     const atom = this.atomsFeatures.find(a => a.properties.shellies.uuid === change.nodeId);
