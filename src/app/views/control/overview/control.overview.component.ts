@@ -10,6 +10,8 @@ import {
   TextColorDirective,
   ButtonDirective,
   TableDirective,
+  InputGroupComponent,
+  InputGroupTextDirective
 } from '@coreui/angular';
 import { IconDirective } from '@coreui/icons-angular';
 import { FormsModule } from '@angular/forms';
@@ -49,15 +51,25 @@ import { lastValueFrom } from 'rxjs';
     TableDirective,
     IconDirective,
     GraphRightSidebarComponent,
-    GraphCanvasComponent
+    GraphCanvasComponent,
+    InputGroupComponent,
+    InputGroupTextDirective
   ]
 })
 export class ControlOverviewComponent {
   @ViewChild(GraphCanvasComponent) private graphCanvas?: GraphCanvasComponent; // still available if needed later
-  async ngOnInit() {}
+  async ngOnInit() {
+    // Initialize search terms from default search text
+    this.initializeSearchTerms();
+  }
   searchText: string;
   isSearchTextValid: boolean | undefined = undefined;
   searchKey: string;
+
+  // Search terms (chips)
+  searchTerms: string[] = [];
+  searchInputValue: string = '';
+
   atomsFeatures: Atom[];
   atomsIndexed: Record<string, NodeElement>;
   atomsFeaturesTexted: AtomTexted[];
@@ -452,6 +464,83 @@ export class ControlOverviewComponent {
       toAtom.bonds = toAtom.bonds.filter(b => !(b.uuid === connection.from && b.direction === 'from'));
       // Update atom store
       this.atomStore.updateAtom(toAtom);
+    }
+  }
+
+  addSearchTerm(term: string): void {
+    if (term.trim() && !this.searchTerms.includes(term.trim())) {
+      this.searchTerms.push(term.trim());
+      this.updateSearchText();
+    }
+    this.searchInputValue = '';
+  }
+
+  removeSearchTerm(term: string): void {
+    this.searchTerms = this.searchTerms.filter(t => t !== term);
+    this.updateSearchText();
+  }
+
+  updateSearchText(): void {
+    if (this.searchTerms.length > 0) {
+      // Format search text with "labels=" prefix
+      this.searchText = 'labels=' + this.searchTerms.join(',');
+      this.isSearchTextValid = this.searchService.validateSearchText(this.searchText);
+    } else {
+      this.searchText = '';
+      this.isSearchTextValid = undefined;
+    }
+  }
+
+  initializeSearchTerms(): void {
+    // Parse the default search text into chips
+    if (this.searchText) {
+      // Extract the value part after '=' if it exists
+      const match = this.searchText.match(/=(.+)/);
+      if (match) {
+        const terms = match[1].split(',').map(t => t.trim()).filter(t => t);
+        this.searchTerms = terms;
+      }
+    }
+  }
+
+  onSearchInputKeydown(event: KeyboardEvent): void {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      const input = event.target as HTMLInputElement;
+      const value = input.value.trim();
+      if (value) {
+        this.addSearchTerm(value);
+      }
+      // Trigger search after adding term (or immediately if no input)
+      this.retrieveAtomsFeatures();
+    } else if (event.key === ',' || event.key === ' ') {
+      event.preventDefault();
+      const input = event.target as HTMLInputElement;
+      const value = input.value.trim();
+      if (value) {
+        this.addSearchTerm(value);
+      }
+    } else if (event.key === 'Backspace' && !this.searchInputValue) {
+      // Remove last search term when backspace is pressed on empty input
+      if (this.searchTerms.length > 0) {
+        this.removeSearchTerm(this.searchTerms[this.searchTerms.length - 1]);
+      }
+    }
+  }
+
+  onSearchInputBlur(): void {
+    const value = this.searchInputValue.trim();
+    if (value) {
+      this.addSearchTerm(value);
+    }
+  }
+
+  onSearchInputPaste(event: ClipboardEvent): void {
+    event.preventDefault();
+    const paste = event.clipboardData?.getData('text');
+    if (paste) {
+      const terms = paste.split(',').map(term => term.trim()).filter(term => term);
+      terms.forEach(term => this.addSearchTerm(term));
     }
   }
 }

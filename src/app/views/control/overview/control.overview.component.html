@@ -5,13 +5,35 @@
   <c-card-body class="position-relative" style="padding-top: 70px; --graph-controls-height: 70px;">
         <!-- Top controls: Rearrange button and Search Bar -->
         <div style="position: absolute; top: 0; left: 0; width: 100%; z-index: 10; display: flex; gap: 1rem; align-items: center; padding: 10px; background: transparent;">
-          <input [valid]="isSearchTextValid" aria-label="default input example"
-            cFormControl
-            placeholder="Search..."
-            type="text"
-            [(ngModel)]="searchText"
-            (keyup.enter)="retrieveAtomsFeatures()"
-            style="flex: 1; min-width: 200px; max-width: 100%;"/>
+          <c-input-group class="mb-0 search-input-group" style="flex: 1; min-width: 200px; max-width: 100%;">
+            <span cInputGroupText>Search</span>
+            <div class="form-control search-chip-input d-flex flex-wrap align-items-center gap-2"
+                 [class.is-invalid]="isSearchTextValid === false"
+                 [class.is-valid]="isSearchTextValid === true">
+              <span
+                *ngFor="let term of searchTerms; let i = index"
+                class="badge bg-primary d-inline-flex align-items-center gap-1 search-chip">
+                <span class="search-text">{{ term }}</span>
+                <button
+                  type="button"
+                  class="btn btn-sm btn-ghost-light text-white px-1 py-0 search-chip-remove"
+                  (click)="removeSearchTerm(term)"
+                  [attr.aria-label]="'Remove search term ' + term">
+                  &times;
+                </button>
+              </span>
+              <input
+                type="text"
+                class="chip-text-input flex-grow-1"
+                placeholder=""
+                autocomplete="off"
+                [(ngModel)]="searchInputValue"
+                [ngModelOptions]="{ standalone: true }"
+                (keydown)="onSearchInputKeydown($event)"
+                (blur)="onSearchInputBlur()"
+                (paste)="onSearchInputPaste($event)"/>
+            </div>
+          </c-input-group>
           <button
             cButton
             color="success"
