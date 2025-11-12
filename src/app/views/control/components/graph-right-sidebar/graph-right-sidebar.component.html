@@ -91,7 +91,7 @@
             <span cInputGroupText>Bonds</span>
             <div class="d-flex flex-wrap gap-1 p-2 border rounded">
               <span *ngFor="let bond of atomForUpdate.bonds"
-                    [class]="'badge ' + (bond.direction === 'from' ? 'bg-success' : 'bg-info')">{{ bond.name }}</span>
+                    [class]="'badge ' + (bond.direction === 'to' ? 'bg-success' : 'bg-info')">{{ bond.name }}</span>
             </div>
           </c-input-group>
 
@@ -163,12 +163,11 @@
               <ng-container *ngIf="isOperationValid && parsedOperationTokens.length > 0">
                 <span
                   *ngFor="let token of parsedOperationTokens"
-                  [class]="'badge me-1 ' + (token.type === 'operator' ? 'bg-primary' : 'bg-success')">
+                  [class]="'badge me-1 ' + (token.type === 'operator' ? 'bg-primary' : 'bg-info')">
                   {{ token.type === 'operator' ? token.value : token.title }}
                 </span>
               </ng-container>
               <ng-container *ngIf="!isOperationValid || parsedOperationTokens.length === 0">
-                <span class="text-muted" *ngIf="!atomForUpdate.properties.nuclearies.operation">Click to edit...</span>
                 <span *ngIf="atomForUpdate.properties.nuclearies.operation">{{ atomForUpdate.properties.nuclearies.operation }}</span>
               </ng-container>
             </div>

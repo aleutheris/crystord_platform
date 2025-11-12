@@ -449,13 +449,13 @@ export class GraphRightSidebarComponent implements AfterContentInit {
 
   onOperationFieldBlur(): void {
     this.isOperationFieldFocused = false;
-    
+
     // Validate and parse the operation string
     this.validateAndParseOperation();
-    
+
     // Update dropdown based on operation content
     this.updateSelectedOperationType();
-    
+
     // Only send to backend if valid
     if (this.isOperationValid) {
       this.onFieldBlur();
