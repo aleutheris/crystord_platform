@@ -40,6 +40,7 @@ interface Connection {
 	id: number;
 	from: PortRef;
 	to: PortRef;
+	direction: 'to' | 'from';
 }
 
 interface Point {
@@ -146,7 +147,7 @@ export class GraphCanvasComponent implements AfterViewInit, AfterViewChecked {
 			if (!nodeIds.has(pair.from) || !nodeIds.has(pair.to)) return;
 			const fromPort: PortRef = { nodeId: pair.from, portId: 'default', type: 'output' };
 			const toPort: PortRef = { nodeId: pair.to, portId: 'default', type: 'input' };
-			this.connections.push({ id: this.nextConnectionId++, from: fromPort, to: toPort });
+			this.connections.push({ id: this.nextConnectionId++, from: fromPort, to: toPort, direction: 'to' });
 		});
 	}
 
@@ -346,7 +347,7 @@ export class GraphCanvasComponent implements AfterViewInit, AfterViewChecked {
 
 			// Allow multiple connections per input port
 			const id = this.dragConnection.originConnectionId ?? this.nextConnectionId++;
-			this.connections.push({ id, from: outputPort, to: inputPort });
+			this.connections.push({ id, from: outputPort, to: inputPort, direction: 'to' });
 
 			// Emit connection created event for atom bond updates
 			this.connectionCreated.emit({ from: outputPort.nodeId, to: inputPort.nodeId });

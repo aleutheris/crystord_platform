@@ -90,7 +90,8 @@
           <c-input-group class="mb-3">
             <span cInputGroupText>Bonds</span>
             <div class="d-flex flex-wrap gap-1 p-2 border rounded">
-              <span *ngFor="let bond of atomForUpdate.bonds" class="badge bg-secondary">{{ bond.name }}</span>
+              <span *ngFor="let bond of atomForUpdate.bonds"
+                    [class]="'badge ' + (bond.direction === 'from' ? 'bg-success' : 'bg-info')">{{ bond.name }}</span>
             </div>
           </c-input-group>
 
