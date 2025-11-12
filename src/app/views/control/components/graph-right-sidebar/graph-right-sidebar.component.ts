@@ -108,6 +108,11 @@ export class GraphRightSidebarComponent implements AfterContentInit {
   ) {
     // Subscribe to selection changes
     this.atomSelection.getSelectedUuid$().subscribe(uuid => {
+      // Save any pending changes before switching atoms
+      if (this.selectedAtomUuid && this.selectedAtomUuid !== uuid) {
+        this.savePendingChanges();
+      }
+
       this.selectedAtomUuid = uuid;
       if (uuid) {
         const atom = this.atomStore.getAtomByUuid(uuid);
@@ -123,6 +128,7 @@ export class GraphRightSidebarComponent implements AfterContentInit {
     });
 
     this.atomStore.getAtoms$().subscribe(() => {
+      // Don't reload if we're currently updating or no atom selected
       if (!this.selectedAtomUuid || this.isUpdatingFromBlur) {
         return;
       }
@@ -183,6 +189,30 @@ export class GraphRightSidebarComponent implements AfterContentInit {
    */
   onAtomPropertyChanged(): void {
     this.notifyAtomForUpdateChange();
+  }
+
+  /**
+   * Save any pending changes before switching contexts
+   */
+  private savePendingChanges(): void {
+    if (this.isUpdatingFromBlur) {
+      return;
+    }
+
+    // Block updates if operation is invalid
+    if (!this.isOperationValid) {
+      console.warn('Cannot save: operation field is invalid');
+      return;
+    }
+
+    // Compare current state with original state
+    const hasChanges = this.hasAtomChanged(this.originalAtomState, this.atomForUpdate);
+
+    if (hasChanges) {
+      // Update the atom via service (synchronously to ensure it completes)
+      this.isUpdatingFromBlur = true;
+      this.updateAtomFeatures();
+    }
   }
 
   /**

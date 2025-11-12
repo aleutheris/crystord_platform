@@ -297,13 +297,21 @@ export class ControlOverviewComponent {
     // Update the corresponding graph node
     const nodeIndex = this.graphNodes.findIndex(node => node.id === uuid);
     if (nodeIndex >= 0) {
-      this.graphNodes[nodeIndex].data.title = updatedAtom.properties.nuclearies.title || 'Atom';
-      this.graphNodes[nodeIndex].data.content = typeof updatedAtom.properties.nuclearies.content === 'string'
-        ? updatedAtom.properties.nuclearies.content
-        : JSON.stringify(updatedAtom.properties.nuclearies.content);
-      this.graphNodes[nodeIndex].data.operator = typeof updatedAtom.properties.nuclearies.operation === 'string'
-        ? updatedAtom.properties.nuclearies.operation
-        : JSON.stringify(updatedAtom.properties.nuclearies.operation);
+      // Create new data object to trigger change detection
+      this.graphNodes[nodeIndex] = {
+        ...this.graphNodes[nodeIndex],
+        data: {
+          title: updatedAtom.properties.nuclearies.title || 'Atom',
+          content: typeof updatedAtom.properties.nuclearies.content === 'string'
+            ? updatedAtom.properties.nuclearies.content
+            : JSON.stringify(updatedAtom.properties.nuclearies.content),
+          operator: typeof updatedAtom.properties.nuclearies.operation === 'string'
+            ? updatedAtom.properties.nuclearies.operation
+            : JSON.stringify(updatedAtom.properties.nuclearies.operation)
+        }
+      };
+      // Trigger change detection by creating new array reference
+      this.graphNodes = [...this.graphNodes];
     }
 
     // Update atom store
