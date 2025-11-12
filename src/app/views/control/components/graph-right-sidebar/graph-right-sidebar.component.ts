@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, ContentChild, TemplateRef, AfterContentInit } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ContentChild, TemplateRef, AfterContentInit, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IconDirective } from '@coreui/icons-angular';
@@ -71,6 +71,7 @@ export class GraphRightSidebarComponent implements AfterContentInit {
   @Output() atomDeleted = new EventEmitter<string>();
 
   @ContentChild(TemplateRef) contentTemplate!: TemplateRef<any>;
+  @ViewChild('operationInput') operationInput?: ElementRef<HTMLInputElement>;
 
   isExpanded: boolean = true;
   hasProjectedContent: boolean = false;
@@ -94,6 +95,11 @@ export class GraphRightSidebarComponent implements AfterContentInit {
 
   // Selected atom UUID
   selectedAtomUuid: string | null = null;
+
+  // Operation field state
+  isOperationFieldFocused: boolean = false;
+  isOperationValid: boolean = true;
+  parsedOperationTokens: Array<{type: 'uuid' | 'operator', value: string, title?: string}> = [];
 
   constructor(
     private atomService: AtomService,
@@ -186,6 +192,13 @@ export class GraphRightSidebarComponent implements AfterContentInit {
     if (this.isUpdatingFromBlur) {
       return;
     }
+
+    // Block updates if operation is invalid
+    if (!this.isOperationValid) {
+      console.warn('Cannot save: operation field is invalid');
+      return;
+    }
+
     this.isUpdatingFromBlur = true;
 
     // Compare current state with original state
@@ -328,6 +341,9 @@ export class GraphRightSidebarComponent implements AfterContentInit {
     this.originalAtomState = JSON.parse(JSON.stringify(target));
     this.labelInputValue = '';
 
+    // Validate and parse operation
+    this.validateAndParseOperation();
+
     // Update the selected operation type based on the operation string
     this.updateSelectedOperationType();
   }
@@ -336,23 +352,36 @@ export class GraphRightSidebarComponent implements AfterContentInit {
     const operation = this.atomForUpdate.properties.nuclearies.operation || '';
 
     if (!operation.trim()) {
+      this.selectedOperationType = 'empty';
+      return;
+    }
+
+    // Extract all operators from the operation
+    const operators = new Set<string>();
+    const parts = operation.split(' ');
+
+    for (let i = 1; i < parts.length; i += 2) {
+      if (parts[i]) {
+        operators.add(parts[i]);
+      }
+    }
+
+    // If no operators or mixed operators, set to none
+    if (operators.size === 0 || operators.size > 1) {
       this.selectedOperationType = 'none';
       return;
     }
 
-    // Check for operation types in order of specificity
-    if (operation.includes(' / ')) {
-      this.selectedOperationType = 'div';
-    } else if (operation.includes(' * ')) {
-      this.selectedOperationType = 'mult';
-    } else if (operation.includes(' - ')) {
-      this.selectedOperationType = 'sub';
-    } else if (operation.includes(' + ')) {
-      this.selectedOperationType = 'add';
-    } else {
-      // If it contains operators but not the expected patterns, set to none
-      this.selectedOperationType = 'none';
-    }
+    // Single operator type - determine which one
+    const operator = Array.from(operators)[0];
+    const operatorTypeMap: { [key: string]: string } = {
+      '+': 'add',
+      '-': 'sub',
+      '*': 'mult',
+      '/': 'div'
+    };
+
+    this.selectedOperationType = operatorTypeMap[operator] || 'none';
   }
 
   private hasAtomChanged(original: any, current: any): boolean {
@@ -368,10 +397,17 @@ export class GraphRightSidebarComponent implements AfterContentInit {
   onOperationTypeChange(type: string) {
     this.selectedOperationType = type;
 
-    // Handle "none" option - set operation to empty string
-    if (type === 'none') {
+    // Handle "empty" option - clear operation and send to backend
+    if (type === 'empty') {
       this.atomForUpdate.properties.nuclearies.operation = '';
+      this.isOperationValid = true;
+      this.parsedOperationTokens = [];
       this.updateAtomFeatures();
+      return;
+    }
+
+    // Handle "none" option - do nothing, allow mixed operators
+    if (type === 'none') {
       return;
     }
 
@@ -393,8 +429,110 @@ export class GraphRightSidebarComponent implements AfterContentInit {
     const operationString = bondUuids.join(` ${operator} `);
     this.atomForUpdate.properties.nuclearies.operation = operationString;
 
-    // Send the updated atom data to the backend
-    this.updateAtomFeatures();
+    // Trigger validation and parsing
+    this.onOperationFieldBlur();
+  }
+
+  onOperationDisplayClick(): void {
+    this.isOperationFieldFocused = true;
+    // Focus the input after Angular updates the DOM
+    setTimeout(() => {
+      if (this.operationInput) {
+        this.operationInput.nativeElement.focus();
+      }
+    }, 0);
+  }
+
+  onOperationFieldFocus(): void {
+    this.isOperationFieldFocused = true;
+  }
+
+  onOperationFieldBlur(): void {
+    this.isOperationFieldFocused = false;
+    
+    // Validate and parse the operation string
+    this.validateAndParseOperation();
+    
+    // Update dropdown based on operation content
+    this.updateSelectedOperationType();
+    
+    // Only send to backend if valid
+    if (this.isOperationValid) {
+      this.onFieldBlur();
+    }
+  }  private validateAndParseOperation(): void {
+    const operation = this.atomForUpdate.properties.nuclearies.operation || '';
+
+    // Empty string is valid
+    if (!operation.trim()) {
+      this.isOperationValid = true;
+      this.parsedOperationTokens = [];
+      return;
+    }
+
+    // Parse and validate the operation string
+    const tokens = this.parseOperationString(operation);
+
+    if (!tokens) {
+      this.isOperationValid = false;
+      this.parsedOperationTokens = [];
+      return;
+    }
+
+    this.isOperationValid = true;
+    this.parsedOperationTokens = tokens;
+  }
+
+  private parseOperationString(operation: string): Array<{type: 'uuid' | 'operator', value: string, title?: string}> | null {
+    // Split by spaces to get tokens
+    const parts = operation.split(' ').filter(p => p.trim());
+
+    if (parts.length === 0) {
+      return [];
+    }
+
+    // Must alternate between UUID and operator: UUID op UUID op UUID...
+    // Must start and end with UUID (odd number of parts)
+    if (parts.length % 2 === 0) {
+      return null;
+    }
+
+    const tokens: Array<{type: 'uuid' | 'operator', value: string, title?: string}> = [];
+    const bondUuids = new Set(this.atomForUpdate.bonds.map(b => b.uuid));
+    const validOperators = new Set(['+', '-', '*', '/']);
+
+    for (let i = 0; i < parts.length; i++) {
+      const part = parts[i];
+
+      if (i % 2 === 0) {
+        // Should be UUID
+        if (!bondUuids.has(part)) {
+          return null;
+        }
+
+        // Find the atom title for this UUID
+        const bond = this.atomForUpdate.bonds.find(b => b.uuid === part);
+        const atomTitle = bond?.name || part;
+
+        tokens.push({
+          type: 'uuid',
+          value: part,
+          title: atomTitle
+        });
+      } else {
+        // Should be operator
+        if (!validOperators.has(part)) {
+          return null;
+        }
+
+        tokens.push({
+          type: 'operator',
+          value: part
+        });
+      }
+    }
+
+    return tokens;
   }
 
   /**

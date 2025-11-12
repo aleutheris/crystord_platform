@@ -171,3 +171,27 @@
     transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 }
+
+// Operation field display styling
+.operation-display {
+  cursor: pointer;
+  min-height: 38px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+
+  &:hover {
+    background-color: var(--cui-input-hover-bg, rgba(255, 255, 255, 0.05));
+  }
+
+  .badge {
+    font-size: 0.875rem;
+    padding: 0.25rem 0.5rem;
+  }
+
+  &.is-invalid {
+    border-color: var(--cui-danger, #e55353);
+    background-color: rgba(229, 83, 83, 0.1);
+  }
+}

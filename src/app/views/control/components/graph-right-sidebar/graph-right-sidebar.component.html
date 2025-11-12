@@ -134,6 +134,7 @@
                 {{ selectedOperationType || '--' }}
               </button>
               <ul cDropdownMenu>
+                <li><button cDropdownItem (click)="onOperationTypeChange('empty')">empty</button></li>
                 <li><button cDropdownItem (click)="onOperationTypeChange('none')">none</button></li>
                 <li><button cDropdownItem (click)="onOperationTypeChange('add')">add</button></li>
                 <li><button cDropdownItem (click)="onOperationTypeChange('sub')">sub</button></li>
@@ -141,20 +142,36 @@
                 <li><button cDropdownItem (click)="onOperationTypeChange('div')">div</button></li>
               </ul>
             </c-dropdown>
+
+            <!-- Editing mode: show raw text input -->
             <input
-              *ngIf="!(atomForUpdate.properties.nuclearies.operation ?? '').includes('\n')"
+              #operationInput
+              *ngIf="isOperationFieldFocused"
               cFormControl
               placeholder=""
               [(ngModel)]="atomForUpdate.properties.nuclearies.operation"
-              (blur)="onFieldBlur()"/>
-            <textarea
-              *ngIf="(atomForUpdate.properties.nuclearies.operation ?? '').includes('\n')"
-              cFormControl
-              placeholder=""
-              [(ngModel)]="atomForUpdate.properties.nuclearies.operation"
-              (blur)="onFieldBlur()"
-              style="height: 150px;">
-            </textarea>
+              (focus)="onOperationFieldFocus()"
+              (blur)="onOperationFieldBlur()"
+              [class.is-invalid]="!isOperationValid"/>
+
+            <!-- Display mode: show badges -->
+            <div
+              *ngIf="!isOperationFieldFocused"
+              class="form-control operation-display"
+              [class.is-invalid]="!isOperationValid"
+              (click)="onOperationDisplayClick()">
+              <ng-container *ngIf="isOperationValid && parsedOperationTokens.length > 0">
+                <span
+                  *ngFor="let token of parsedOperationTokens"
+                  [class]="'badge me-1 ' + (token.type === 'operator' ? 'bg-primary' : 'bg-success')">
+                  {{ token.type === 'operator' ? token.value : token.title }}
+                </span>
+              </ng-container>
+              <ng-container *ngIf="!isOperationValid || parsedOperationTokens.length === 0">
+                <span class="text-muted" *ngIf="!atomForUpdate.properties.nuclearies.operation">Click to edit...</span>
+                <span *ngIf="atomForUpdate.properties.nuclearies.operation">{{ atomForUpdate.properties.nuclearies.operation }}</span>
+              </ng-container>
+            </div>
           </c-input-group>
 
           <c-input-group class="mb-3">
