@@ -313,6 +313,16 @@ export class GraphRightSidebarComponent implements AfterContentInit {
     const source = atom ?? this.initializeUpdateAtom();
     const target = JSON.parse(JSON.stringify(source));
     target.labels = this.sanitizeLabels(target.labels);
+    
+    // Update bond names to show connected atom titles instead of bond names
+    target.bonds = target.bonds.map((bond: any) => {
+      const connectedAtom = this.atomStore.getAtomByUuid(bond.uuid);
+      return {
+        ...bond,
+        name: connectedAtom ? connectedAtom.properties.nuclearies.title || bond.name : bond.name
+      };
+    });
+    
     this.atomForUpdate = target;
     // Store a deep copy of the original state for change detection
     this.originalAtomState = JSON.parse(JSON.stringify(target));
