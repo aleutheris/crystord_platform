@@ -165,7 +165,10 @@ export class ControlOverviewComponent {
         title: atom.properties.nuclearies.title || 'Atom',
         content: typeof atom.properties.nuclearies.content === 'string'
           ? atom.properties.nuclearies.content
-          : JSON.stringify(atom.properties.nuclearies.content)
+          : JSON.stringify(atom.properties.nuclearies.content),
+        operator: typeof atom.properties.nuclearies.operation === 'string'
+          ? atom.properties.nuclearies.operation
+          : JSON.stringify(atom.properties.nuclearies.operation)
       }
     }));
 
@@ -177,7 +180,7 @@ export class ControlOverviewComponent {
 
     try {
       const positioned = computeDagreLayout(
-        nodes.map(n => ({ id: n.id, width: 220, height: 140 })),
+        nodes.map(n => ({ id: n.id, width: 154, height: 140 })),
         edges,
         { rankdir: 'LR', nodesep: 30, ranksep: 100, marginx: 60, marginy: 60 }
       );
@@ -298,6 +301,9 @@ export class ControlOverviewComponent {
       this.graphNodes[nodeIndex].data.content = typeof updatedAtom.properties.nuclearies.content === 'string'
         ? updatedAtom.properties.nuclearies.content
         : JSON.stringify(updatedAtom.properties.nuclearies.content);
+      this.graphNodes[nodeIndex].data.operator = typeof updatedAtom.properties.nuclearies.operation === 'string'
+        ? updatedAtom.properties.nuclearies.operation
+        : JSON.stringify(updatedAtom.properties.nuclearies.operation);
     }
 
     // Update atom store

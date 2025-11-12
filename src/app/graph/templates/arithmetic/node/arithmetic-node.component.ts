@@ -1,4 +1,5 @@
 import { Component, ElementRef, EventEmitter, Input, Output, ViewChild, OnChanges } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 export type NodePortType = 'input' | 'output';
 
@@ -12,11 +13,13 @@ export interface NodePortPointerEvent {
   selector: 'df-node-arithmetic',
   templateUrl: './arithmetic-node.component.html',
   styleUrls: ['./arithmetic-node.component.scss'],
-  standalone: true
+  standalone: true,
+  imports: [CommonModule]
 })
 export class ArithmeticNodeComponent implements OnChanges {
   @Input() title = '';
   @Input() content = '';
+  @Input() operator = '';
   @Input() selected = false;
   @Output() titleChange = new EventEmitter<string>();
   @Output() contentChange = new EventEmitter<string>();
@@ -81,6 +84,35 @@ export class ArithmeticNodeComponent implements OnChanges {
 
   handlePortPointerLeave(type: NodePortType, portId: string): void {
     this.portPointerLeave.emit({ type, portId });
+  }
+
+  getOperatorSymbols(): string {
+    if (!this.operator) return '';
+
+    // Parse the operation string format: "UUID operator UUID operator UUID..."
+    // We want to extract only the operator symbols (+, -, *, /)
+
+    // Map operators to their display symbols
+    const operatorSymbolMap: Record<string, string> = {
+      '+': '+',
+      '-': '-',
+      '*': '×',
+      '/': '÷'
+    };
+
+    // Split by spaces and filter for operator symbols
+    const parts = this.operator.split(' ').filter(p => p.trim());
+    const operators: string[] = [];
+
+    for (let i = 0; i < parts.length; i++) {
+      const part = parts[i].trim();
+      // Operators are at odd indices (1, 3, 5, ...) in the format: UUID op UUID op UUID
+      if (i % 2 === 1 && operatorSymbolMap[part]) {
+        operators.push(operatorSymbolMap[part]);
+      }
+    }
+
+    return operators.length > 0 ? operators.join(' ') : '';
   }
 
   getPortRect(type: NodePortType): DOMRect | null {

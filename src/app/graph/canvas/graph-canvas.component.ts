@@ -21,6 +21,7 @@ import {
 export interface GraphNodeData {
 	title: string;
 	content: string;
+	operator?: string;
 }
 
 export interface GraphNode {

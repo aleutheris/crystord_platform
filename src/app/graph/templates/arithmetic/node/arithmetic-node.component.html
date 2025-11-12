@@ -28,17 +28,29 @@
         placeholder="Title"
       />
     </div>
+
+    <!-- Operator badge in center -->
+    <div class="df-node__operator" *ngIf="operator && getOperatorSymbols()">
+      <span class="badge bg-secondary">{{ getOperatorSymbols() }}</span>
+    </div>
+    <!-- Fallback: show raw operator if no symbols parsed -->
+    <div class="df-node__operator" *ngIf="operator && !getOperatorSymbols()">
+      <span class="badge bg-secondary">{{ operator }}</span>
+    </div>
+
     <div class="df-node__body">
-      <label class="df-node__label" [attr.for]="contentInputId">Content</label>
-      <input
-        [id]="contentInputId"
-        type="text"
-        class="df-node__input"
-        [value]="content"
-        (input)="onContentInput($any($event.target).value)"
-        (blur)="onContentBlur()"
-        placeholder="Enter content..."
-      />
+      <div class="df-node__input-group">
+        <span class="df-node__input-label">Content</span>
+        <input
+          [id]="contentInputId"
+          type="text"
+          class="df-node__input-field"
+          [value]="content"
+          (input)="onContentInput($any($event.target).value)"
+          (blur)="onContentBlur()"
+          placeholder=""
+        />
+      </div>
     </div>
   </div>
 </div>
