@@ -155,8 +155,12 @@ export class LandingComponent {
     window.open('https://crystord.substack.com/embed', '_blank');
   }
 
-  openAddon(): void {
-    this.router.navigate(['/gaddon']);
+  openSlidesAddon(): void {
+    this.router.navigate(['/slides-addon']);
+  }
+
+  openSheetsAddon(): void {
+    this.router.navigate(['/sheets-addon']);
   }
 
   openEmail(): void {

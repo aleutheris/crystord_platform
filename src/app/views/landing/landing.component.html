@@ -245,29 +245,56 @@
           </c-col>
           <c-col md="4" class="text-center mb-4">
             <div class="mb-3">
-              <svg cIcon name="cilChart" size="3xl" class="text-primary"></svg>
+              <svg cIcon name="cilCode" size="3xl" class="text-primary"></svg>
             </div>
-            <h5>Advanced Analytics</h5>
+            <h5>No-Code Data Flows</h5>
             <p class="text-muted">
-              Comprehensive data visualization and reporting tools to help you make informed decisions.
+              Create complex data pipelines without programming. Build analytics workflows visually—perfect for non-developers who need powerful data processing.
             </p>
           </c-col>
           <c-col md="4" class="text-center mb-4">
             <div class="mb-3">
-              <svg cIcon name="cilLockLocked" size="3xl" class="text-success"></svg>
+              <svg cIcon name="cilShareBoxed" size="3xl" class="text-success"></svg>
             </div>
-            <h5>Secure & Reliable</h5>
+            <h5>Granular Data Versioning</h5>
             <p class="text-muted">
-              Enterprise-grade security with 99.9% uptime guarantee and data protection.
+              Track changes at the atomic level. Every value is versioned, giving you complete visibility into how your data evolves over time.
             </p>
           </c-col>
           <c-col md="4" class="text-center mb-4">
             <div class="mb-3">
-              <svg cIcon name="cilSettings" size="3xl" class="text-info"></svg>
+              <svg cIcon name="cilChartLine" size="3xl" class="text-info"></svg>
             </div>
-            <h5>Easy Control</h5>
+            <h5>Visual Data Dependencies</h5>
             <p class="text-muted">
-              Intuitive interface designed for both beginners and advanced users.
+              See how your data flows and connects. Understand dependencies at a glance with intuitive visualisations of your entire data ecosystem.
+            </p>
+          </c-col>
+        </c-row>
+
+        <!-- Google Sheets Integration Section -->
+        <c-row class="mt-4">
+          <c-col md="12">
+            <div class="text-center mb-4">
+              <h4 class="fw-bold">Google Sheets™ Integration</h4>
+            </div>
+          </c-col>
+          <c-col md="6" class="text-center mb-4">
+            <div class="mb-3">
+              <svg cIcon name="cilPuzzle" size="3xl" class="text-success"></svg>
+            </div>
+            <h5>Seamless Workspace Add-on</h5>
+            <p class="text-muted">
+              Connect directly to Crystord from Google Sheets. Fetch only the data you need, in your format, without leaving your spreadsheet.
+            </p>
+          </c-col>
+          <c-col md="6" class="text-center mb-4">
+            <div class="mb-3">
+              <svg cIcon name="cilPeople" size="3xl" class="text-warning"></svg>
+            </div>
+            <h5>Collaborate Effectively</h5>
+            <p class="text-muted">
+              Store data and logic in Crystord, visualise in Sheets. Team members work with live data whilst maintaining a single source of truth.
             </p>
           </c-col>
         </c-row>
@@ -335,23 +362,23 @@
             </c-card>
           </c-col>
 
-          <!-- Crystord Add-on -->
+          <!-- Google Slides Add-on -->
           <c-col md="6" lg="3">
             <c-card class="h-100 text-center border-0 bg-light">
               <c-card-body class="p-4">
                 <div class="mb-3">
                   <svg cIcon name="cilPuzzle" size="2xl" class="text-success"></svg>
                 </div>
-                <h6 class="fw-semibold">Google Add-on</h6>
+                <h6 class="fw-semibold">Google Slides Add-on</h6>
                 <p class="text-muted small mb-3">
-                  Enhance your Google Slides™ with our powerful add-on
+                  Enhance your Google Slides™ presentations with Crystord
                 </p>
                 <button
                   cButton
                   color="success"
                   variant="outline"
                   size="sm"
-                  (click)="openAddon()"
+                  (click)="openSlidesAddon()"
                   class="px-3"
                 >
                   <svg cIcon name="cilBookmark" class="me-1"></svg>
@@ -361,12 +388,41 @@
             </c-card>
           </c-col>
 
-          <!-- Contact Email -->
+          <!-- Google Sheets Add-on -->
           <c-col md="6" lg="3">
             <c-card class="h-100 text-center border-0 bg-light">
               <c-card-body class="p-4">
                 <div class="mb-3">
-                  <img src="./assets/images/contact.svg" alt="Contact" style="width: 16px; height: 16px;">
+                  <svg cIcon name="cilSpreadsheet" size="2xl" class="text-info"></svg>
+                </div>
+                <h6 class="fw-semibold">Google Sheets Add-on</h6>
+                <p class="text-muted small mb-3">
+                  Fetch and visualise Crystord data in Google Sheets™
+                </p>
+                <button
+                  cButton
+                  color="info"
+                  variant="outline"
+                  size="sm"
+                  (click)="openSheetsAddon()"
+                  class="px-3"
+                >
+                  <svg cIcon name="cilBookmark" class="me-1"></svg>
+                  Learn More
+                </button>
+              </c-card-body>
+            </c-card>
+          </c-col>
+        </c-row>
+
+        <!-- Contact Section -->
+        <c-row class="g-4 mb-5">
+          <!-- Contact Email -->
+          <c-col md="12">
+            <c-card class="text-center border-0 bg-light">
+              <c-card-body class="p-4">
+                <div class="mb-3">
+                  <img src="./assets/images/contact.svg" alt="Contact" style="width: 24px; height: 24px;">
                 </div>
                 <h6 class="fw-semibold">Contact Us</h6>
                 <p class="text-muted small mb-3">

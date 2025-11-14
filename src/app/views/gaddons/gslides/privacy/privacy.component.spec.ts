@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { GaddonComponent } from './gaddon.component';
+import { PrivacyComponent } from './privacy.component';
 
-describe('GaddonComponent', () => {
-  let component: GaddonComponent;
-  let fixture: ComponentFixture<GaddonComponent>;
+describe('PrivacyComponent', () => {
+  let component: PrivacyComponent;
+  let fixture: ComponentFixture<PrivacyComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [GaddonComponent]
+      imports: [PrivacyComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(GaddonComponent);
+    fixture = TestBed.createComponent(PrivacyComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

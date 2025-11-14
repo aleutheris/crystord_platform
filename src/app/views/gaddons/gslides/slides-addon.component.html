@@ -1,53 +1,40 @@
-<div class="gaddon-page">
-  <c-container>
-    <!-- Hero Section -->
-    <section class="hero-section text-center py-5">
-      <c-row class="justify-content-center">
-        <c-col xl="8" lg="10">
-          <a href="https://crystord.com" target="_blank" rel="noopener noreferrer">
-            <img src="assets/logo_negated.png" alt="Crystord Logo" class="mb-4" style="max-height: 60px; cursor: pointer;">
-          </a>
-          <h1 class="display-4 fw-bold text-primary mb-3">Crystord Google Workspace Add-on</h1>
-          <p class="lead text-muted mb-4">
-            A streamlined Google Workspace Add-on that brings the power of Crystord's synchronization
-            directly to your Google Sheets™ and Google Slides™. Transform static presentations into
-            dynamic, data-driven templates with just a few clicks.
+<div class="bg-body-tertiary min-vh-100">
+  <c-container class="py-5">
+    <c-row class="justify-content-center">
+      <c-col md="12" lg="10" xl="9">
+        <div class="mb-4">
+          <button
+            cButton
+            color="primary"
+            variant="outline"
+            (click)="goBack()"
+            class="mb-3"
+          >
+            <svg cIcon name="cilArrowLeft" class="me-2"></svg>
+            Back to Home
+          </button>
+        </div>
+        <div class="addon-hero text-center">
+          <svg cIcon name="cilFile" size="4xl" class="mb-3"></svg>
+          <h1 class="display-5 fw-bold mb-3">Google Slides™ Add-on</h1>
+          <p class="lead mb-4">
+            Transform static presentations into dynamic, data-driven templates. Connect Crystord's powerful synchronisation engine directly to Google Slides™ and create presentations that update automatically with your latest data.
           </p>
-          <div class="alert alert-info d-inline-block" role="alert">
-            <svg cIcon name="cilInfo" class="me-2"></svg>
-            <strong>New Google Workspace Integration:</strong> No extensions menu needed!
-            Access this add-on directly from the right sidebar in Google Slides™.
-          </div>
-          <div class="d-flex justify-content-center gap-3 flex-wrap">
-            <button
-              cButton
-              color="primary"
-              size="lg"
-              (click)="installAddon()"
-              class="px-4"
-            >
-              <svg cIcon name="cilCloudDownload" class="me-2"></svg>
-              Install Add-on
-            </button>
-            <button
-              cButton
-              color="outline-primary"
-              size="lg"
-              (click)="learnMore()"
-              class="px-4"
-            >
-              <svg cIcon name="cilArrowBottom" class="me-2"></svg>
-              Learn More
-            </button>
-          </div>
-        </c-col>
-      </c-row>
-    </section>
+          <button
+            cButton
+            color="light"
+            size="lg"
+            (click)="installAddon()"
+            class="px-4"
+          >
+            <svg cIcon name="cilCloudDownload" class="me-2"></svg>
+            Install from Marketplace
+          </button>
+        </div>
 
-    <!-- Core Functionality Section -->
-    <section class="functionality-section py-5 bg-light">
-      <c-row class="justify-content-center">
-        <c-col xl="10">
+        <!-- Core Functionality Section -->
+        <c-row class="mb-5">
+          <c-col md="12">
           <h2 class="text-center mb-5">How It Works</h2>
           <c-row class="align-items-center mb-5">
             <c-col md="6">
@@ -88,12 +75,10 @@
           </c-row>
         </c-col>
       </c-row>
-    </section>
 
-    <!-- Live Updates Section -->
-    <section class="updates-section py-5">
-      <c-row class="justify-content-center">
-        <c-col xl="10">
+        <!-- Live Updates Section -->
+        <c-row class="mb-5">
+          <c-col md="12">
           <c-row class="align-items-center">
             <c-col md="6">
               <h3 class="h4 mb-3">Instant Updates, Zero Hassle</h3>
@@ -123,12 +108,10 @@
           </c-row>
         </c-col>
       </c-row>
-    </section>
 
-    <!-- Use Cases Section -->
-    <section class="use-cases-section py-5 bg-light">
-      <c-row class="justify-content-center">
-        <c-col xl="10">
+        <!-- Use Cases Section -->
+        <c-row class="mb-5">
+          <c-col md="12">
           <h2 class="text-center mb-5">Perfect For</h2>
           <c-row class="g-4">
             <c-col md="6" lg="3">
@@ -186,74 +169,57 @@
           </c-row>
         </c-col>
       </c-row>
-    </section>
 
-    <!-- Call to Action Section -->
-    <section class="cta-section py-5">
-      <c-row class="justify-content-center">
-        <c-col xl="8" class="text-center">
-          <h2 class="mb-4">Ready to Transform Your Presentations?</h2>
-          <p class="lead text-muted mb-4">
-            Be among the first to experience the next generation of data-driven presentations
-            with the Crystord Google Workspace Add-on.
-          </p>
-          <div class="d-flex justify-content-center gap-3 flex-wrap mb-4">
-            <button
-              cButton
-              color="primary"
-              size="lg"
-              (click)="installAddon()"
-              class="px-4"
-            >
-              <svg cIcon name="cilCloudDownload" class="me-2"></svg>
-              Install from Google Workspace Marketplace
-            </button>
-          </div>
-          <p class="text-muted">
-            Want to stay updated on new features?
-            <a href="https://crystord.substack.com/embed" target="_blank" rel="noopener noreferrer" class="text-decoration-none">
-              Subscribe to our newsletter
-            </a>
-          </p>
-        </c-col>
-      </c-row>
-    </section>
+        <!-- Call to Action Section -->
+        <c-row class="mb-5">
+          <c-col md="12">
+            <c-card class="border-primary">
+              <c-card-body class="p-5 text-center">
+                <h3 class="fw-bold mb-3">Ready to Transform Your Presentations?</h3>
+                <p class="text-muted mb-4">
+                  Install the Crystord for Google Slides™ add-on today and experience data-driven presentations.
+                </p>
+                <div class="d-flex gap-3 justify-content-center flex-wrap">
+                  <button
+                    cButton
+                    color="primary"
+                    size="lg"
+                    (click)="installAddon()"
+                    class="px-4"
+                  >
+                    <svg cIcon name="cilCloudDownload" class="me-2"></svg>
+                    Install Now
+                  </button>
+                  <button
+                    cButton
+                    color="light"
+                    size="lg"
+                    (click)="contactSupport()"
+                    class="px-4"
+                  >
+                    <svg cIcon name="cilEnvelopeClosed" class="me-2"></svg>
+                    Contact Support
+                  </button>
+                </div>
+              </c-card-body>
+            </c-card>
+          </c-col>
+        </c-row>
 
-    <!-- Relationship to Core Crystord -->
-    <section class="relationship-section py-5 bg-light">
-      <c-row class="justify-content-center">
-        <c-col xl="8" class="text-center">
-          <h3 class="mb-3">Part of the Crystord Ecosystem</h3>
-          <p class="text-muted">
-            This Google Workspace Add-on is a focused, lightweight version of our comprehensive
-            Crystord platform. While the core Crystord system offers advanced analytics,
-            real-time monitoring, and extensive control features, this add-on brings
-            essential synchronization capabilities directly to your Google Workspace.
-          </p>
-          <button
-            cButton
-            color="outline-primary"
-            (click)="exploreCore()"
-            class="mt-3"
-          >
-            Explore Core Crystord Platform
-          </button>
-        </c-col>
-      </c-row>
-    </section>
-
-    <!-- Trademark Notice -->
-    <c-row class="mt-4">
-      <c-col md="12">
-        <div class="text-center">
-          <small class="text-muted">
-            <a href="/gaddon/privacy" class="text-decoration-none me-3" target="_blank">Privacy Policy</a>
-            <a href="/gaddon/terms" class="text-decoration-none me-3" target="_blank">Terms of Service</a>
-            <a href="/gaddon/support" class="text-decoration-none me-3" target="_blank">Support</a>
-            <br>
-            Google Sheets™ and Google Slides™ are trademarks of Google LLC.
-          </small>
-        </div>
+        <!-- Trademark Notice -->
+        <c-row>
+          <c-col md="12">
+            <div class="text-center">
+              <small class="text-muted">
+                <a href="/slides-addon/privacy" class="text-decoration-none me-3" target="_blank">Privacy Policy</a>
+                <a href="/slides-addon/terms" class="text-decoration-none me-3" target="_blank">Terms of Service</a>
+                <a href="/slides-addon/support" class="text-decoration-none" target="_blank">Support</a>
+                <br>
+                Google Sheets™ and Google Slides™ are trademarks of Google LLC.
+              </small>
+            </div>
+          </c-col>
+        </c-row>
       </c-col>
     </c-row>
   </c-container>

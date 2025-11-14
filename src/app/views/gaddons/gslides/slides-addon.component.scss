@@ -1,0 +1,112 @@
+.addon-hero {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 4rem 2rem;
+  border-radius: 0.5rem;
+  margin-bottom: 2rem;
+}
+
+.functionality-section,
+.use-cases-section,
+.relationship-section {
+  background-color: var(--cui-light);
+}
+
+.updates-section,
+.cta-section {
+  background-color: white;
+}
+
+// Card hover effects
+c-card {
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.15) !important;
+  }
+}
+
+// Button hover effects
+button[cButton] {
+  transition: transform 0.2s ease-in-out;
+
+  &:hover {
+    transform: scale(1.02);
+  }
+}
+
+// GIF styling
+img[src$=".gif"] {
+  border: 2px solid var(--cui-border-color);
+  max-height: 300px;
+
+  @media (max-width: 768px) {
+    max-height: 200px;
+  }
+}
+
+// Code styling
+code {
+  background-color: var(--cui-gray-100);
+  padding: 0.2rem 0.4rem;
+  border-radius: 0.25rem;
+  font-size: 0.875em;
+  color: var(--cui-danger);
+}
+
+// Badge styling
+.badge {
+  font-size: 0.8rem;
+}
+
+// Footer styling
+.footer-section {
+  background-color: var(--cui-gray-50);
+
+  a {
+    color: var(--cui-secondary);
+
+    &:hover {
+      color: var(--cui-primary);
+    }
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .hero-section {
+    padding: 3rem 0 !important;
+
+    .display-4 {
+      font-size: 2rem;
+    }
+  }
+
+  .functionality-section,
+  .updates-section,
+  .use-cases-section,
+  .cta-section,
+  .relationship-section {
+    padding: 3rem 0 !important;
+  }
+
+  .d-flex.gap-3 {
+    flex-direction: column;
+    gap: 1rem !important;
+  }
+}
+
+// Section spacing
+section {
+  position: relative;
+
+  &:not(:last-child) {
+    margin-bottom: 0;
+  }
+}
+
+// Icon styling in cards
+svg[cIcon] {
+  opacity: 0.8;
+}

@@ -13,8 +13,8 @@ import { IconDirective } from '@coreui/icons-angular';
 
 @Component({
   selector: 'app-gaddon',
-  templateUrl: './gaddon.component.html',
-  styleUrls: ['./gaddon.component.scss'],
+  templateUrl: './slides-addon.component.html',
+  styleUrls: ['./slides-addon.component.scss'],
   standalone: true,
   imports: [
     CommonModule,
@@ -31,23 +31,15 @@ export class GaddonComponent {
 
   constructor(private router: Router) {}
 
+  goBack(): void {
+    this.router.navigate(['/']);
+  }
+
   installAddon(): void {
     window.open('https://gsuite.google.com/marketplace/app/foo/186388621973', '_blank');
   }
 
-  learnMore(): void {
-    // Scroll to functionality section
-    const element = document.querySelector('.functionality-section');
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
-  }
-
-  subscribeNewsletter(): void {
-    window.open('https://crystord.substack.com/embed', '_blank');
-  }
-
-  exploreCore(): void {
-    window.open('https://crystord.com', '_blank');
+  contactSupport(): void {
+    window.open('mailto:aleutheris@gmail.com?subject=Google Slides Add-on Inquiry', '_blank');
   }
 }

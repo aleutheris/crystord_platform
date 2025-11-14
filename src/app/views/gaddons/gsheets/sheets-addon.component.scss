@@ -1,0 +1,56 @@
+.addon-hero {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 4rem 2rem;
+  border-radius: 0.5rem;
+  margin-bottom: 2rem;
+}
+
+.feature-icon {
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  margin: 0 auto 1rem;
+}
+
+.feature-icon.primary {
+  background: rgba(50, 31, 219, 0.1);
+}
+
+.feature-icon.success {
+  background: rgba(46, 184, 92, 0.1);
+}
+
+.feature-icon.info {
+  background: rgba(57, 186, 230, 0.1);
+}
+
+.feature-icon.warning {
+  background: rgba(255, 193, 7, 0.1);
+}
+
+.step-number {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--cui-primary);
+  color: white;
+  font-weight: bold;
+  margin-right: 1rem;
+  flex-shrink: 0;
+}
+
+.screenshot-placeholder {
+  background: var(--cui-light);
+  border: 2px dashed var(--cui-border-color);
+  border-radius: 0.5rem;
+  padding: 3rem;
+  text-align: center;
+  color: var(--cui-secondary);
+}

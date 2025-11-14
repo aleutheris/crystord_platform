@@ -1,0 +1,178 @@
+<div class="bg-body-tertiary min-vh-100">
+  <c-container class="py-5">
+    <c-row class="justify-content-center">
+      <c-col md="12" lg="10">
+        <!-- Navigation -->
+        <div class="mb-4">
+          <button
+            cButton
+            color="light"
+            variant="ghost"
+            (click)="goBack()"
+            class="mb-3"
+          >
+            <svg cIcon name="cilArrowLeft" class="me-2"></svg>
+            Back to Google Sheets Add-on
+          </button>
+        </div>
+
+        <div class="support-content">
+          <h1 class="mb-4">Support & Help</h1>
+          <p class="lead mb-5">
+            Find answers to common questions about the Crystord for Google Sheets™ add-on.
+          </p>
+
+          <!-- Getting Started -->
+          <h2 class="mb-4">Getting Started</h2>
+
+          <div class="faq-item">
+            <h5 class="faq-question">How do I install the add-on?</h5>
+            <p class="faq-answer">
+              You can install the Crystord for Google Sheets add-on from the Google Workspace Marketplace. Once installed, open any Google Sheets document, go to Extensions → Crystord → Authorise to connect your Crystord account.
+            </p>
+          </div>
+
+          <div class="faq-item">
+            <h5 class="faq-question">Do I need a Crystord account?</h5>
+            <p class="faq-answer">
+              Yes, you need an active Crystord account to use the add-on. If you don't have one, you can create a free account at the Crystord landing page.
+            </p>
+          </div>
+
+          <div class="faq-item">
+            <h5 class="faq-question">Is the add-on free to use?</h5>
+            <p class="faq-answer">
+              Yes, the add-on is free to install and use. However, access to Crystord data depends on your Crystord account tier and permissions.
+            </p>
+          </div>
+
+          <!-- Using the Add-on -->
+          <h2 class="mb-4 mt-5">Using the Add-on</h2>
+
+          <div class="faq-item">
+            <h5 class="faq-question">How do I fetch data from Crystord?</h5>
+            <p class="faq-answer">
+              After authorising the add-on, open the sidebar via Extensions → Crystord → Show Sidebar. Browse your Crystord data flows, select the atoms or nodes you want to import, and click "Fetch Data." The data will appear in your spreadsheet at the selected cell location.
+            </p>
+          </div>
+
+          <div class="faq-item">
+            <h5 class="faq-question">Can I access historical versions of data?</h5>
+            <p class="faq-answer">
+              Yes! Crystord's granular versioning is fully supported. In the sidebar, you can select a specific version or time range for any data point before importing it into your sheet.
+            </p>
+          </div>
+
+          <div class="faq-item">
+            <h5 class="faq-question">How do I refresh data?</h5>
+            <p class="faq-answer">
+              To refresh data, select the cells containing Crystord data and click the "Refresh" button in the add-on sidebar. This will fetch the latest values from Crystord whilst maintaining your formatting.
+            </p>
+          </div>
+
+          <div class="faq-item">
+            <h5 class="faq-question">Can I format the imported data?</h5>
+            <p class="faq-answer">
+              Absolutely! You can specify custom formatting options in the add-on settings before importing data. After import, you can also use Google Sheets' native formatting tools as needed.
+            </p>
+          </div>
+
+          <!-- Troubleshooting -->
+          <h2 class="mb-4 mt-5">Troubleshooting</h2>
+
+          <div class="faq-item">
+            <h5 class="faq-question">The add-on isn't appearing in my Extensions menu</h5>
+            <p class="faq-answer">
+              Try refreshing your Google Sheets page. If it still doesn't appear, reinstall the add-on from the Google Workspace Marketplace. Make sure you're signed in to the correct Google account.
+            </p>
+          </div>
+
+          <div class="faq-item">
+            <h5 class="faq-question">I'm getting an "Authentication Failed" error</h5>
+            <p class="faq-answer">
+              This usually means your Crystord session has expired. Go to Extensions → Crystord → Authorise to log in again. Ensure you're using the correct Crystord username and password.
+            </p>
+          </div>
+
+          <div class="faq-item">
+            <h5 class="faq-question">Data isn't loading or is taking too long</h5>
+            <p class="faq-answer">
+              Large datasets may take a few moments to fetch. If the issue persists:
+            </p>
+            <ul>
+              <li>Check your internet connection</li>
+              <li>Verify you have permissions to access the Crystord data flow</li>
+              <li>Try fetching a smaller subset of data first</li>
+              <li>Check the browser console (F12) for error messages</li>
+            </ul>
+          </div>
+
+          <div class="faq-item">
+            <h5 class="faq-question">Can I use the add-on offline?</h5>
+            <p class="faq-answer">
+              No, the add-on requires an internet connection to fetch data from Crystord servers. However, once data is imported into your sheet, you can work with it offline using Google Sheets' offline mode.
+            </p>
+          </div>
+
+          <!-- Privacy & Security -->
+          <h2 class="mb-4 mt-5">Privacy & Security</h2>
+
+          <div class="faq-item">
+            <h5 class="faq-question">Is my data secure?</h5>
+            <p class="faq-answer">
+              Yes. The add-on uses secure authentication and encrypted connections. We only access the specific data you request to import. For more details, see our <a [routerLink]="['/sheets-addon/privacy']">Privacy Policy</a>.
+            </p>
+          </div>
+
+          <div class="faq-item">
+            <h5 class="faq-question">What permissions does the add-on require?</h5>
+            <p class="faq-answer">
+              The add-on requires permission to:
+            </p>
+            <ul>
+              <li>Access your Google Sheets to insert and update data</li>
+              <li>Connect to your Crystord account to fetch data</li>
+              <li>Display the add-on sidebar interface</li>
+            </ul>
+          </div>
+
+          <div class="faq-item">
+            <h5 class="faq-question">How do I revoke access?</h5>
+            <p class="faq-answer">
+              To revoke the add-on's access to your Crystord account, go to Extensions → Crystord → Sign Out. To completely remove the add-on, go to Extensions → Manage Extensions and uninstall it.
+            </p>
+          </div>
+
+          <!-- Contact Support -->
+          <h2 class="mb-4 mt-5">Still Need Help?</h2>
+          <c-card class="border-0">
+            <c-card-body class="contact-card">
+              <svg cIcon name="cilEnvelopeClosed" size="3xl" class="text-primary mb-3"></svg>
+              <h4 class="mb-3">Contact Our Support Team</h4>
+              <p class="text-muted mb-4">
+                Can't find the answer you're looking for? Our support team is here to help.
+              </p>
+              <button
+                cButton
+                color="primary"
+                size="lg"
+                (click)="contactSupport()"
+                class="px-4"
+              >
+                <svg cIcon name="cilEnvelopeClosed" class="me-2"></svg>
+                Email Support
+              </button>
+              <p class="mt-3 mb-0 text-muted">
+                <small>Response time: Usually within 24-48 hours</small>
+              </p>
+            </c-card-body>
+          </c-card>
+
+          <p class="mt-5 text-muted">
+            <small>Google Sheets™ is a trademark of Google LLC. Crystord is not affiliated with or endorsed by Google LLC.</small>
+          </p>
+        </div>
+      </c-col>
+    </c-row>
+  </c-container>
+</div>

@@ -1,0 +1,33 @@
+.support-content {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.faq-item {
+  margin-bottom: 2rem;
+}
+
+.faq-question {
+  color: var(--cui-primary);
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.faq-answer {
+  line-height: 1.6;
+  color: var(--cui-body-color);
+}
+
+.contact-card {
+  background: var(--cui-light);
+  border-radius: 0.5rem;
+  padding: 2rem;
+  text-align: center;
+}
+
+code {
+  background: var(--cui-secondary-bg);
+  padding: 0.2rem 0.4rem;
+  border-radius: 0.25rem;
+  font-size: 0.9em;
+}
