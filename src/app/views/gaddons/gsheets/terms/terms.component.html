@@ -1,123 +1,170 @@
-<div class="bg-body-tertiary min-vh-100">
-  <c-container class="py-5">
-    <c-row class="justify-content-center">
-      <c-col md="12" lg="10">
-        <!-- Navigation -->
-        <div class="mb-4">
-          <button
-            cButton
-            color="light"
-            variant="ghost"
-            (click)="goBack()"
-            class="mb-3"
-          >
-            <svg cIcon name="cilArrowLeft" class="me-2"></svg>
-            Back to Google Sheets Add-on
-          </button>
-        </div>
+<div class="sheets-addon-container">
+  <div class="content">
+    <div class="mb-4">
+      <button
+        cButton
+        color="light"
+        variant="ghost"
+        (click)="goBack()"
+        class="mb-3"
+      >
+        <svg cIcon name="cilArrowLeft" class="me-2"></svg>
+        Back to Google Sheets Add-on
+      </button>
+    </div>
+    <header class="policy-header">
+      <h1>Crystord Google Sheets™ Add-on: Terms of Service</h1>
+      <p class="last-updated">Last updated: November 14, 2025</p>
+    </header>
 
-        <div class="terms-content">
-          <h1 class="mb-4">Terms of Service</h1>
-          <p class="last-updated">Last updated: November 14, 2025</p>
+    <section class="policy-section">
+      <h2>Introduction</h2>
+      <p>These Terms of Service ("Terms") govern your access to and use of the Crystord Google Sheets™ Add-on (the "Add-on"), a software plugin that enables users to fetch and couple data from Crystord data flows into Google Sheets™. These Terms apply only to the Crystord Add-on and not to the Crystord platform, website, or any other Crystord service. The Add-on and the main Crystord platform are entirely separate; using the Add-on does not imply access to any other Crystord products.</p>
+    </section>
 
-          <h2>Agreement to Terms</h2>
-          <p>
-            By accessing and using the Crystord for Google Sheets™ add-on (the "Add-on"), you agree to be bound by these Terms of Service ("Terms"). If you do not agree to these Terms, please do not use the Add-on.
-          </p>
+    <section class="policy-section">
+      <h2>Acceptance of Terms</h2>
+      <p>By installing or using the Crystord Add-on, you confirm that you have read, understood, and agree to be bound by these Terms. If you do not agree to these Terms, do not use the Add-on.</p>
+    </section>
 
-          <h2>Description of Service</h2>
-          <p>
-            The Add-on provides integration between Crystord and Google Sheets, allowing users to:
-          </p>
-          <ul>
-            <li>Connect their Crystord account to Google Sheets</li>
-            <li>Fetch data from Crystord data flows</li>
-            <li>Visualise Crystord data within spreadsheets</li>
-            <li>Synchronise granular versioned data</li>
-          </ul>
+    <section class="policy-section">
+      <h2>Definitions</h2>
+      <ul>
+        <li><strong>Add-on:</strong> The Crystord Google Sheets™ Add-on, a tool for connecting Crystord data flows to Google Sheets™.</li>
+        <li><strong>Company/Developer:</strong> Aleutheris.</li>
+        <li><strong>User:</strong> Any person operating the Add-on.</li>
+        <li><strong>Service:</strong> The features and functions offered by the Add-on, as described herein.</li>
+      </ul>
+    </section>
 
-          <h2>Account Requirements</h2>
-          <ul>
-            <li>You must have an active Crystord account to use the Add-on</li>
-            <li>You must have a Google Workspace account with Google Sheets access</li>
-            <li>You are responsible for maintaining the confidentiality of your account credentials</li>
-            <li>You are responsible for all activities that occur under your account</li>
-          </ul>
+    <section class="policy-section">
+      <h2>Eligibility and Account Requirements</h2>
+      <ul>
+        <li><strong>Age Restriction:</strong> No minimum age requirement.</li>
+        <li><strong>Authentication:</strong> Users must authenticate via their Google Account to use the Add-on; a separate Crystord account is also required.</li>
+        <li><strong>Geographic Restriction:</strong> None.</li>
+      </ul>
+    </section>
 
-          <h2>Acceptable Use</h2>
-          <p>You agree not to:</p>
-          <ul>
-            <li>Use the Add-on for any illegal or unauthorised purpose</li>
-            <li>Attempt to gain unauthorised access to Crystord systems or data</li>
-            <li>Interfere with or disrupt the Add-on's functionality</li>
-            <li>Use the Add-on to transmit malicious code or harmful content</li>
-            <li>Reverse engineer, decompile, or disassemble the Add-on</li>
-            <li>Remove or modify any proprietary notices or labels</li>
-          </ul>
+    <section class="policy-section">
+      <h2>Description of the Service</h2>
+      <p>The Crystord Add-on allows users to dynamically populate Google Sheets™ with data from Crystord data flows. Cells can be coupled to specific atom features from Crystord, ensuring spreadsheets always reflect the freshest data.</p>
+      <ul>
+        <li><strong>Primary functions:</strong> Search and couple spreadsheet cells to Crystord atoms, fetch atom data, and synchronise values with granular versioning.</li>
+        <li><strong>Current limitations:</strong> The Add-on currently supports text and numeric values and is limited to integration between Crystord and Google Sheets™.</li>
+      </ul>
+    </section>
 
-          <h2>Data Usage</h2>
-          <ul>
-            <li>You retain all rights to your data stored in Crystord</li>
-            <li>The Add-on accesses only the data you explicitly request to import</li>
-            <li>You are responsible for ensuring you have the right to access and use the data you import</li>
-            <li>We process your data in accordance with our Privacy Policy</li>
-          </ul>
+    <section class="policy-section">
+      <h2>Restrictions</h2>
+      <p>Users agree NOT to:</p>
+      <ul>
+        <li>Reverse engineer, decompile, or disassemble any part of the Add-on.</li>
+        <li>Use the Add-on in violation of applicable laws or regulations.</li>
+        <li>License, sell, resell, lease, or otherwise exploit the Add-on except as explicitly permitted in these Terms.</li>
+        <li>Misrepresent the Add-on as part of any other software platform or service.</li>
+      </ul>
+    </section>
 
-          <h2>Intellectual Property</h2>
-          <p>
-            The Add-on and its original content, features, and functionality are owned by Crystord and are protected by international copyright, trademark, patent, trade secret, and other intellectual property laws.
-          </p>
+    <section class="policy-section">
+      <h2>User Content and Data</h2>
+      <ul>
+        <li>The Add-on accesses Crystord data only as authorised by the user and processes Google Sheets data according to granted permissions.</li>
+        <li>Atom data from Crystord is fetched and stored on Crystord servers; cell-to-atom mappings are maintained in sheet metadata.</li>
+        <li>User-generated content in Crystord workspaces is stored on Crystord servers with appropriate security measures.</li>
+      </ul>
+    </section>
 
-          <h2>Third-Party Services</h2>
-          <p>
-            The Add-on integrates with Google Sheets, a third-party service. Your use of Google Sheets is subject to Google's Terms of Service and Privacy Policy. We are not responsible for any third-party services.
-          </p>
+    <section class="policy-section">
+      <h2>Data Retention and User Rights</h2>
+      <h3>Data Handling Commitments</h3>
+      <ul>
+        <li><strong>Atom Storage:</strong> Atom data persists on Crystord servers until explicitly deleted by the user.</li>
+        <li><strong>Mapping Storage:</strong> Cell-to-atom mappings are stored in Google Sheets metadata while active.</li>
+        <li><strong>Session-Based Processing:</strong> Data synchronisation occurs during active user sessions.</li>
+      </ul>
 
-          <h2>Disclaimers and Limitations of Liability</h2>
-          <h3>Service "As Is"</h3>
-          <p>
-            The Add-on is provided "as is" and "as available" without warranties of any kind, either express or implied, including but not limited to warranties of merchantability, fitness for a particular purpose, or non-infringement.
-          </p>
+      <h3>User Rights Regarding Data</h3>
+      <ul>
+        <li><strong>Access Revocation:</strong> Users have the right to revoke the Add-on's access to their Google account at any time through Google Account security settings.</li>
+        <li><strong>Data Deletion:</strong> Users can delete atoms from their Crystord workspace; decoupling cells removes mappings but preserves atom data.</li>
+        <li><strong>Data Portability:</strong> Users retain full control and ownership of their data in both Crystord and Google Workspace.</li>
+        <li><strong>Right to Information:</strong> Users may contact the Company to confirm data handling practices.</li>
+      </ul>
 
-          <h3>Limitation of Liability</h3>
-          <p>
-            To the maximum extent permitted by law, Crystord shall not be liable for any indirect, incidental, special, consequential, or punitive damages, or any loss of profits or revenues, whether incurred directly or indirectly, or any loss of data, use, goodwill, or other intangible losses.
-          </p>
+      <h3>Service Termination and Data</h3>
+      <ul>
+        <li>If the Add-on service is discontinued, users will be notified in advance.</li>
+        <li>Atom data remains accessible through the Crystord platform; Google Sheets data remains in user's Google account.</li>
+        <li>Users may continue to access their data normally after service termination.</li>
+      </ul>
+    </section>
 
-          <h2>Data Backup</h2>
-          <p>
-            You are responsible for maintaining backups of your data. We are not responsible for any data loss that may occur through your use of the Add-on.
-          </p>
+    <section class="policy-section">
+      <h2>Intellectual Property</h2>
+      <ul>
+        <li>The Add-on is the property of Aleutheris, protected under intellectual property laws.</li>
+        <li>You are granted a limited, non-exclusive, non-transferable license to use the Add-on, strictly in accordance with these Terms.</li>
+        <li>You retain all rights to your original Google documents and Crystord data.</li>
+      </ul>
+    </section>
 
-          <h2>Service Modifications and Termination</h2>
-          <ul>
-            <li>We reserve the right to modify or discontinue the Add-on at any time</li>
-            <li>We may suspend or terminate your access if you violate these Terms</li>
-            <li>You may stop using the Add-on at any time by uninstalling it</li>
-          </ul>
+    <section class="policy-section">
+      <h2>Payment and Fees</h2>
+      <p>The Add-on is currently free. If premium features are introduced in future, a separate notification and updated terms will be provided before any payment is required.</p>
+    </section>
 
-          <h2>Updates to Terms</h2>
-          <p>
-            We may update these Terms from time to time. We will notify you of any material changes by posting the new Terms on this page and updating the "Last updated" date. Your continued use of the Add-on after changes become effective constitutes acceptance of the revised Terms.
-          </p>
+    <section class="policy-section">
+      <h2>Disclaimers and Limitation of Liability</h2>
+      <ul>
+        <li>The Add-on is provided "as is" and "as available." Crystord offers no warranty as to the accuracy or availability of the Add-on.</li>
+        <li>Aleutheris, its affiliates, or licensors will not be liable for any direct, indirect, incidental, or consequential damages resulting from the use of the Add-on.</li>
+        <li>Add-on availability and functionality may depend on the Google platform's and Crystord's reliability and continued support.</li>
+      </ul>
+    </section>
 
-          <h2>Governing Law</h2>
-          <p>
-            These Terms shall be governed by and construed in accordance with applicable laws, without regard to its conflict of law provisions.
-          </p>
+    <section class="policy-section">
+      <h2>Suspension and Termination</h2>
+      <ul>
+        <li>Users may uninstall the Add-on at any time to terminate use.</li>
+        <li>Aleutheris reserves the right to suspend or discontinue the Add-on at any time, for any reason, and without notice.</li>
+        <li>The Add-on is entirely distinct from any suspension or termination of the main Crystord software platform.</li>
+      </ul>
+    </section>
 
-          <h2>Contact Information</h2>
-          <p>
-            If you have any questions about these Terms, please contact us at:
-            <br>
-            <a href="mailto:aleutheris@gmail.com">aleutheris&#64;gmail.com</a>
-          </p>
+    <section class="policy-section">
+      <h2>Modifications</h2>
+      <ul>
+        <li>Crystord may update these Terms from time to time. Significant changes will be communicated via email (if contact is available) or through the Add-on.</li>
+        <li>Continued use after changes constitutes acceptance of the updated Terms.</li>
+      </ul>
+    </section>
 
-          <p class="mt-5 text-muted">
-            <small>Google Sheets™ is a trademark of Google LLC. Crystord is not affiliated with or endorsed by Google LLC.</small>
-          </p>
-        </div>
-      </c-col>
-    </c-row>
-  </c-container>
+    <section class="policy-section">
+      <h2>Support</h2>
+      <ul>
+        <li>For support and questions related to the Add-on or these Terms, contact: <a href="mailto:aleutheris&#64;gmail.com">aleutheris&#64;gmail.com</a>.</li>
+        <li>Standard response time is within three (3) days.</li>
+      </ul>
+    </section>
+
+    <section class="policy-section">
+      <h2>Governing Law</h2>
+      <p>These Terms are governed by the laws of the Netherlands.</p>
+    </section>
+
+    <section class="policy-section">
+      <h2>Severability</h2>
+      <p>If any provision of these Terms is found to be invalid or unenforceable, the remaining provisions remain effective to the fullest extent permitted by law.</p>
+    </section>
+
+    <section class="policy-section">
+      <h2>Final Note</h2>
+      <p>By using the Crystord Add-on, you confirm acknowledgment and acceptance of these Terms. For privacy specifics, please see the separate Privacy Policy. These Terms do not apply to or regulate use of the broader Crystord software platform or website.</p>
+    </section>
+
+    <footer class="trademark-notice">
+      <p><small>Google Sheets™ is a trademark of Google LLC. Crystord is not affiliated with or endorsed by Google LLC.</small></p>
+    </footer>
+  </div>
 </div>

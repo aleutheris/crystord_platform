@@ -1,112 +1,133 @@
-<div class="bg-body-tertiary min-vh-100">
-  <c-container class="py-5">
-    <c-row class="justify-content-center">
-      <c-col md="12" lg="10">
-        <!-- Navigation -->
-        <div class="mb-4">
-          <button
-            cButton
-            color="light"
-            variant="ghost"
-            (click)="goBack()"
-            class="mb-3"
-          >
-            <svg cIcon name="cilArrowLeft" class="me-2"></svg>
-            Back to Google Sheets Add-on
-          </button>
-        </div>
+<div class="sheets-addon-container">
+  <div class="content">
+    <div class="mb-4">
+      <button
+        cButton
+        color="light"
+        variant="ghost"
+        (click)="goBack()"
+        class="mb-3"
+      >
+        <svg cIcon name="cilArrowLeft" class="me-2"></svg>
+        Back to Google Sheets Add-on
+      </button>
+    </div>
+    <header class="policy-header">
+      <h1>Crystord Google Sheets™ Add-on: Privacy Policy</h1>
+      <p class="last-updated">Last updated: November 14, 2025</p>
+    </header>
 
-        <div class="privacy-content">
-          <h1 class="mb-4">Privacy Policy</h1>
-          <p class="last-updated">Last updated: November 14, 2025</p>
+    <section class="policy-section">
+      <h2>Introduction</h2>
+      <p>
+        Crystord is a data-flow platform that stores versioned "atoms" and their attributes
+        on secure Crystord managed servers. The Crystord Google Sheets™ add-on lets you search
+        and couple spreadsheet cells to those atoms directly from a sidebar, ensuring your sheet
+        always reflects the freshest data coming from Crystord. This privacy notice explains how
+        information is accessed, stored, and protected when you sign in with your Google account
+        and use the add-on.
+      </p>
+    </section>
 
-          <h2>Introduction</h2>
-          <p>
-            This Privacy Policy describes how Crystord ("we", "us", or "our") collects, uses, and shares information when you use the Crystord for Google Sheets™ add-on (the "Add-on").
-          </p>
+    <section class="policy-section">
+      <h2>Permissions and Data Access</h2>
+      <p>When you authorise the add-on, Google prompts you to grant the following scopes so the sidebar can function:</p>
+      <ul>
+        <li>Read the active Google Sheets™ file to determine which cells you selected, and also to read the metadata of those cells stored in a hidden spreadsheet.</li>
+        <li>Write or update those cells when you refresh or sync atom data.</li>
+        <li>Identify you via your Google account so we can link the add-on session to your Crystord workspace.</li>
+      </ul>
+      <p>These permissions are used exclusively to let you fetch atom features, search by labels, and push refreshed values into the currently opened sheet.</p>
+    </section>
 
-          <h2>Information We Collect</h2>
-          <h3>Information You Provide</h3>
-          <ul>
-            <li><strong>Account Information:</strong> When you connect your Crystord account to the Add-on, we collect your Crystord username and authentication credentials.</li>
-            <li><strong>Spreadsheet Data:</strong> We access only the specific data you request to import from Crystord into your Google Sheets.</li>
-          </ul>
+    <section class="policy-section">
+      <h2>Use of Google User Data</h2>
+      <p>Crystord's use of Google User Data follows Google's Limited Use Requirements:</p>
+      <ul>
+        <li>Google account information is used only to authenticate you and show data that belongs to your Crystord workspace.</li>
+        <li>Sheet content is accessed only when you initiate a cell-atom coupling or refresh action.</li>
+        <li>We never use Google data for advertising, profiling, or resale and we do not share it with unaffiliated third parties.</li>
+      </ul>
+    </section>
 
-          <h3>Automatically Collected Information</h3>
-          <ul>
-            <li><strong>Usage Data:</strong> We collect information about how you interact with the Add-on, including features used and actions performed.</li>
-            <li><strong>Technical Information:</strong> We may collect device information, browser type, and IP addresses for security and troubleshooting purposes.</li>
-          </ul>
+    <section class="policy-section">
+      <h2>Data Storage</h2>
+      <ul>
+        <li><strong>Atom Repository:</strong> Data you manage inside Crystord, including atom labels, atom bonds, atom feature values, is stored on Crystord servers so that it can be versioned, searched, and fetched by the add-on.</li>
+        <li><strong>Cell-to-atom Mappings:</strong> When you couple a cell to an atom feature, the mapping (spreadsheet ID, sheet name, cell reference, atom identifier, and the feature name) is stored in your sheet metadata. These mappings are retained while active but can be removed by decoupling cells.</li>
+        <li><strong>No Bulk Sheet Storage:</strong> The add-on does not upload your entire Google Sheet to Crystord. Only the pairings you create and the resulting atom data are retained.</li>
+      </ul>
+    </section>
 
-          <h2>How We Use Your Information</h2>
-          <p>We use the information we collect to:</p>
-          <ul>
-            <li>Provide and maintain the Add-on functionality</li>
-            <li>Authenticate your Crystord account and authorise data access</li>
-            <li>Fetch and synchronise data between Crystord and Google Sheets</li>
-            <li>Improve and optimise the Add-on's performance</li>
-            <li>Provide customer support and respond to your enquiries</li>
-            <li>Detect, prevent, and address technical issues and security threats</li>
-          </ul>
+    <section class="policy-section">
+      <h2>Data Processing and Security</h2>
+      <p>
+        All Google Sheet operations happen through Google APIs while Crystord handles atom lookups, label searches, and version history on its servers. Communications between the sidebar, Google, and Crystord use HTTPS with modern encryption. Access to Crystord infrastructure is audited and limited to authorised personnel following least-privilege principles.
+      </p>
+    </section>
 
-          <h2>Data Sharing and Disclosure</h2>
-          <p>We do not sell your personal information. We may share your information only in the following circumstances:</p>
-          <ul>
-            <li><strong>With Your Consent:</strong> We may share information when you explicitly authorise us to do so.</li>
-            <li><strong>Service Providers:</strong> We may share information with third-party service providers who assist in operating the Add-on.</li>
-            <li><strong>Legal Requirements:</strong> We may disclose information if required by law or in response to valid legal requests.</li>
-          </ul>
+    <section class="policy-section">
+      <h2>Exception Logging</h2>
+      <p>Crystord keeps technical error logs (without sheet content) for up to 30 days to diagnose issues such as failed refreshes or sidebar crashes.</p>
+    </section>
 
-          <h2>Google API Services User Data Policy</h2>
-          <p>
-            The Crystord for Google Sheets Add-on's use and transfer of information received from Google APIs adheres to the
-            <a href="https://developers.google.com/terms/api-services-user-data-policy" target="_blank" rel="noopener noreferrer">
-              Google API Services User Data Policy
-            </a>, including the Limited Use requirements.
-          </p>
+    <section class="policy-section">
+      <h2>User Controls</h2>
+      <ul>
+        <li>You can uncouple any cell inside the sidebar, which immediately removes the mapping from Crystord storage.</li>
+        <li>You can revoke Google permissions at any time through <a href="https://myaccount.google.com/permissions" target="_blank" rel="noopener noreferrer">Google Account settings</a>, which stops the add-on from reading or writing sheets.</li>
+        <li>You can delete atoms from within Crystord, which removes the underlying server-side data the add-on references.</li>
+      </ul>
+    </section>
 
-          <h2>Data Security</h2>
-          <p>
-            We implement appropriate technical and organisational measures to protect your information against unauthorised access, alteration, disclosure, or destruction. However, no method of transmission over the internet is 100% secure.
-          </p>
+    <section class="policy-section">
+      <h2>Data Retention and Deletion</h2>
+      <h3>Data Retention</h3>
+      <ul>
+        <li><strong>Atom Data:</strong> Atoms persist in the Crystord database even when decoupled from cells, until explicitly deleted by the user.</li>
+        <li><strong>Cell-to-atom Mappings:</strong> Mappings are retained while active in your sheet metadata to enable refresh operations.</li>
+        <li><strong>Google Data:</strong> Sheet values are only read transiently to insert refreshed atom data. They are not stored outside Google.</li>
+        <li><strong>Exception Logs:</strong> Technical error logs are retained for up to 30 days for debugging purposes.</li>
+      </ul>
 
-          <h2>Data Retention</h2>
-          <p>
-            We retain your information only for as long as necessary to provide the Add-on services and fulfil the purposes outlined in this Privacy Policy. You may request deletion of your data at any time by contacting us.
-          </p>
+      <h3>Data Deletion</h3>
+      <ul>
+        <li><strong>Atom Deletion:</strong> Users can delete atoms from their Crystord workspace, which removes the underlying server-side data.</li>
+        <li><strong>Mapping Removal:</strong> Decoupling cells removes the mapping but preserves the atom data until user deletion.</li>
+        <li><strong>Access Revocation:</strong> Revoking permissions terminates all data access and stops synchronization.</li>
+        <li><strong>User Rights:</strong> You have the right to request confirmation of data deletion by contacting us at <a href="mailto:aleutheris&#64;gmail.com">aleutheris&#64;gmail.com</a>.</li>
+      </ul>
 
-          <h2>Your Rights</h2>
-          <p>Depending on your location, you may have the following rights:</p>
-          <ul>
-            <li>Access to your personal information</li>
-            <li>Correction of inaccurate data</li>
-            <li>Deletion of your data</li>
-            <li>Objection to or restriction of data processing</li>
-            <li>Data portability</li>
-          </ul>
+      <h3>Data Minimization</h3>
+      <p>Crystord follows data minimization principles by:</p>
+      <ul>
+        <li>Only accessing the specific Google Sheets™ files you explicitly authorize.</li>
+        <li>Processing data only when you initiate actions like pairing or refreshing.</li>
+        <li>Not collecting or storing personal information beyond what's necessary for the add-on's functionality.</li>
+        <li>Automatically purging any temporary data after each session.</li>
+      </ul>
+    </section>
 
-          <h2>Children's Privacy</h2>
-          <p>
-            The Add-on is not intended for children under the age of 13. We do not knowingly collect personal information from children under 13.
-          </p>
+    <section class="policy-section">
+      <h2>Compliance</h2>
+      <p>
+        Crystord's use and transfer of information obtained from Google APIs complies with the
+        <a href="https://developers.google.com/terms/api-services-user-data-policy" target="_blank" rel="noopener noreferrer">Google API Services User Data Policy</a>, including the Limited Use requirements. We also follow applicable data protection laws in the regions where we operate.
+      </p>
+    </section>
 
-          <h2>Changes to This Privacy Policy</h2>
-          <p>
-            We may update this Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page and updating the "Last updated" date.
-          </p>
+    <section class="policy-section">
+      <h2>Changes to This Policy</h2>
+      <p>We may update this Privacy Policy as the add-on evolves. Updates will be posted on this page with a revised "Last updated" date, and material changes will be communicated in-product or via email when feasible.</p>
+    </section>
 
-          <h2>Contact Us</h2>
-          <p>
-            If you have any questions about this Privacy Policy, please contact us at:
-            <br>
-            <a href="mailto:aleutheris@gmail.com">aleutheris&#64;gmail.com</a>
-          </p>
+    <section class="policy-section">
+      <h2>Contact</h2>
+      <p>If you have questions or would like to exercise your privacy rights, email <a href="mailto:aleutheris&#64;gmail.com">aleutheris&#64;gmail.com</a>.</p>
+    </section>
 
-          <p class="mt-5 text-muted">
-            <small>Google Sheets™ is a trademark of Google LLC. Crystord is not affiliated with or endorsed by Google LLC.</small>
-          </p>
-        </div>
-      </c-col>
-    </c-row>
-  </c-container>
+    <footer class="trademark-notice">
+      <p><small>Google Sheets™ is a trademark of Google LLC. Crystord is not affiliated with or endorsed by Google LLC.</small></p>
+    </footer>
+  </div>
 </div>
