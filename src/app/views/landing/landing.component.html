@@ -82,6 +82,31 @@
                         required
                       />
                     </c-input-group>
+                    <div class="d-grid mb-3">
+                      <button
+                        cButton
+                        color="primary"
+                        type="submit"
+                        [disabled]="isLoading()"
+                        class="px-4"
+                      >
+                        @if (isLoading()) {
+                          <c-spinner size="sm" class="me-2"></c-spinner>
+                        }
+                        Sign In
+                      </button>
+                    </div>
+                    <div class="text-center mt-3">
+                      <p class="text-muted mb-3">or log in with</p>
+                      <div class="d-flex justify-content-center position-relative">
+                        <div id="landing-google-signin"></div>
+                      </div>
+                      @if (isGoogleLoading()) {
+                        <div class="d-flex justify-content-center mt-2">
+                          <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                        </div>
+                      }
+                    </div>
                   } @else {
                     <c-input-group class="mb-3">
                       <span cInputGroupText>
@@ -125,21 +150,21 @@
                         required
                       />
                     </c-input-group>
+                    <div class="d-grid mb-3">
+                      <button
+                        cButton
+                        color="primary"
+                        type="submit"
+                        [disabled]="isLoading()"
+                        class="px-4"
+                      >
+                        @if (isLoading()) {
+                          <c-spinner size="sm" class="me-2"></c-spinner>
+                        }
+                        Create Account
+                      </button>
+                    </div>
                   }
-                  <div class="d-grid">
-                    <button
-                      cButton
-                      color="primary"
-                      type="submit"
-                      [disabled]="isLoading()"
-                      class="px-4"
-                    >
-                      @if (isLoading()) {
-                        <c-spinner size="sm" class="me-2"></c-spinner>
-                      }
-                      {{ authMode() === 'signin' ? 'Sign In' : 'Create Account' }}
-                    </button>
-                  </div>
                 </form>
 
                 <div class="text-center mt-3">

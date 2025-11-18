@@ -1,7 +1,7 @@
-import { Component, signal } from '@angular/core';
-import { Router } from '@angular/router';
-import { CommonModule } from '@angular/common';
+import { Component, signal, AfterViewInit, inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser, CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import {
   ButtonDirective,
@@ -18,6 +18,7 @@ import {
   AlertComponent
 } from '@coreui/angular';
 import { IconDirective } from '@coreui/icons-angular';
+import { GoogleAuthService } from '../../services/google-auth.service';
 
 @Component({
   selector: 'app-landing',
@@ -42,7 +43,7 @@ import { IconDirective } from '@coreui/icons-angular';
     IconDirective
   ]
 })
-export class LandingComponent {
+export class LandingComponent implements AfterViewInit {
   loginForm = {
     username: '',
     password: ''
@@ -58,11 +59,25 @@ export class LandingComponent {
   demoLoading = signal(false);
   authMode = signal<'signin' | 'signup'>('signin');
   authError = signal<string | null>(null);
+  isGoogleLoading = signal(true);
+
+  private platformId = inject(PLATFORM_ID);
 
   constructor(
     private authService: AuthService,
-    private router: Router
-  ) {}
+    private router: Router,
+    private googleAuth: GoogleAuthService
+  ) {
+    if (!isPlatformBrowser(this.platformId)) {
+      this.isGoogleLoading.set(false);
+    }
+  }
+
+  ngAfterViewInit(): void {
+    if (isPlatformBrowser(this.platformId)) {
+      setTimeout(() => this.initializeGoogleButton(), 100);
+    }
+  }
 
   switchMode(mode: 'signin' | 'signup'): void {
     if (this.authMode() === mode) {
@@ -75,9 +90,50 @@ export class LandingComponent {
 
     if (mode === 'signin') {
       this.signupForm = { username: '', password: '', confirmPassword: '' };
+      if (isPlatformBrowser(this.platformId)) {
+        setTimeout(() => this.initializeGoogleButton(), 100);
+      }
     } else {
       this.loginForm = { username: '', password: '' };
     }
+  }
+
+  private initializeGoogleButton(): void {
+    if (!isPlatformBrowser(this.platformId)) {
+      this.isGoogleLoading.set(false);
+      return;
+    }
+
+    const buttonDiv = document.getElementById('landing-google-signin');
+    if (!buttonDiv) {
+      // If element isn't present yet due to rendering timing, retry shortly
+      setTimeout(() => this.initializeGoogleButton(), 100);
+      return;
+    }
+
+    this.isGoogleLoading.set(true);
+    this.googleAuth.renderButton(buttonDiv, (credential) => this.handleGoogleCredential(credential))
+      .then(() => this.isGoogleLoading.set(false))
+      .catch(error => {
+        console.error('Error initializing landing Google button:', error);
+        this.isGoogleLoading.set(false);
+      });
+  }
+
+  private handleGoogleCredential(credential: string): void {
+    this.isGoogleLoading.set(true);
+    this.authError.set(null);
+
+    this.authService.loginWithGoogle(credential).subscribe({
+      next: () => {
+        this.isGoogleLoading.set(false);
+        this.router.navigate(['/control']);
+      },
+      error: () => {
+        this.isGoogleLoading.set(false);
+        this.authError.set('Unable to sign in with Google right now. Please try again.');
+      }
+    });
   }
 
   onSubmit(): void {
