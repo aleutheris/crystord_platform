@@ -31,7 +31,7 @@ export class GoogleAuthService {
     this.scriptLoading = new Promise((resolve, reject) => {
       const script = document.createElement('script');
       script.id = 'google-signin-script';
-      script.src = 'https://accounts.google.com/gsi/client';
+      script.src = 'https://accounts.google.com/gsi/client?hl=en-GB';
       script.async = true;
       script.defer = true;
       script.onload = () => resolve();
@@ -75,9 +75,22 @@ export class GoogleAuthService {
     google.accounts.id.renderButton(element, {
       theme: 'outline',
       size: 'large',
-      width: element.offsetWidth || 320,
-      text: 'signin_with',
+      width: 40,
+      text: '',
       ...options
     });
+
+    // Hide the text to make it logo-only
+    setTimeout(() => {
+      const button = element.querySelector('div[role="button"]') || element.querySelector('button');
+      if (button) {
+        const textElements = button.querySelectorAll('span, div');
+        textElements.forEach(el => {
+          if (el.textContent && el.textContent.trim() && !el.querySelector('svg, img')) {
+            (el as HTMLElement).style.display = 'none';
+          }
+        });
+      }
+    }, 100);
   }
 }

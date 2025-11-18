@@ -2,7 +2,7 @@
 
 services:
   crystord_web:
-    image: crystord_web:dev
+    image: crystord_web:prod
     container_name: crystord_web
     labels:
       - traefik.enable=true
