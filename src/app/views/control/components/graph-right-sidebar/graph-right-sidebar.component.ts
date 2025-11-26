@@ -427,12 +427,11 @@ export class GraphRightSidebarComponent implements AfterContentInit {
   onOperationTypeChange(type: string) {
     this.selectedOperationType = type;
 
-    // Handle "empty" option - clear operation and send to backend
+    // Handle "empty" option - clear operation textbox only (no backend update)
     if (type === 'empty') {
       this.atomForUpdate.properties.nuclearies.operation = '';
       this.isOperationValid = true;
       this.parsedOperationTokens = [];
-      this.updateAtomFeatures();
       return;
     }
 
@@ -459,8 +458,10 @@ export class GraphRightSidebarComponent implements AfterContentInit {
     const operationString = bondUuids.join(` ${operator} `);
     this.atomForUpdate.properties.nuclearies.operation = operationString;
 
-    // Trigger validation and parsing
-    this.onOperationFieldBlur();
+    // Only validate and parse, don't trigger backend update
+    // Backend update will happen when user edits textbox and it loses focus
+    this.validateAndParseOperation();
+    this.updateSelectedOperationType();
   }
 
   onOperationDisplayClick(): void {

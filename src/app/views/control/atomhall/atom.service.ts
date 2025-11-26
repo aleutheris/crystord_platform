@@ -12,7 +12,7 @@ export class AtomService {
   constructor(private apollo: Apollo) { }
 
   // GraphQL: retrieve(labels, uuid)
-  readAtoms(data: any): Observable<any> {
+  readAtoms(data: any, fetchPolicy: 'cache-first' | 'network-only' | 'no-cache' = 'cache-first'): Observable<any> {
     const { labels, uuid } = this.extractSelector(data);
     const RETRIEVE = gql`
       query Retrieve($labels: [String], $uuid: String) {
@@ -26,7 +26,7 @@ export class AtomService {
         }
       }
     `;
-    return this.apollo.query({ query: RETRIEVE, variables: { labels, uuid }, fetchPolicy: 'no-cache', errorPolicy: 'all' }).pipe(
+    return this.apollo.query({ query: RETRIEVE, variables: { labels, uuid }, fetchPolicy, errorPolicy: 'all' }).pipe(
       map((res: any) => {
         // Normalize GraphQL shape to legacy REST-like `{ result: Atom[] }`
         const payload = res?.data?.retrieve;

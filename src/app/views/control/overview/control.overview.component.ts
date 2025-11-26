@@ -118,13 +118,8 @@ export class ControlOverviewComponent {
     this.searchKey = this.searchService.updateSearchKey(this.searchText);
     if (this.searchKey === 'uuid') {
       const uuid = this.searchText.split('=')[1];
-      lastValueFrom(this.atomService.readAtoms({ uuid })).then((data) => {
-        this.atomsFeatures = data['result'];
-        this.atomStore.setAtoms(this.atomsFeatures); // update atom store
-        // Defer graph updates to avoid ExpressionChangedAfterItHasBeenCheckedError
-        Promise.resolve().then(() => {
-          this.handleRetrievedData();
-        });
+      lastValueFrom(this.atomService.readAtoms({ uuid }, 'network-only')).then((data) => {
+        this.updateAtomsAndRender(data['result'], true);
         this.isSearchTextValid = true;
       }).catch((error) => {
         console.error('There was an error retrieving the atom:', error);
@@ -134,13 +129,8 @@ export class ControlOverviewComponent {
       const retrievalInteraction = this.searchService.chooseRetrievalInteraction(this.searchKey);
       const query = this.searchService.parseSearchTextIntoQuery(this.searchText, retrievalInteraction);
 
-      lastValueFrom(this.atomService.readAtoms(query)).then((data) => {
-        this.atomsFeatures = data['result'];
-        this.atomStore.setAtoms(this.atomsFeatures); // update atom store
-        // Defer graph updates to avoid ExpressionChangedAfterItHasBeenCheckedError
-        Promise.resolve().then(() => {
-          this.handleRetrievedData();
-        });
+      lastValueFrom(this.atomService.readAtoms(query, 'network-only')).then((data) => {
+        this.updateAtomsAndRender(data['result'], true);
         this.isSearchTextValid = true;
       }).catch((error) => {
         console.error('There was an error searching for atoms:', error);
@@ -149,9 +139,37 @@ export class ControlOverviewComponent {
     }
   }
 
-  handleRetrievedData() {
+  /**
+   * Unified method to update atomsFeatures and render graph.
+   * Used by both search (fetch) and creation scenarios.
+   * @param atoms - Array of atoms to process
+   * @param replaceAll - If true, replace all atoms (search); if false, merge/append (create)
+   */
+  private updateAtomsAndRender(atoms: Atom[], replaceAll: boolean): void {
+    if (replaceAll) {
+      // Search scenario: replace all atoms
+      this.atomsFeatures = atoms;
+    } else {
+      // Create scenario: merge/append atoms
+      atoms.forEach(atom => {
+        const existingIndex = this.atomsFeatures.findIndex(
+          a => a.properties.shellies.uuid === atom.properties.shellies.uuid
+        );
+        if (existingIndex >= 0) {
+          this.atomsFeatures[existingIndex] = atom;
+        } else {
+          this.atomsFeatures.push(atom);
+        }
+      });
+    }
+
+    // Update atom store (single source of truth)
+    this.atomStore.setAtoms(this.atomsFeatures);
+
+    // Update indexed and texted atoms
     this.atomsIndexed = this.transformerService.getIndexedAtoms(this.atomsFeatures);
     this.atomsFeaturesTexted = this.transformerService.atomsContentToString(this.atomsFeatures, this.atomsIndexed);
+
     // Defer graph updates to avoid ExpressionChangedAfterItHasBeenCheckedError
     Promise.resolve().then(() => {
       this.updateGraphNodes();
@@ -319,18 +337,8 @@ export class ControlOverviewComponent {
   }
 
   onAtomCreated(newAtom: Atom): void {
-    // Add the new atom to our local arrays
-    this.atomsFeatures.push(newAtom);
-
-    // Update indexed atoms
-    this.atomsIndexed = this.transformerService.getIndexedAtoms(this.atomsFeatures);
-
-    // Update texted atoms
-    const allTexted = this.transformerService.atomsContentToString(this.atomsFeatures, this.atomsIndexed);
-    this.atomsFeaturesTexted = allTexted;
-
-    // Update graph nodes and connections
-    this.updateGraphNodes();
+    // Add the new atom using unified method
+    this.updateAtomsAndRender([newAtom], false);
   }
 
   onAtomDeleted(deletedUuid: string): void {
