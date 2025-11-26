@@ -22,6 +22,11 @@
   box-shadow: 0 0 0 6px rgba(50, 31, 219, 0.15);
 }
 
+.df-node--dirty {
+  border-color: var(--cui-warning, #f9b115);
+  box-shadow: 0 0 0 4px rgba(249, 177, 21, 0.25);
+}
+
 .df-node__title-row {
   margin-bottom: 0.5rem;
 }

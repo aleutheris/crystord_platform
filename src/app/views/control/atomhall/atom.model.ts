@@ -4,7 +4,8 @@ export interface Atom {
   labels: string[],
   bonds: Bond[],
   properties: AtomProperties,
-  isDockTemplate?: boolean
+  isDockTemplate?: boolean,
+  isDirty?: boolean
 };
 
 export interface Bond {

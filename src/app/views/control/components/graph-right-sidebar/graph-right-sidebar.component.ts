@@ -108,11 +108,6 @@ export class GraphRightSidebarComponent implements AfterContentInit {
   ) {
     // Subscribe to selection changes
     this.atomSelection.getSelectedUuid$().subscribe(uuid => {
-      // Save any pending changes before switching atoms
-      if (this.selectedAtomUuid && this.selectedAtomUuid !== uuid) {
-        this.savePendingChanges();
-      }
-
       this.selectedAtomUuid = uuid;
       if (uuid) {
         const atom = this.atomStore.getAtomByUuid(uuid);
@@ -188,59 +183,154 @@ export class GraphRightSidebarComponent implements AfterContentInit {
    * Notify store when atom properties change
    */
   onAtomPropertyChanged(): void {
-    this.notifyAtomForUpdateChange();
+    this.markAsDirty();
   }
 
   /**
-   * Save any pending changes before switching contexts
+   * Mark the atom as dirty and update the store
    */
-  private savePendingChanges(): void {
-    if (this.isUpdatingFromBlur) {
-      return;
-    }
-
-    // Block updates if operation is invalid
-    if (!this.isOperationValid) {
-      console.warn('Cannot save: operation field is invalid');
-      return;
-    }
-
-    // Compare current state with original state
-    const hasChanges = this.hasAtomChanged(this.originalAtomState, this.atomForUpdate);
-
-    if (hasChanges) {
-      // Update the atom via service (synchronously to ensure it completes)
-      this.isUpdatingFromBlur = true;
-      this.updateAtomFeatures();
+  private markAsDirty(): void {
+    this.atomForUpdate.isDirty = true;
+    if (this.atomForUpdate.properties.shellies.uuid) {
+      this.atomStore.updateAtom(this.atomForUpdate);
     }
   }
 
   /**
-   * Auto-save when field loses focus, but only if values actually changed
+   * Save the atom (create or update)
    */
-  onFieldBlur(): void {
-    if (this.isUpdatingFromBlur) {
+  saveAtom(): void {
+    console.log('[Operation] saveAtom called');
+
+    // Only update if there is at least one label
+    if (this.atomForUpdate.labels.length === 0) {
+      console.log('[Operation] No labels, skipping update');
       return;
     }
 
-    // Block updates if operation is invalid
-    if (!this.isOperationValid) {
-      console.warn('Cannot save: operation field is invalid');
+    // If no UUID, create new atom
+    if (!this.atomForUpdate.properties.shellies.uuid) {
+      this.createAtom();
       return;
     }
 
-    this.isUpdatingFromBlur = true;
+    // Otherwise update existing atom
+    this.updateAtom();
+  }
 
-    // Compare current state with original state
-    const hasChanges = this.hasAtomChanged(this.originalAtomState, this.atomForUpdate);
-
-    if (hasChanges) {
-      // Update the atom via service
-      this.updateAtomFeatures();
-    } else {
-      // No changes detected, skip save
-      this.isUpdatingFromBlur = false;
+  private createAtom(): void {
+    if (!this.canSaveAtom()) {
+      return;
     }
+
+    // Prepare the atom input for the mutation
+    const atomInput = {
+      labels: this.atomForUpdate.labels,
+      properties: {
+        nuclearies: {
+          title: this.atomForUpdate.properties.nuclearies.title,
+          description: this.atomForUpdate.properties.nuclearies.description,
+          content: this.atomForUpdate.properties.nuclearies.content,
+          operation: this.atomForUpdate.properties.nuclearies.operation,
+          constants: this.atomForUpdate.properties.nuclearies.constants
+        }
+      }
+    };
+
+    // Call the change mutation without selector to create new atom
+    const mq = {
+      args: {
+        inputs: [atomInput]
+      }
+    };
+
+    this.atomService.modifyAtoms(mq).subscribe({
+      next: (data) => {
+        console.log('New atom created successfully:', data);
+        // The response should contain the new UUID
+        if (data.result && data.result.length > 0) {
+          const newUuid = data.result[0];
+          // Fetch the newly created atom to get complete data
+          this.fetchAndIntegrateNewAtom(newUuid);
+        }
+      },
+      error: (error) => {
+        console.error('There was an error creating the new atom:', error);
+      }
+    });
+  }
+
+  private updateAtom(): void {
+    console.log('[Operation] Preparing mutation with bonds:', this.atomForUpdate.bonds.length);
+    let mq: {
+      modification: string,
+      args: {
+        selector: {
+          properties: {
+            shellies: {
+              uuid: string
+            }
+          }
+        },
+        inputs: {
+          labels: string[],
+          bonds?: { uuid: string, name: string, direction: string }[],
+          properties: {
+            nuclearies: any
+          }
+        }
+      }
+    } = {
+      modification: 'update_atom_features',
+      args: {
+        selector: {
+          properties: {
+            shellies: {
+              uuid: this.atomForUpdate.properties.shellies.uuid
+            }
+          }
+        },
+        inputs: {
+          labels: this.atomForUpdate.labels,
+          bonds: this.atomForUpdate.bonds.map(b => ({
+            uuid: b.uuid,
+            name: b.direction === 'from' ? 'OP_DEPENDENCY' : (b.name || ''),
+            direction: b.direction
+          })),
+          properties: {
+            nuclearies: {
+              title: this.atomForUpdate.properties.nuclearies.title,
+              description: this.atomForUpdate.properties.nuclearies.description,
+              content: this.str2json(this.atomForUpdate.properties.nuclearies.content),
+              constants: this.atomForUpdate.properties.nuclearies.constants,
+              operation: this.str2json(this.atomForUpdate.properties.nuclearies.operation)
+            }
+          }
+        }
+      }
+    };
+
+    console.log('[Operation] Sending mutation to backend...');
+    this.atomService.modifyAtoms(mq).subscribe({
+      next: (data) => {
+        console.log('[Operation] Backend update successful:', data);
+        // Update original state after successful save
+        this.originalAtomState = JSON.parse(JSON.stringify(this.atomForUpdate));
+        this.atomForUpdate.isDirty = false;
+        // Emit the updated atom for bidirectional sync
+        this.atomUpdated.emit(this.atomForUpdate);
+        // Update store to reflect clean state
+        this.atomStore.updateAtom(this.atomForUpdate);
+      },
+      error: (error) => {
+        console.error('There was an error updating the atom data:', error);
+      }
+    });
+  }
+
+  canSaveAtom(): boolean {
+    return this.atomForUpdate.labels.length > 0 &&
+           this.atomForUpdate.properties.nuclearies.title.trim() !== '';
   }
 
   onLabelInputKeydown(event: KeyboardEvent): void {
@@ -281,7 +371,7 @@ export class GraphRightSidebarComponent implements AfterContentInit {
     }
 
     this.atomForUpdate.labels = this.atomForUpdate.labels.filter((_, i) => i !== index);
-    this.notifyAtomForUpdateChange();
+    this.markAsDirty();
   }
 
   private addLabelFromInput(): void {
@@ -317,7 +407,7 @@ export class GraphRightSidebarComponent implements AfterContentInit {
     }
 
     this.atomForUpdate.labels = [...this.atomForUpdate.labels, normalized];
-    this.notifyAtomForUpdateChange();
+    this.markAsDirty();
   }
 
   private removeLastLabel(): void {
@@ -369,6 +459,7 @@ export class GraphRightSidebarComponent implements AfterContentInit {
     this.atomForUpdate = target;
     // Store a deep copy of the original state for change detection
     this.originalAtomState = JSON.parse(JSON.stringify(target));
+    this.atomForUpdate.isDirty = false;
     this.labelInputValue = '';
 
     // Validate and parse operation
@@ -418,13 +509,11 @@ export class GraphRightSidebarComponent implements AfterContentInit {
     return JSON.stringify(original) !== JSON.stringify(current);
   }
 
-  private notifyAtomForUpdateChange(): void {
-    if (this.atomForUpdate.properties.shellies.uuid) {
-      this.atomStore.updateAtom(this.atomForUpdate);
-    }
-  }
+  // notifyAtomForUpdateChange removed, replaced by markAsDirty
+
 
   onOperationTypeChange(type: string) {
+    console.log('[Operation] Dropdown changed to:', type);
     this.selectedOperationType = type;
 
     // Handle "empty" option - clear operation textbox only (no backend update)
@@ -432,6 +521,8 @@ export class GraphRightSidebarComponent implements AfterContentInit {
       this.atomForUpdate.properties.nuclearies.operation = '';
       this.isOperationValid = true;
       this.parsedOperationTokens = [];
+      console.log('[Operation] Set to empty, textbox cleared');
+      this.markAsDirty();
       return;
     }
 
@@ -457,11 +548,14 @@ export class GraphRightSidebarComponent implements AfterContentInit {
       .map(bond => bond.uuid);
     const operationString = bondUuids.join(` ${operator} `);
     this.atomForUpdate.properties.nuclearies.operation = operationString;
+    console.log('[Operation] Textbox set to:', operationString);
 
-    // Only validate and parse, don't trigger backend update
-    // Backend update will happen when user edits textbox and it loses focus
+    // Validate and parse
     this.validateAndParseOperation();
     this.updateSelectedOperationType();
+    console.log('[Operation] Validation done, isValid:', this.isOperationValid);
+
+    this.markAsDirty();
   }
 
   onOperationDisplayClick(): void {
@@ -479,6 +573,7 @@ export class GraphRightSidebarComponent implements AfterContentInit {
   }
 
   onOperationFieldBlur(): void {
+    console.log('[Operation] Field blur triggered');
     this.isOperationFieldFocused = false;
 
     // Validate and parse the operation string
@@ -487,10 +582,7 @@ export class GraphRightSidebarComponent implements AfterContentInit {
     // Update dropdown based on operation content
     this.updateSelectedOperationType();
 
-    // Only send to backend if valid
-    if (this.isOperationValid) {
-      this.onFieldBlur();
-    }
+    this.markAsDirty();
   }  private validateAndParseOperation(): void {
     const operation = this.atomForUpdate.properties.nuclearies.operation || '';
 
@@ -618,52 +710,8 @@ export class GraphRightSidebarComponent implements AfterContentInit {
     this.prepareAtomForUpdate(null);
   }
 
-  onFormButtonClick(): void {
-    if (!this.canFormAtom()) {
-      return;
-    }
+  // onFormButtonClick removed, replaced by saveAtom
 
-    // Prepare the atom input for the mutation
-    const atomInput = {
-      labels: this.atomForUpdate.labels,
-      properties: {
-        nuclearies: {
-          title: this.atomForUpdate.properties.nuclearies.title,
-          description: this.atomForUpdate.properties.nuclearies.description,
-          content: this.atomForUpdate.properties.nuclearies.content,
-          operation: this.atomForUpdate.properties.nuclearies.operation,
-          constants: this.atomForUpdate.properties.nuclearies.constants
-        }
-      }
-    };
-
-    // Call the change mutation without selector to create new atom
-    const mq = {
-      args: {
-        inputs: [atomInput]
-      }
-    };
-
-    this.atomService.modifyAtoms(mq).subscribe({
-      next: (data) => {
-        console.log('New atom created successfully:', data);
-        // The response should contain the new UUID
-        if (data.result && data.result.length > 0) {
-          const newUuid = data.result[0];
-          // Fetch the newly created atom to get complete data
-          this.fetchAndIntegrateNewAtom(newUuid);
-        }
-      },
-      error: (error) => {
-        console.error('There was an error creating the new atom:', error);
-      }
-    });
-  }
-
-  canFormAtom(): boolean {
-    return this.atomForUpdate.labels.length > 0 &&
-           this.atomForUpdate.properties.nuclearies.title.trim() !== '';
-  }
 
   private fetchAndIntegrateNewAtom(newUuid: string): void {
     // Fetch the newly created atom
@@ -698,74 +746,8 @@ export class GraphRightSidebarComponent implements AfterContentInit {
     });
   }
 
-  /**
-   * Update atom features (copied from control.detail)
-   */
-  private updateAtomFeatures() {
-    if (!this.atomForUpdate.properties.shellies.uuid) {
-      console.error('UUID is required to update atom');
-      return;
-    }
+  // updateAtomFeatures removed, replaced by updateAtom
 
-    // Only update if there is at least one label
-    if (this.atomForUpdate.labels.length === 0) {
-      return;
-    }    let mq: {
-      modification: string,
-      args: {
-        selector: {
-          properties: {
-            shellies: {
-              uuid: string
-            }
-          }
-        },
-        inputs: {
-          labels: string[],
-          properties: {
-            nuclearies: any
-          }
-        }
-      }
-    } = {
-      modification: 'update_atom_features',
-      args: {
-        selector: {
-          properties: {
-            shellies: {
-              uuid: this.atomForUpdate.properties.shellies.uuid
-            }
-          }
-        },
-        inputs: {
-          labels: this.atomForUpdate.labels,
-          properties: {
-            nuclearies: {
-              title: this.atomForUpdate.properties.nuclearies.title,
-              description: this.atomForUpdate.properties.nuclearies.description,
-              content: this.str2json(this.atomForUpdate.properties.nuclearies.content),
-              constants: this.atomForUpdate.properties.nuclearies.constants,
-              operation: this.str2json(this.atomForUpdate.properties.nuclearies.operation)
-            }
-          }
-        }
-      }
-    };
-
-    this.atomService.modifyAtoms(mq).subscribe({
-      next: (data) => {
-        // Update original state after successful save
-        this.originalAtomState = JSON.parse(JSON.stringify(this.atomForUpdate));
-        this.isUpdatingFromBlur = false;
-        // Emit the updated atom for bidirectional sync
-        this.atomUpdated.emit(this.atomForUpdate);
-      },
-      error: (error) => {
-        console.error('There was an error updating the atom data:', error);
-        this.isUpdatingFromBlur = false;
-      }
-    });
-  }
 
   /**
    * Destroy atom (copied from control.detail)

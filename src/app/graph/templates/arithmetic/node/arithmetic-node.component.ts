@@ -21,6 +21,7 @@ export class ArithmeticNodeComponent implements OnChanges {
   @Input() content = '';
   @Input() operator = '';
   @Input() selected = false;
+  @Input() isDirty = false;
   @Output() titleChange = new EventEmitter<string>();
   @Output() contentChange = new EventEmitter<string>();
   @Output() portPointerDown = new EventEmitter<NodePortPointerEvent>();

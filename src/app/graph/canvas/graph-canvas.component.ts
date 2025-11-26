@@ -22,6 +22,7 @@ export interface GraphNodeData {
 	title: string;
 	content: string;
 	operator?: string;
+  isDirty?: boolean;
 }
 
 export interface GraphNode {

@@ -45,6 +45,7 @@
 					[title]="node.data.title"
 					[content]="node.data.content"
 					[operator]="node.data.operator || ''"
+          [isDirty]="!!node.data.isDirty"
 					[selected]="i === selectedIndex"
 					(titleChange)="onNodeTitleChange(node.id, $event)"
 					(contentChange)="onNodeContentChange(node.id, $event)"

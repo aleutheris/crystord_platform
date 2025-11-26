@@ -25,10 +25,11 @@
           color="success"
           type="button"
           variant="outline"
-          (click)="onFormButtonClick()"
-          [disabled]="!canFormAtom()"
-          aria-label="Form New Atom">
-          Form
+          (click)="saveAtom()"
+          [disabled]="!canSaveAtom()"
+          aria-label="Save Atom">
+          Save
+          <span *ngIf="atomForUpdate.isDirty" class="badge bg-danger ms-1">!</span>
         </button>
         <button
           cButton
@@ -102,7 +103,7 @@
               cFormControl
               placeholder=""
               [(ngModel)]="atomForUpdate.properties.nuclearies.title"
-              (blur)="onFieldBlur()"/>
+              (ngModelChange)="onAtomPropertyChanged()"/>
           </c-input-group>
 
           <c-input-group class="mb-3">
@@ -112,13 +113,13 @@
               cFormControl
               placeholder=""
               [(ngModel)]="atomForUpdate.properties.nuclearies.content"
-              (blur)="onFieldBlur()"/>
+              (ngModelChange)="onAtomPropertyChanged()"/>
             <textarea
               *ngIf="atomForUpdate.properties.nuclearies.content.includes('\n')"
               cFormControl
               placeholder=""
               [(ngModel)]="atomForUpdate.properties.nuclearies.content"
-              (blur)="onFieldBlur()"
+              (ngModelChange)="onAtomPropertyChanged()"
               style="height: 150px;">
             </textarea>
           </c-input-group>
@@ -179,7 +180,7 @@
               cFormControl
               placeholder=""
               [(ngModel)]="atomForUpdate.properties.nuclearies.description"
-              (blur)="onFieldBlur()"/>
+              (ngModelChange)="onAtomPropertyChanged()"/>
           </c-input-group>
 
           <c-input-group class="mb-3">
@@ -189,13 +190,13 @@
               cFormControl
               placeholder=""
               [(ngModel)]="atomForUpdate.properties.nuclearies.constants"
-              (blur)="onFieldBlur()"/>
+              (ngModelChange)="onAtomPropertyChanged()"/>
             <textarea
               *ngIf="getConstantsAsString().includes('\n')"
               cFormControl
               placeholder=""
               [(ngModel)]="atomForUpdate.properties.nuclearies.constants"
-              (blur)="onFieldBlur()"
+              (ngModelChange)="onAtomPropertyChanged()"
               style="height: 150px;">
             </textarea>
           </c-input-group>

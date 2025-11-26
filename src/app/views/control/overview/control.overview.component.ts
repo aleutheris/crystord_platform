@@ -61,6 +61,19 @@ export class ControlOverviewComponent {
   async ngOnInit() {
     // Initialize search terms from default search text
     this.initializeSearchTerms();
+
+    // Subscribe to atom store to keep graph in sync with sidebar changes (e.g. dirty state)
+    this.atomStore.getAtoms$().subscribe(atoms => {
+      // Only update if we have atoms (avoid initial empty state if not desired, or handle it)
+      if (atoms.length > 0 || this.atomsFeatures.length > 0) {
+        this.atomsFeatures = atoms;
+        // Update derived data
+        this.atomsIndexed = this.transformerService.getIndexedAtoms(this.atomsFeatures);
+        this.atomsFeaturesTexted = this.transformerService.atomsContentToString(this.atomsFeatures, this.atomsIndexed);
+        // Update graph
+        this.updateGraphNodes();
+      }
+    });
   }
   searchText: string;
   isSearchTextValid: boolean | undefined = undefined;
@@ -186,7 +199,8 @@ export class ControlOverviewComponent {
           : JSON.stringify(atom.properties.nuclearies.content),
         operator: typeof atom.properties.nuclearies.operation === 'string'
           ? atom.properties.nuclearies.operation
-          : JSON.stringify(atom.properties.nuclearies.operation)
+          : JSON.stringify(atom.properties.nuclearies.operation),
+        isDirty: atom.isDirty
       }
     }));
 
