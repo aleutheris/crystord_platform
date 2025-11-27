@@ -200,11 +200,8 @@ export class GraphRightSidebarComponent implements AfterContentInit {
    * Save the atom (create or update)
    */
   saveAtom(): void {
-    console.log('[Operation] saveAtom called');
-
     // Only update if there is at least one label
     if (this.atomForUpdate.labels.length === 0) {
-      console.log('[Operation] No labels, skipping update');
       return;
     }
 
@@ -246,7 +243,6 @@ export class GraphRightSidebarComponent implements AfterContentInit {
 
     this.atomService.modifyAtoms(mq).subscribe({
       next: (data) => {
-        console.log('New atom created successfully:', data);
         // The response should contain the new UUID
         if (data.result && data.result.length > 0) {
           const newUuid = data.result[0];
@@ -261,7 +257,6 @@ export class GraphRightSidebarComponent implements AfterContentInit {
   }
 
   private updateAtom(): void {
-    console.log('[Operation] Preparing mutation with bonds:', this.atomForUpdate.bonds.length);
     let mq: {
       modification: string,
       args: {
@@ -313,10 +308,8 @@ export class GraphRightSidebarComponent implements AfterContentInit {
       }
     };
 
-    console.log('[Operation] Sending mutation to backend...');
     this.atomService.modifyAtoms(mq).subscribe({
       next: (data) => {
-        console.log('[Operation] Backend update successful:', data);
         // Update original state after successful save
         this.originalAtomState = JSON.parse(JSON.stringify(this.atomForUpdate));
         this.atomForUpdate.isDirty = false;
@@ -522,7 +515,6 @@ export class GraphRightSidebarComponent implements AfterContentInit {
 
 
   onOperationTypeChange(type: string) {
-    console.log('[Operation] Dropdown changed to:', type);
     this.selectedOperationType = type;
 
     // Handle "empty" option - clear operation textbox only (no backend update)
@@ -530,7 +522,6 @@ export class GraphRightSidebarComponent implements AfterContentInit {
       this.atomForUpdate.properties.nuclearies.operation = '';
       this.isOperationValid = true;
       this.parsedOperationTokens = [];
-      console.log('[Operation] Set to empty, textbox cleared');
       this.markAsDirty();
       return;
     }
@@ -557,12 +548,10 @@ export class GraphRightSidebarComponent implements AfterContentInit {
       .map(bond => bond.uuid);
     const operationString = bondUuids.join(` ${operator} `);
     this.atomForUpdate.properties.nuclearies.operation = operationString;
-    console.log('[Operation] Textbox set to:', operationString);
 
     // Validate and parse
     this.validateAndParseOperation();
     this.updateSelectedOperationType();
-    console.log('[Operation] Validation done, isValid:', this.isOperationValid);
 
     this.markAsDirty();
   }
@@ -582,7 +571,6 @@ export class GraphRightSidebarComponent implements AfterContentInit {
   }
 
   onOperationFieldBlur(): void {
-    console.log('[Operation] Field blur triggered');
     this.isOperationFieldFocused = false;
 
     // Validate and parse the operation string
