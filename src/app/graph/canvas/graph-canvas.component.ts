@@ -468,14 +468,26 @@ export class GraphCanvasComponent implements AfterViewInit, AfterViewChecked {
 	zoomIn() { this.applyZoom(1.1); }
 	zoomOut() { this.applyZoom(1/1.1); }
 
-	private applyZoom(factor: number) {
+	onWheel(event: WheelEvent): void {
+		event.preventDefault();
+		const factor = event.deltaY < 0 ? 1.1 : (1 / 1.1);
+		const canvasRect = this.canvasRef.nativeElement.getBoundingClientRect();
+		const center = {
+			x: event.clientX - canvasRect.left,
+			y: event.clientY - canvasRect.top
+		};
+		this.applyZoom(factor, center);
+	}
+
+	private applyZoom(factor: number, center?: Point) {
 		const prev = this.viewport.scale;
 		let next = prev * factor;
 		next = Math.min(3, Math.max(0.25, next));
-		// Zoom towards center of canvas
+
 		const canvasRect = this.canvasRef.nativeElement.getBoundingClientRect();
-		const cx = canvasRect.width / 2;
-		const cy = canvasRect.height / 2;
+		const cx = center ? center.x : canvasRect.width / 2;
+		const cy = center ? center.y : canvasRect.height / 2;
+
 		// world point at center before
 		const worldBefore = this.screenToWorld(cx, cy);
 		this.viewport.scale = next;

@@ -4,6 +4,7 @@
 	(pointerdown)="onCanvasPointerDown($event)"
 	(document:pointermove)="onPointerMove($event)"
 	(document:pointerup)="onPointerUp($event)"
+	(wheel)="onWheel($event)"
 >
 		<svg class="graph-canvas__links">
 			<g [attr.transform]="'translate(' + viewport.x + ',' + viewport.y + ') scale(' + viewport.scale + ')'"><!-- world space -->
