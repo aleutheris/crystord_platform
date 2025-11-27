@@ -272,9 +272,9 @@ export class ControlOverviewComponent {
         const toId = bond.uuid;
         if (!toId || !nodeIds.has(toId)) continue;
         if (bond.direction === 'from') {
-          pairs.push({ from: toId, to: fromId });
-        } else {
           pairs.push({ from: fromId, to: toId });
+        } else {
+          pairs.push({ from: toId, to: fromId });
         }
       }
     }
