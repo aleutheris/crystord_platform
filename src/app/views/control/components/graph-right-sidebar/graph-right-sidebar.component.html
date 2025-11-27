@@ -18,7 +18,7 @@
           variant="outline"
           (click)="onCleanButtonClick()"
           aria-label="Clean Sidebar">
-          Clean
+          <svg cIcon name="cilBan" size="lg"></svg>
         </button>
         <button
           cButton
@@ -27,9 +27,12 @@
           variant="outline"
           (click)="saveAtom()"
           [disabled]="!canSaveAtom()"
-          aria-label="Save Atom">
-          Save
-          <span *ngIf="atomForUpdate.isDirty" class="badge bg-danger ms-1">!</span>
+          aria-label="Save Atom"
+          class="position-relative">
+          <svg cIcon name="cilSave" size="lg"></svg>
+          <span *ngIf="atomForUpdate.isDirty" class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle">
+            <span class="visually-hidden">Unsaved changes</span>
+          </span>
         </button>
         <button
           cButton
@@ -38,7 +41,7 @@
           variant="outline"
           (click)="destroyAtoms()"
           aria-label="Destroy Atom">
-          Destroy
+          <svg cIcon name="cilTrash" size="lg"></svg>
         </button>
       </div>
 
@@ -91,8 +94,8 @@
           <c-input-group class="mb-3">
             <span cInputGroupText>Bonds</span>
             <div class="d-flex flex-wrap gap-1 p-2 border rounded">
-              <span *ngFor="let bond of atomForUpdate.bonds"
-                    [class]="'badge ' + (bond.direction === 'to' ? 'bg-success' : 'bg-info')">{{ bond.name }}</span>
+                <span *ngFor="let bond of atomForUpdate.bonds"
+                  [class]="'badge ' + (bond.direction === 'to' ? 'bg-success' : 'bg-info')">{{ bond.displayName || bond.name }}</span>
             </div>
           </c-input-group>
 

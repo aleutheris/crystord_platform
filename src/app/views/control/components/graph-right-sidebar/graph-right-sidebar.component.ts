@@ -294,7 +294,10 @@ export class GraphRightSidebarComponent implements AfterContentInit {
           labels: this.atomForUpdate.labels,
           bonds: this.atomForUpdate.bonds.map(b => ({
             uuid: b.uuid,
-            name: b.direction === 'from' ? 'OP_DEPENDENCY' : (b.name || ''),
+            // Ensure OP_DEPENDENCY is applied to the correct direction for backend
+            // bonds created via arrows were inverted previously; OP_DEPENDENCY should be
+            // applied to the 'to' side of a bond relative to the atom being sent.
+            name: b.direction === 'to' ? 'OP_DEPENDENCY' : (b.name || ''),
             direction: b.direction
           })),
           properties: {
@@ -450,9 +453,15 @@ export class GraphRightSidebarComponent implements AfterContentInit {
     // Update bond names to show connected atom titles instead of bond names
     target.bonds = target.bonds.map((bond: any) => {
       const connectedAtom = this.atomStore.getAtomByUuid(bond.uuid);
+      // Try to get title from connected atom, otherwise fall back to existing displayName, then name
+      const displayName = connectedAtom
+        ? (connectedAtom.properties.nuclearies.title || bond.name)
+        : (bond.displayName || bond.name);
+
       return {
         ...bond,
-        name: connectedAtom ? connectedAtom.properties.nuclearies.title || bond.name : bond.name
+        // Keep original 'name' for backend payloads; use 'displayName' for UI badges
+        displayName
       };
     });
 
@@ -544,7 +553,7 @@ export class GraphRightSidebarComponent implements AfterContentInit {
 
     const operator = operatorMap[type] || type;
     const bondUuids = this.atomForUpdate.bonds
-      .filter(bond => bond.direction === 'from')
+      .filter(bond => bond.direction === 'to')
       .map(bond => bond.uuid);
     const operationString = bondUuids.join(` ${operator} `);
     this.atomForUpdate.properties.nuclearies.operation = operationString;
@@ -635,7 +644,7 @@ export class GraphRightSidebarComponent implements AfterContentInit {
 
         // Find the atom title for this UUID
         const bond = this.atomForUpdate.bonds.find(b => b.uuid === part);
-        const atomTitle = bond?.name || part;
+        const atomTitle = bond?.displayName || bond?.name || part;
 
         tokens.push({
           type: 'uuid',

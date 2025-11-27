@@ -5,6 +5,7 @@
 	overflow: hidden;
 	cursor: grab;
 	background: var(--cui-body-bg, #1f1f1f);
+	user-select: none;
 }
 
 .graph-canvas:active {

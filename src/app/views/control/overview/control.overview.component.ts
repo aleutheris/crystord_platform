@@ -71,7 +71,7 @@ export class ControlOverviewComponent {
         this.atomsIndexed = this.transformerService.getIndexedAtoms(this.atomsFeatures);
         this.atomsFeaturesTexted = this.transformerService.atomsContentToString(this.atomsFeatures, this.atomsIndexed);
         // Update graph
-        this.updateGraphNodes();
+        this.updateGraphNodes(false);
       }
     });
   }
@@ -124,7 +124,7 @@ export class ControlOverviewComponent {
 
   rearrangeGraph() {
     // Re-run auto layout on current atoms and bonds
-    this.updateGraphNodes();
+    this.updateGraphNodes(true);
   }
 
   retrieveAtomsFeatures() {
@@ -176,6 +176,19 @@ export class ControlOverviewComponent {
       });
     }
 
+    // Populate displayName for all bonds to ensure UI shows titles instead of UUIDs/OP_DEPENDENCY
+    const atomMap = new Map(this.atomsFeatures.map(a => [a.properties.shellies.uuid, a]));
+    this.atomsFeatures.forEach(atom => {
+      if (atom.bonds) {
+        atom.bonds.forEach(bond => {
+          const connectedAtom = atomMap.get(bond.uuid);
+          if (connectedAtom) {
+            bond.displayName = connectedAtom.properties.nuclearies.title || bond.name;
+          }
+        });
+      }
+    });
+
     // Update atom store (single source of truth)
     this.atomStore.setAtoms(this.atomsFeatures);
 
@@ -185,11 +198,11 @@ export class ControlOverviewComponent {
 
     // Defer graph updates to avoid ExpressionChangedAfterItHasBeenCheckedError
     Promise.resolve().then(() => {
-      this.updateGraphNodes();
+      this.updateGraphNodes(true);
     });
   }
 
-  private updateGraphNodes() {
+  private updateGraphNodes(recalculateLayout: boolean = true) {
     const nodes = this.atomsFeatures.map(atom => ({
       id: atom.properties.shellies.uuid,
       data: {
@@ -210,28 +223,41 @@ export class ControlOverviewComponent {
       return bonds.map(b => b.direction === 'from' ? { from: b.uuid, to: fromId } : { from: fromId, to: b.uuid });
     });
 
-    try {
-      const positioned = computeDagreLayout(
-        nodes.map(n => ({ id: n.id, width: 154, height: 140 })),
-        edges,
-        { rankdir: 'LR', nodesep: 30, ranksep: 100, marginx: 60, marginy: 60 }
-      );
-      const posMap = new Map(positioned.map(p => [p.id, p] as const));
+    if (recalculateLayout) {
+      try {
+        const positioned = computeDagreLayout(
+          nodes.map(n => ({ id: n.id, width: 154, height: 140 })),
+          edges,
+          { rankdir: 'LR', nodesep: 30, ranksep: 100, marginx: 60, marginy: 60 }
+        );
+        const posMap = new Map(positioned.map(p => [p.id, p] as const));
+        this.graphNodes = nodes.map(n => ({
+          id: n.id,
+          x: (posMap.get(n.id)?.x ?? 0) + 60,
+          y: (posMap.get(n.id)?.y ?? 0) + 60,
+          data: n.data
+        }));
+      } catch (e) {
+        console.warn('[Graph] Dagre layout failed:', e);
+        // No fallback nodes - just leave graphNodes empty
+        this.graphNodes = [];
+      }
+    } else {
+      // Preserve existing positions
+      const posMap = new Map(this.graphNodes.map(n => [n.id, { x: n.x, y: n.y }] as const));
       this.graphNodes = nodes.map(n => ({
         id: n.id,
-        x: (posMap.get(n.id)?.x ?? 0) + 60,
-        y: (posMap.get(n.id)?.y ?? 0) + 60,
+        x: posMap.get(n.id)?.x ?? 0,
+        y: posMap.get(n.id)?.y ?? 0,
         data: n.data
       }));
-    } catch (e) {
-      console.warn('[Graph] Dagre layout failed:', e);
-      // No fallback nodes - just leave graphNodes empty
-      this.graphNodes = [];
     }
 
     console.debug('[Graph] Nodes updated:', this.graphNodes.length);
-    // Fit the view to show all nodes
-    this.graphCanvas?.fitToView();
+    // Fit the view to show all nodes only if layout was recalculated
+    if (recalculateLayout) {
+      this.graphCanvas?.fitToView();
+    }
     this.updateGraphConnections();
   }
 
@@ -245,7 +271,7 @@ export class ControlOverviewComponent {
       for (const bond of bonds) {
         const toId = bond.uuid;
         if (!toId || !nodeIds.has(toId)) continue;
-        if (bond.direction === 'from') {
+        if (bond.direction === 'to') {
           pairs.push({ from: toId, to: fromId });
         } else {
           pairs.push({ from: fromId, to: toId });
@@ -367,7 +393,7 @@ export class ControlOverviewComponent {
     this.atomsFeaturesTexted = allTexted;
 
     // Update graph nodes and connections
-    this.updateGraphNodes();
+    this.updateGraphNodes(true);
 
     // Update atom store
     this.atomStore.removeAtom(deletedUuid);
@@ -440,65 +466,55 @@ export class ControlOverviewComponent {
   }
 
   onConnectionCreated(connection: {from: string, to: string}): void {
-    // Update bonds for both atoms in the browser session only (no backend call)
     const fromAtom = this.atomsFeatures.find(a => a.properties.shellies.uuid === connection.from);
     const toAtom = this.atomsFeatures.find(a => a.properties.shellies.uuid === connection.to);
 
     if (fromAtom) {
-      // Add bond to fromAtom (outgoing bond)
       if (!fromAtom.bonds) {
         fromAtom.bonds = [];
       }
-      // Check if bond already exists to avoid duplicates
       const bondExists = fromAtom.bonds.some(b => b.uuid === connection.to && b.direction === 'to');
       if (!bondExists) {
         const toAtomName = toAtom?.properties.nuclearies.title || '';
         fromAtom.bonds.push({
           uuid: connection.to,
-          name: toAtomName,
-          direction: 'to'
+          name: 'OP_DEPENDENCY',
+          displayName: toAtomName,
+          direction: 'from'
         });
-        // Update atom store
         this.atomStore.updateAtom(fromAtom);
       }
     }
 
     if (toAtom) {
-      // Add bond to toAtom (incoming bond)
       if (!toAtom.bonds) {
         toAtom.bonds = [];
       }
-      // Check if bond already exists to avoid duplicates
       const bondExists = toAtom.bonds.some(b => b.uuid === connection.from && b.direction === 'from');
       if (!bondExists) {
         const fromAtomName = fromAtom?.properties.nuclearies.title || '';
         toAtom.bonds.push({
           uuid: connection.from,
-          name: fromAtomName,
-          direction: 'from'
+          name: 'OP_DEPENDENCY',
+          displayName: fromAtomName,
+          direction: 'to'
         });
-        // Update atom store
         this.atomStore.updateAtom(toAtom);
       }
     }
   }
 
   onConnectionRemoved(connection: {from: string, to: string}): void {
-    // Remove bonds for both atoms in the browser session only (no backend call)
     const fromAtom = this.atomsFeatures.find(a => a.properties.shellies.uuid === connection.from);
     const toAtom = this.atomsFeatures.find(a => a.properties.shellies.uuid === connection.to);
 
     if (fromAtom && fromAtom.bonds) {
-      // Remove bond from fromAtom
       fromAtom.bonds = fromAtom.bonds.filter(b => !(b.uuid === connection.to && b.direction === 'to'));
-      // Update atom store
       this.atomStore.updateAtom(fromAtom);
     }
 
     if (toAtom && toAtom.bonds) {
-      // Remove bond from toAtom
       toAtom.bonds = toAtom.bonds.filter(b => !(b.uuid === connection.from && b.direction === 'from'));
-      // Update atom store
       this.atomStore.updateAtom(toAtom);
     }
   }

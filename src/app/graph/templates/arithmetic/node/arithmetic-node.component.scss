@@ -1,5 +1,6 @@
 :host {
   display: block;
+  user-select: none;
 }
 
 .df-node {
@@ -39,6 +40,7 @@
   border-radius: 0.25rem;
   background: var(--cui-input-bg, transparent);
   color: var(--cui-input-color, inherit);
+  user-select: none;
 }
 
 .df-node__operator {
@@ -93,6 +95,7 @@
     border-left: 0;
     border-radius: 0 0.375rem 0.375rem 0;
     transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    user-select: none;
 
     &:focus {
       outline: none;

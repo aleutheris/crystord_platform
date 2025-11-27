@@ -11,6 +11,7 @@ export interface Atom {
 export interface Bond {
   uuid: string,
   name: string,
+  displayName?: string,
   direction: 'to' | 'from',
 }
 
