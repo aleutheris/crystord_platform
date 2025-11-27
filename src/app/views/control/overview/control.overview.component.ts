@@ -271,7 +271,7 @@ export class ControlOverviewComponent {
       for (const bond of bonds) {
         const toId = bond.uuid;
         if (!toId || !nodeIds.has(toId)) continue;
-        if (bond.direction === 'from') {
+        if (bond.direction === 'to') {
           pairs.push({ from: fromId, to: toId });
         } else {
           pairs.push({ from: toId, to: fromId });
@@ -480,7 +480,7 @@ export class ControlOverviewComponent {
           uuid: connection.to,
           name: 'OP_DEPENDENCY',
           displayName: toAtomName,
-          direction: 'from'
+          direction: 'to'
         });
         this.atomStore.updateAtom(fromAtom);
       }
@@ -497,7 +497,7 @@ export class ControlOverviewComponent {
           uuid: connection.from,
           name: 'OP_DEPENDENCY',
           displayName: fromAtomName,
-          direction: 'to'
+          direction: 'from'
         });
         this.atomStore.updateAtom(toAtom);
       }
