@@ -15,11 +15,12 @@
         </div>
         <div class="addon-hero text-center">
           <svg cIcon name="cilSpreadsheet" size="4xl" class="mb-3"></svg>
-          <h1 class="display-5 fw-bold mb-3">Google Sheets™ Add-on</h1>
+          <h1 class="display-5 fw-bold mb-3">Crystord</h1>
+          <h1 class="display-6 fw-bold mb-3">Control Your Dataflow</h1>
           <p class="lead mb-4">
-            Connect Crystord's powerful data flow engine directly to Google Sheets™.
-            Fetch, visualise, and collaborate with granular versioned data. All within your
-            familiar spreadsheet environment.
+            A Google Sheets™ Add-on that connects Crystord's powerful dataflow engine directly to
+            your Google Sheets™ files. Fetch, visualise, and collaborate with granular versioned
+            data. All within your familiar spreadsheet environment.
           </p>
           <button
             cButton
@@ -27,9 +28,10 @@
             size="lg"
             (click)="installAddon()"
             class="px-4"
+            disabled
           >
             <svg cIcon name="cilCloudDownload" class="me-2"></svg>
-            Install from Marketplace
+            Install from Marketplace (available after Google's approval)
           </button>
         </div>
 
@@ -233,9 +235,10 @@
                     size="lg"
                     (click)="installAddon()"
                     class="px-4"
+                    disabled
                   >
                     <svg cIcon name="cilCloudDownload" class="me-2"></svg>
-                    Install Now
+                    Install Now (available after Google's approval)
                   </button>
                   <a
                     cButton
@@ -252,6 +255,16 @@
             </div>
           </div>
         </div>
+
+        <button
+          cButton
+          color="primary"
+          variant="outline"
+          (click)="goBack()"
+          class="mb-3">
+          <svg cIcon name="cilArrowLeft" class="me-2"></svg>
+          Back to Home
+        </button>
 
         <!-- Footer Notice -->
         <div class="row">

@@ -54,3 +54,12 @@
   text-align: center;
   color: var(--cui-secondary);
 }
+
+// Button hover effects
+button[cButton] {
+  transition: transform 0.2s ease-in-out;
+
+  &:hover {
+    transform: scale(1.02);
+  }
+}
