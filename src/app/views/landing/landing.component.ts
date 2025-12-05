@@ -211,12 +211,8 @@ export class LandingComponent implements AfterViewInit {
     window.open('https://crystord.substack.com/embed', '_blank');
   }
 
-  openSlidesAddon(): void {
-    this.router.navigate(['/slides-addon']);
-  }
-
-  openSheetsAddon(): void {
-    this.router.navigate(['/sheets-addon']);
+  openAddon(): void {
+    this.router.navigate(['/gaddon']);
   }
 
   openEmail(): void {

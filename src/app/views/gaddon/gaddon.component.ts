@@ -13,8 +13,8 @@ import { IconDirective } from '@coreui/icons-angular';
 
 @Component({
   selector: 'app-gaddon',
-  templateUrl: './slides-addon.component.html',
-  styleUrls: ['./slides-addon.component.scss'],
+  templateUrl: './gaddon.component.html',
+  styleUrls: ['./gaddon.component.scss'],
   standalone: true,
   imports: [
     CommonModule,

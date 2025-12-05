@@ -75,60 +75,31 @@ export const routes: Routes = [
   },
   // Google Slides Add-on routes
   {
-    path: 'slides-addon',
-    loadComponent: () => import('./views/gaddons/gslides/slides-addon.component').then(m => m.GaddonComponent),
+    path: 'gaddon',
+    loadComponent: () => import('./views/gaddon/gaddon.component').then(m => m.GaddonComponent),
     data: {
       title: 'Crystord Google Slides Add-on'
     }
   },
   {
-    path: 'slides-addon/privacy',
-    loadComponent: () => import('./views/gaddons/gslides/privacy/privacy.component').then(m => m.PrivacyComponent),
+    path: 'gaddon/privacy',
+    loadComponent: () => import('./views/gaddon/privacy/privacy.component').then(m => m.PrivacyComponent),
     data: {
       title: 'Google Slides Add-on Privacy Policy'
     }
   },
   {
-    path: 'slides-addon/terms',
-    loadComponent: () => import('./views/gaddons/gslides/terms/terms.component').then(m => m.TermsComponent),
+    path: 'gaddon/terms',
+    loadComponent: () => import('./views/gaddon/terms/terms.component').then(m => m.TermsComponent),
     data: {
       title: 'Google Slides Add-on Terms of Service'
     }
   },
   {
-    path: 'slides-addon/support',
-    loadComponent: () => import('./views/gaddons/gslides/support/support.component').then(m => m.SupportComponent),
+    path: 'gaddon/support',
+    loadComponent: () => import('./views/gaddon/support/support.component').then(m => m.SupportComponent),
     data: {
       title: 'Google Slides Add-on Support'
-    }
-  },
-  // Google Sheets Add-on routes
-  {
-    path: 'sheets-addon',
-    loadComponent: () => import('./views/gaddons/gsheets/sheets-addon.component').then(m => m.SheetsAddonComponent),
-    data: {
-      title: 'Crystord Google Sheets Add-on'
-    }
-  },
-  {
-    path: 'sheets-addon/privacy',
-    loadComponent: () => import('./views/gaddons/gsheets/privacy/privacy.component').then(m => m.PrivacyComponent),
-    data: {
-      title: 'Google Sheets Add-on Privacy Policy'
-    }
-  },
-  {
-    path: 'sheets-addon/terms',
-    loadComponent: () => import('./views/gaddons/gsheets/terms/terms.component').then(m => m.TermsComponent),
-    data: {
-      title: 'Google Sheets Add-on Terms of Service'
-    }
-  },
-  {
-    path: 'sheets-addon/support',
-    loadComponent: () => import('./views/gaddons/gsheets/support/support.component').then(m => m.SupportComponent),
-    data: {
-      title: 'Google Sheets Add-on Support'
     }
   },
   {
