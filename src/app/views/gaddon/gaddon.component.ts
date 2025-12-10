@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import {
   ButtonDirective,
@@ -18,6 +18,7 @@ import { IconDirective } from '@coreui/icons-angular';
   standalone: true,
   imports: [
     CommonModule,
+    RouterLink,
     ButtonDirective,
     CardBodyComponent,
     CardComponent,
