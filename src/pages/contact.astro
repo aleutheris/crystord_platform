@@ -1,0 +1,14 @@
+---
+import MainLayout from "../layouts/MainLayout.astro";
+import { siteConfig } from "../config/site";
+---
+
+<MainLayout title="Contact">
+  <section class="panel">
+    <h1>Contact Crystord</h1>
+    <p>
+      For product inquiries and support routing, contact us at
+      <a href={`mailto:${siteConfig.contactEmail}`}>{siteConfig.contactEmail}</a>.
+    </p>
+  </section>
+</MainLayout>

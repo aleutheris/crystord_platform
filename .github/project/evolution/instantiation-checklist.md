@@ -8,11 +8,11 @@ This checklist tracks the transition from the archived Angular-based public site
 
 ## 1. Bootstrap the project
 
-- [ ] Confirm the archive source path (`crystord_platform_archive`) to use for inspiration.
-- [ ] Confirm the new public-site repo structure and destination folders.
+- [x] Confirm the archive source path (`crystord_platform_archive`) to use for inspiration.
+- [x] Confirm the new public-site repo structure and destination folders.
 - [ ] Keep the SaaS sign-in experience separate from the public landing page.
-- [ ] Instantiate the project governance files under `.github/project/` and `.github/project/evolution/`.
-- [ ] Preserve the existing project instructions and update them only where they describe the new site accurately.
+- [x] Instantiate the project governance files under `.github/project/` and `.github/project/evolution/`.
+- [x] Preserve the existing project instructions and update them only where they describe the new site accurately.
 
 
 ## 2. Review and select archive features/content
@@ -24,9 +24,9 @@ This checklist tracks the transition from the archived Angular-based public site
 
 ## 3. Define the technology stack
 
-- [ ] Choose a static-site generator or framework that works well on GitHub Pages (e.g., Astro, Jekyll, Hugo, plain HTML/CSS/JS).
-- [ ] Ensure the stack does not use Angular or other SPA frameworks requiring a backend.
-- [ ] Confirm the stack supports easy maintenance and static deployment.
+- [x] Choose a static-site generator or framework that works well on GitHub Pages (e.g., Astro, Jekyll, Hugo, plain HTML/CSS/JS).
+- [x] Ensure the stack does not use Angular or other SPA frameworks requiring a backend.
+- [x] Confirm the stack supports easy maintenance and static deployment.
 
 
 ## 4. Define the target site shape
@@ -58,8 +58,8 @@ This checklist tracks the transition from the archived Angular-based public site
 
 ## 7. Plan the build and deployment setup
 
-- [ ] Add the static-site project skeleton required for GitHub Pages.
-- [ ] Configure base-path handling for GitHub Pages deployment.
+- [x] Add the static-site project skeleton required for GitHub Pages.
+- [x] Configure base-path handling for GitHub Pages deployment.
 - [ ] Add the build workflow for publishing the site.
 - [ ] Confirm the final public repository name and Pages URL.
 - [ ] Confirm how preview builds or local development should work.
@@ -76,7 +76,7 @@ This checklist tracks the transition from the archived Angular-based public site
 
 ## 9. Open questions
 
-- [ ] Where exactly is the archive directory located in the current workspace or source storage?
+- [x] Where exactly is the archive directory located in the current workspace or source storage?
 - [ ] What is the canonical SaaS sign-in URL for the new public site to link to?
 - [ ] Should the public site be single-page with anchored sections, or multi-page with separate routes?
 - [ ] Should the legal pages be fully recreated now, or carried over after the initial scaffold is in place?

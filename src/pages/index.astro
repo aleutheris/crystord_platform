@@ -1,0 +1,29 @@
+---
+import MainLayout from "../layouts/MainLayout.astro";
+import { siteConfig } from "../config/site";
+---
+
+<MainLayout title="Landing Page">
+  <section class="panel">
+    <h1>Crystord Platform</h1>
+    <p>
+      This is the new public landing site for Crystord. It introduces the product and routes users to
+      legal, add-on, and contact information while keeping sign-in as a distinct SaaS entry point.
+    </p>
+    <div class="actions">
+      <a class="btn btn-primary" href="/sign-in">Sign in to Crystord</a>
+      <a class="btn btn-secondary" href="/google-addon">Explore Google Add-on</a>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>What stays on this public site</h2>
+    <ul class="clean">
+      <li>Product overview and positioning</li>
+      <li>Google Add-on information</li>
+      <li>Contact and support entry points</li>
+      <li>Terms of Service and Privacy Policy pages</li>
+      <li>YouTube channel reference: <a href={siteConfig.youtubeUrl}>Crystord YouTube</a></li>
+    </ul>
+  </section>
+</MainLayout>
