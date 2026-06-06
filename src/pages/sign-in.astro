@@ -1,17 +1,11 @@
 ---
 import MainLayout from "../layouts/MainLayout.astro";
-import { siteConfig } from "../config/site";
+import SignInForm from "../components/SignInForm.astro";
 ---
 
 <MainLayout title="Sign In">
   <section class="panel">
-    <h1>Sign in to the Crystord SaaS App</h1>
-    <p>
-      The SaaS application is hosted separately from this public landing site.
-    </p>
-    <div class="actions">
-      <a class="btn btn-primary" href={siteConfig.appSignInUrl}>Continue to Sign In</a>
-      <a class="btn btn-secondary" href="/">Back to Landing Page</a>
-    </div>
+    <h1>Sign in to Crystord</h1>
+    <SignInForm />
   </section>
 </MainLayout>

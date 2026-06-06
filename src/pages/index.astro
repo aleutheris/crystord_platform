@@ -1,17 +1,22 @@
 ---
 import MainLayout from "../layouts/MainLayout.astro";
+import SignInForm from "../components/SignInForm.astro";
 import { siteConfig } from "../config/site";
 ---
 
 <MainLayout title="Landing Page">
   <section class="panel">
-    <h1>Crystord Platform</h1>
+    <h1>Sign in to Crystord</h1>
+    <SignInForm />
+  </section>
+
+  <section class="panel">
+    <h2>Crystord Platform</h2>
     <p>
       This is the new public landing site for Crystord. It introduces the product and routes users to
       legal, add-on, and contact information while keeping sign-in as a distinct SaaS entry point.
     </p>
     <div class="actions">
-      <a class="btn btn-primary" href="/sign-in">Sign in to Crystord</a>
       <a class="btn btn-secondary" href="/google-addon">Explore Google Add-on</a>
     </div>
   </section>

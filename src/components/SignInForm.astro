@@ -1,0 +1,112 @@
+---
+import { siteConfig } from "../config/site";
+---
+
+<form class="sign-in-form" data-auth-url={siteConfig.appSignInUrl} novalidate>
+  <div class="form-field">
+    <label for="si-email">Email</label>
+    <input id="si-email" name="email" type="email" required autocomplete="email" />
+  </div>
+  <div class="form-field">
+    <label for="si-password">Password</label>
+    <input id="si-password" name="password" type="password" required autocomplete="current-password" />
+  </div>
+  <p class="sign-in-error" hidden aria-live="polite"></p>
+  <button type="submit" class="btn btn-primary">Sign In</button>
+</form>
+
+<style>
+  .sign-in-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    max-width: 360px;
+  }
+
+  .form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+
+  label {
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+
+  input {
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 0.6rem 0.75rem;
+    font-size: 1rem;
+    font-family: inherit;
+    color: var(--ink);
+    background: var(--surface);
+  }
+
+  input:focus {
+    outline: 2px solid var(--brand);
+    outline-offset: 1px;
+    border-color: var(--brand);
+  }
+
+  .sign-in-error {
+    color: #b91c1c;
+    margin: 0;
+    font-size: 0.9rem;
+  }
+
+  button[type="submit"] {
+    align-self: flex-start;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    font-family: inherit;
+  }
+
+  button[type="submit"]:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLFormElement>(".sign-in-form").forEach((form) => {
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const authUrl = form.dataset.authUrl!;
+      const email = (form.querySelector<HTMLInputElement>("#si-email"))!.value.trim();
+      const password = (form.querySelector<HTMLInputElement>("#si-password"))!.value;
+      const errorEl = form.querySelector<HTMLParagraphElement>(".sign-in-error")!;
+      const submitBtn = form.querySelector<HTMLButtonElement>("button[type=submit]")!;
+
+      errorEl.hidden = true;
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Signing in…";
+
+      try {
+        const res = await fetch(authUrl, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({ email, password }),
+        });
+
+        if (res.ok) {
+          window.location.href = new URL(authUrl).origin;
+        } else {
+          const data: { message?: string } = await res.json().catch(() => ({}));
+          errorEl.textContent = data.message ?? "Sign-in failed. Please check your credentials.";
+          errorEl.hidden = false;
+          submitBtn.disabled = false;
+          submitBtn.textContent = "Sign In";
+        }
+      } catch {
+        errorEl.textContent = "Unable to reach the sign-in service. Please try again.";
+        errorEl.hidden = false;
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Sign In";
+      }
+    });
+  });
+</script>
