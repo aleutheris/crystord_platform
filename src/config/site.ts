@@ -2,7 +2,8 @@ export const siteConfig = {
   productName: "Crystord",
   appSignInUrl: import.meta.env.PUBLIC_APP_SIGN_IN_URL || "https://app.crystord.com/sign-in",
   youtubeUrl: "https://www.youtube.com/@crystord",
-  contactEmail: "hello@crystord.com"
+  contactEmail: "hello@crystord.com",
+  addonMarketplaceUrl: "https://workspace.google.com/marketplace/app/crystord/186388621973"
 };
 
 export const mainNav = [

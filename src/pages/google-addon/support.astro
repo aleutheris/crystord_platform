@@ -1,0 +1,191 @@
+---
+import MainLayout from "../../layouts/MainLayout.astro";
+import { siteConfig } from "../../config/site";
+---
+
+<MainLayout title="Add-on Support">
+  <article class="panel policy">
+    <h1>Crystord Add-on Support</h1>
+    <p class="meta">Last updated: September 15, 2025</p>
+
+    <section>
+      <h2>Introduction</h2>
+      <p>Welcome to the Crystord Add-on support page. Here you'll find resources to help you get
+      started, answers to common questions, troubleshooting steps, and ways to contact us.</p>
+    </section>
+
+    <section>
+      <h2>Getting Started</h2>
+      <h3>What is Crystord?</h3>
+      <p>Crystord is a Google Workspace Add-on that syncs variables between Google Sheets™ and
+      Google Slides™. Use it to create dynamic slide templates where placeholders like
+      <code>&#123;&#123;variable_name&#125;&#125;</code> are replaced with values from your
+      spreadsheet.</p>
+
+      <h3>Basic Setup</h3>
+      <ol>
+        <li>Install the Crystord Add-on from the
+        <a href={siteConfig.addonMarketplaceUrl} target="_blank" rel="noopener">Google Workspace Marketplace</a>.</li>
+        <li>Open your Slides™ presentation and add your variables in any part of your slides as
+        <code>&#123;&#123;variable_name&#125;&#125;</code>.</li>
+        <li>Click the bottom-left expansion arrow and press the Crystord icon to open the sidebar.</li>
+        <li>The sidebar displays four buttons:
+          <ul>
+            <li><strong>Create Database:</strong> Creates a new Sheets™ file named "database" that
+            the Crystord Add-on is allowed to read, and opens it in a new tab. This file is
+            automatically selected and initially empty. Add your variables by filling the table with
+            the columns "Name" and "Value".</li>
+            <li><strong>Select Database:</strong> Allows you to select a previously created Sheets™
+            file (database).</li>
+            <li><strong>Open Database:</strong> Opens the selected database in a new tab.</li>
+            <li><strong>Synchronise:</strong> Updates your current Slides™ file with the latest
+            values from the selected database.</li>
+          </ul>
+        </li>
+        <li>The first step is to create a database — nothing works without it. After making any
+        changes to the database, always click "Synchronise" to reflect updates in your Slides.
+        Use clear and consistent naming conventions for variables to avoid conflicts during
+        synchronisation.</li>
+      </ol>
+    </section>
+
+    <section>
+      <h2>Frequently Asked Questions</h2>
+
+      <h3>How do I install the Add-on?</h3>
+      <p>Install directly via the
+      <a href={siteConfig.addonMarketplaceUrl} target="_blank" rel="noopener">Google Workspace Marketplace</a>
+      or from within Google Slides™ by opening the side panel and searching for "Crystord".</p>
+
+      <h3>The variables in Slides aren't updating.</h3>
+      <ul>
+        <li>Ensure you have created and selected a database using the "Create Database" or
+        "Select Database" buttons in the sidebar.</li>
+        <li>Double-check that the variable names in your Slides match exactly with the names in
+        the database (case-sensitive, no extra spaces).</li>
+        <li>Click the "Synchronise" button in the sidebar to update Slides with the latest values
+        from the database.</li>
+      </ul>
+
+      <h3>Do I need to re-link the Sheet every time?</h3>
+      <p>No. Once a database is created or selected, it remains linked to the current Slides file.
+      You can refresh values as often as needed.</p>
+
+      <h3>What format should I use for variables in Slides?</h3>
+      <p>Use curly brackets: <code>&#123;&#123;variable_name&#125;&#125;</code>
+      (e.g., <code>&#123;&#123;item_name&#125;&#125;</code>).</p>
+
+      <h3>What if I accidentally delete the database file?</h3>
+      <p>If the database file is deleted, create a new one using the "Create Database" button in
+      the sidebar and re-add your variables. The database file is a normal Sheets file — you can
+      also try to recover it from the Google Drive trash.</p>
+
+      <h3>What if I select the wrong database?</h3>
+      <p>Use the "Select Database" button in the sidebar to choose the correct one. Ensure the
+      correct database is selected before clicking "Synchronise".</p>
+    </section>
+
+    <section>
+      <h2>Troubleshooting</h2>
+
+      <h3>Add-on not appearing?</h3>
+      <p>Refresh Google Slides™ and ensure you are using the same account you installed the Add-on
+      with.</p>
+
+      <h3>Sidebar won't open or is unresponsive?</h3>
+      <p>Try closing and reopening Google Slides™, or reinstall the Add-on if needed.</p>
+
+      <h3>Unexpected errors or bugs?</h3>
+      <p>Take a screenshot or copy the error message and contact support (details below).</p>
+
+      <h3>Is the Add-on up to date?</h3>
+      <p>Ensure you are using the latest version of the Crystord Add-on. Outdated versions may not
+      support the latest features or workflows. Update via the Google Workspace Marketplace if
+      needed.</p>
+    </section>
+
+    <section>
+      <h2>Contact &amp; Feedback</h2>
+      <ul>
+        <li><strong>Contact us at:</strong>
+        <a href={`mailto:${siteConfig.contactEmail}`}>{siteConfig.contactEmail}</a></li>
+        <li><strong>Bug reports:</strong> Please provide the error message, browser version, and a
+        description of what you were doing when the issue occurred.</li>
+        <li><strong>Feature suggestions:</strong> We welcome your ideas — email us at the address
+        above.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Resources</h2>
+      <ul>
+        <li><a href={siteConfig.addonMarketplaceUrl} target="_blank" rel="noopener">Crystord on
+        Google Workspace Marketplace</a></li>
+        <li><a href={siteConfig.youtubeUrl} target="_blank" rel="noopener">Crystord on YouTube</a>
+        — tutorials and feature walkthroughs</li>
+      </ul>
+    </section>
+
+    <p class="trademark">
+      <a href="/google-addon">Google Add-on</a>
+      &nbsp;·&nbsp;
+      <a href="/privacy">Privacy Policy</a>
+      &nbsp;·&nbsp;
+      <a href="/terms">Terms of Service</a>
+      <br />
+      <small>Google Sheets™ and Google Slides™ are trademarks of Google LLC.</small>
+    </p>
+  </article>
+</MainLayout>
+
+<style>
+  .policy section {
+    margin-bottom: 1.5rem;
+  }
+
+  .policy h2 {
+    font-size: 1.1rem;
+    margin-bottom: 0.4rem;
+  }
+
+  .policy h3 {
+    font-size: 1rem;
+    color: var(--brand-ink);
+    margin-top: 1rem;
+    margin-bottom: 0.3rem;
+  }
+
+  .policy ul,
+  .policy ol {
+    padding-left: 1.4rem;
+    margin: 0.4rem 0 0.8rem;
+  }
+
+  .policy li {
+    margin-bottom: 0.4rem;
+  }
+
+  code {
+    font-family: monospace;
+    background: #f0ece2;
+    padding: 0.1em 0.35em;
+    border-radius: 4px;
+  }
+
+  .meta {
+    color: var(--muted);
+    font-size: 0.9rem;
+    margin-top: -0.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .trademark {
+    color: var(--muted);
+    margin-top: 2rem;
+    font-size: 0.85rem;
+  }
+
+  .trademark a {
+    color: var(--muted);
+  }
+</style>

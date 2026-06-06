@@ -51,7 +51,7 @@ import { siteConfig } from "../config/site";
   }
 
   .sign-in-error {
-    color: #b91c1c;
+    color: var(--error);
     margin: 0;
     font-size: 0.9rem;
   }
@@ -71,12 +71,14 @@ import { siteConfig } from "../config/site";
 </style>
 
 <script>
+  import { submitSignIn } from "../utils/sign-in";
+
   document.querySelectorAll<HTMLFormElement>(".sign-in-form").forEach((form) => {
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
       const authUrl = form.dataset.authUrl!;
-      const email = (form.querySelector<HTMLInputElement>("#si-email"))!.value.trim();
-      const password = (form.querySelector<HTMLInputElement>("#si-password"))!.value;
+      const email = form.querySelector<HTMLInputElement>("#si-email")!.value.trim();
+      const password = form.querySelector<HTMLInputElement>("#si-password")!.value;
       const errorEl = form.querySelector<HTMLParagraphElement>(".sign-in-error")!;
       const submitBtn = form.querySelector<HTMLButtonElement>("button[type=submit]")!;
 
@@ -85,18 +87,11 @@ import { siteConfig } from "../config/site";
       submitBtn.textContent = "Signing in…";
 
       try {
-        const res = await fetch(authUrl, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
-          body: JSON.stringify({ email, password }),
-        });
-
-        if (res.ok) {
-          window.location.href = new URL(authUrl).origin;
+        const result = await submitSignIn(authUrl, email, password);
+        if (result.ok) {
+          window.location.href = result.redirectUrl;
         } else {
-          const data: { message?: string } = await res.json().catch(() => ({}));
-          errorEl.textContent = data.message ?? "Sign-in failed. Please check your credentials.";
+          errorEl.textContent = result.message;
           errorEl.hidden = false;
           submitBtn.disabled = false;
           submitBtn.textContent = "Sign In";

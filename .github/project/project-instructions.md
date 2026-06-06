@@ -55,6 +55,13 @@ Code cohesion defaults (required unless explicitly overridden with rationale):
 - File size guardrail: `<= 200 lines`.
 - Function size guardrail: `<= 30 lines where practical`.
 
+### Definition of Done
+
+All backlog items are considered "Done" only when they are behavior-oriented and satisfy the following end-to-end criteria:
+- **Documentation**: Any necessary documentation (e.g., READMEs, code comments) is updated.
+- **Source Code**: The feature is fully implemented.
+- **Testing**: Automated tests are written to verify the behavior, aiming for 100% test and code coverage.
+
 ## 7. Stack Addendum
 
 - Language and runtime: TypeScript and Astro.

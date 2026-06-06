@@ -1,13 +1,145 @@
 ---
 import MainLayout from "../layouts/MainLayout.astro";
+import { siteConfig } from "../config/site";
 ---
 
 <MainLayout title="Google Add-on">
-  <section class="panel">
-    <h1>Google Add-on</h1>
-    <p>
-      Placeholder page for the Crystord Google Add-on. Content from the archive will be reviewed and
-      selectively adapted here.
+  <section class="panel addon-hero">
+    <h1>Crystord</h1>
+    <h2>Control and Visualise Your Dataflow</h2>
+    <p class="lead">
+      A streamlined Google Workspace Add-on that brings the power of Crystord's synchronisation
+      directly to your Google Sheets™ and Google Slides™. Transform static presentations into
+      dynamic, data-driven templates with just a few clicks.
     </p>
+    <div class="actions">
+      <a class="btn btn-primary" href={siteConfig.addonMarketplaceUrl} target="_blank" rel="noopener">
+        Install from Marketplace
+      </a>
+    </div>
   </section>
+
+  <section class="panel">
+    <h2>How It Works</h2>
+
+    <div class="how-step">
+      <h3>Dynamic Content Synchronisation</h3>
+      <p>
+        The Crystord Google Workspace Add-on transforms your Google Slides™ into dynamic,
+        data-driven presentations. Simply mark variables in your slides using curly brackets
+        (e.g., <code>&#123;&#123;item_name&#125;&#125;</code>) and sync them with values from
+        your Google Sheets™ at the click of a button.
+      </p>
+      <ul class="clean step-list">
+        <li>Open Google Slides™ and click the expansion arrow to find Crystord in the right sidebar.</li>
+        <li>Create your database, open it, and add your variables.</li>
+        <li>Click Synchronise to update your slides immediately.</li>
+      </ul>
+    </div>
+
+    <div class="how-step">
+      <h3>Instant Updates, Zero Hassle</h3>
+      <p>
+        Make changes in your Google Sheets™ and see them reflected immediately in your
+        presentations. No manual copying, no version control issues, no outdated slides.
+      </p>
+      <p>
+        Currently focused on Sheets™-to-Slides™ synchronisation, with new features planned
+        for future releases.
+      </p>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>Perfect For</h2>
+    <ul class="clean use-cases">
+      <li>
+        <strong>Live Reports</strong> — Keep stakeholder reports always up-to-date with real-time data.
+      </li>
+      <li>
+        <strong>Budget Tracking</strong> — Present financial data that updates automatically as numbers change.
+      </li>
+      <li>
+        <strong>Executive Dashboards</strong> — Reflect the latest KPIs and metrics without rebuilding slides.
+      </li>
+      <li>
+        <strong>Project Trackers</strong> — Monitor progress with presentations that update themselves.
+      </li>
+    </ul>
+  </section>
+
+  <section class="panel cta-panel">
+    <h2>Ready to Transform Your Presentations?</h2>
+    <p>
+      Install the Crystord for Google Slides™ Add-on today and experience data-driven presentations.
+    </p>
+    <div class="actions">
+      <a class="btn btn-primary" href={siteConfig.addonMarketplaceUrl} target="_blank" rel="noopener">
+        Install Now
+      </a>
+      <a class="btn btn-secondary" href={`mailto:${siteConfig.contactEmail}?subject=Google%20Add-on%20Support`}>
+        Contact Support
+      </a>
+    </div>
+  </section>
+
+  <p class="trademark">
+    <a href="/google-addon/support">Support</a>
+    &nbsp;·&nbsp;
+    <a href="/privacy">Privacy Policy</a>
+    &nbsp;·&nbsp;
+    <a href="/terms">Terms of Service</a>
+    <br />
+    <small>Google Sheets™ and Google Slides™ are trademarks of Google LLC.</small>
+  </p>
 </MainLayout>
+
+<style>
+  .addon-hero h1 {
+    margin-bottom: 0.1rem;
+  }
+
+  .addon-hero h2 {
+    margin-top: 0;
+    font-size: 1.25rem;
+    color: var(--muted);
+    font-weight: 600;
+  }
+
+  .lead {
+    font-size: 1.05rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .how-step {
+    margin-bottom: 1.5rem;
+  }
+
+  .how-step h3 {
+    color: var(--brand-ink);
+    margin-bottom: 0.4rem;
+  }
+
+  .step-list li,
+  .use-cases li {
+    margin-bottom: 0.5rem;
+  }
+
+  code {
+    font-family: monospace;
+    background: #f0ece2;
+    padding: 0.1em 0.35em;
+    border-radius: 4px;
+  }
+
+  .trademark {
+    font-size: 0.85rem;
+    color: var(--muted);
+    text-align: center;
+    margin-top: 0.5rem;
+  }
+
+  .trademark a {
+    color: var(--muted);
+  }
+</style>

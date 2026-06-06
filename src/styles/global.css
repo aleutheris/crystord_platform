@@ -1,11 +1,14 @@
 :root {
-  --bg: #f6f4ef;
-  --surface: #ffffff;
-  --ink: #1f2933;
-  --muted: #6b7280;
-  --brand: #0f766e;
-  --brand-ink: #083a36;
-  --line: #d7dadd;
+  /* branding.md token map */
+  --bg: #fafbfc;        /* Open White */
+  --surface: #f3f6f8;   /* Soft Neutral */
+  --surface-alt: #e7edf2; /* Structured Neutral */
+  --ink: #17202a;       /* Deep Charcoal */
+  --muted: #5b6b7a;     /* Slate Gray */
+  --brand: #0066cc;     /* Trust Blue */
+  --brand-dark: #004c99; /* Deep Trust Blue */
+  --line: #d6dee5;      /* Soft Border */
+  --error: #d64545;     /* Privacy Red */
 }
 
 * {
@@ -15,7 +18,7 @@
 body {
   margin: 0;
   font-family: "Source Sans 3", "Segoe UI", sans-serif;
-  background: radial-gradient(circle at 10% 10%, #fdf7e9 0%, #f6f4ef 40%, #f0ece2 100%);
+  background: var(--bg);
   color: var(--ink);
 }
 
@@ -59,7 +62,7 @@ main {
 }
 
 .panel {
-  background: var(--surface);
+  background: #ffffff;
   border: 1px solid var(--line);
   border-radius: 16px;
   padding: 1.25rem;
@@ -68,7 +71,7 @@ main {
 
 h1,
 h2 {
-  color: var(--brand-ink);
+  color: var(--brand-dark);
   margin-top: 0;
 }
 

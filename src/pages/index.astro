@@ -11,24 +11,48 @@ import { siteConfig } from "../config/site";
   </section>
 
   <section class="panel">
-    <h2>Crystord Platform</h2>
+    <h2>Control and Visualise Your Dataflow</h2>
     <p>
-      This is the new public landing site for Crystord. It introduces the product and routes users to
-      legal, add-on, and contact information while keeping sign-in as a distinct SaaS entry point.
+      Crystord synchronises data between Google Sheets™ and Google Slides™, turning static
+      presentations into dynamic, data-driven templates. Define variables in your slides, connect
+      a spreadsheet, and keep everything in sync at the click of a button.
     </p>
-    <div class="actions">
-      <a class="btn btn-secondary" href="/google-addon">Explore Google Add-on</a>
-    </div>
   </section>
 
   <section class="panel">
-    <h2>What stays on this public site</h2>
-    <ul class="clean">
-      <li>Product overview and positioning</li>
-      <li>Google Add-on information</li>
-      <li>Contact and support entry points</li>
-      <li>Terms of Service and Privacy Policy pages</li>
-      <li>YouTube channel reference: <a href={siteConfig.youtubeUrl}>Crystord YouTube</a></li>
+    <h2>Why Crystord?</h2>
+    <ul class="clean feature-list">
+      <li>
+        <strong>Live data in your slides.</strong> Values from your Sheets update your Slides
+        instantly — no manual copying, no outdated decks.
+      </li>
+      <li>
+        <strong>Works where you work.</strong> Runs entirely inside Google Workspace as an
+        Add-on; no separate install or account beyond your Google login.
+      </li>
+      <li>
+        <strong>Your data stays yours.</strong> All processing happens within Google's
+        infrastructure. Nothing is stored on external servers.
+      </li>
+      <li>
+        <strong>Built for recurring use.</strong> Perfect for live reports, budget decks,
+        executive dashboards, and project trackers that need to stay current.
+      </li>
     </ul>
   </section>
+
+  <section class="panel">
+    <h2>Get started</h2>
+    <div class="actions">
+      <a class="btn btn-primary" href="/google-addon">Explore the Google Add-on</a>
+      <a class="btn btn-secondary" href={siteConfig.youtubeUrl} target="_blank" rel="noopener">Watch on YouTube</a>
+      <a class="btn btn-secondary" href="/contact">Contact us</a>
+    </div>
+  </section>
 </MainLayout>
+
+<style>
+  .feature-list li {
+    margin-bottom: 0.6rem;
+  }
+</style>
