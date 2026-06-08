@@ -56,6 +56,41 @@ npm run lint
 
 Covers `.ts` and `.astro` files with TypeScript and Astro plugin rules.
 
+## Deployment
+
+### How it works
+
+The site is deployed to GitHub Pages via `.github/workflows/deploy.yml`. The pipeline runs on every push to `main` and can also be triggered manually via **Actions → Deploy to GitHub Pages → Run workflow**.
+
+Build pipeline:
+1. Install dependencies (`npm install`)
+2. Run unit tests (`npm test`) — failure blocks the deploy
+3. Build static output (`npm run build`) with `PUBLIC_APP_SIGN_IN_URL` and `GITHUB_PAGES_BASE` set
+4. Verify build output — checks that all required routes and the app sign-in link are present in `dist/`
+5. Upload `dist/` and deploy to GitHub Pages
+
+Canonical public URL: `https://crystord.com`  
+App sign-in target: `https://app.crystord.com/sign-in`
+
+### Local workflow
+
+```
+npm run dev       # start dev server at http://localhost:4321
+npm run build     # build static output into dist/
+npm run preview   # serve dist/ locally to verify the build
+```
+
+### Rollback
+
+Rollback is performed by reverting the offending commit on `main` and redeploying:
+
+```
+git revert <bad-commit-sha>
+git push origin main
+```
+
+The revert commit triggers the deploy workflow automatically. No manual intervention in GitHub Pages settings is required. After the workflow completes, verify key routes to confirm the rollback is live.
+
 ## Environment variables
 
 - `GITHUB_PAGES_BASE`: Base path used by Astro for GitHub Pages deployments.

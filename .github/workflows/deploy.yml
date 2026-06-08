@@ -31,11 +31,33 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: Run unit tests
+        run: npm test
+
       - name: Build site
         env:
           GITHUB_PAGES_BASE: /crystord_platform/
           PUBLIC_APP_SIGN_IN_URL: https://app.crystord.com/sign-in
         run: npm run build
+
+      - name: Verify build output
+        run: |
+          # Core public routes
+          test -f dist/index.html            || (echo "MISSING: dist/index.html" && exit 1)
+          test -f dist/google-addon/index.html || (echo "MISSING: dist/google-addon/index.html" && exit 1)
+          test -f dist/google-addon/support/index.html || (echo "MISSING: dist/google-addon/support/index.html" && exit 1)
+          test -f dist/privacy/index.html    || (echo "MISSING: dist/privacy/index.html" && exit 1)
+          test -f dist/terms/index.html      || (echo "MISSING: dist/terms/index.html" && exit 1)
+          test -f dist/contact/index.html    || (echo "MISSING: dist/contact/index.html" && exit 1)
+          # Compatibility redirect pages for legacy archive URLs
+          test -f dist/landing/index.html    || (echo "MISSING: dist/landing/index.html" && exit 1)
+          test -f dist/gaddon/index.html     || (echo "MISSING: dist/gaddon/index.html" && exit 1)
+          test -f dist/gaddon/privacy/index.html || (echo "MISSING: dist/gaddon/privacy/index.html" && exit 1)
+          test -f dist/gaddon/terms/index.html   || (echo "MISSING: dist/gaddon/terms/index.html" && exit 1)
+          test -f dist/gaddon/support/index.html || (echo "MISSING: dist/gaddon/support/index.html" && exit 1)
+          # App sign-in link present in landing page
+          grep -q "app.crystord.com" dist/index.html || (echo "MISSING: app.crystord.com link in dist/index.html" && exit 1)
+          echo "Build verification passed."
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
