@@ -6,132 +6,163 @@ import { siteConfig } from "../config/site";
 <MainLayout title="Privacy Policy">
   <article class="panel policy">
     <h1>Crystord: Privacy Policy</h1>
-    <p class="meta">Last updated: December 10, 2025</p>
+    <p class="meta">Last updated: June 8, 2026</p>
 
     <section>
       <h2>Introduction</h2>
-      <p>Crystord is a software platform that enables synchronisation and management of data between
-      various sources. The Crystord Google Workspace Add-on provides features similar to the core
-      Crystord platform, allowing users to seamlessly integrate and update content between Google
-      Sheets™ and Google Slides™. This privacy policy explains how your information is handled when
-      you use the Crystord platform and its Google Add-on.</p>
+      <p>Aleutheris operates two Crystord products: the Crystord Google Workspace Add-on (the
+      "Add-on"), which synchronises data between Google Sheets™ and Google Slides™, and the Crystord
+      web application at <a href="https://app.crystord.com">app.crystord.com</a> (the "App"), which
+      provides account management and access control for the Crystord platform. This privacy policy
+      explains how information is collected, used, and protected across both products.</p>
+    </section>
+
+    <section>
+      <h2>Products Covered by This Policy</h2>
+      <ul>
+        <li><strong>Google Workspace Add-on:</strong> Installed from the Google Workspace Marketplace
+        and runs within Google Slides™. Accesses Google Sheets™ and Slides™ data in your Google
+        account to perform synchronisation.</li>
+        <li><strong>Crystord Web Application (app.crystord.com):</strong> A web-based platform for
+        signing in to your Crystord account. Collects account credentials to authenticate users.</li>
+      </ul>
     </section>
 
     <section>
       <h2>Data Collection and Access</h2>
-      <p>When you use the Crystord platform or install the Crystord Google Add-on, the application
-      accesses the following specific Google user data:</p>
+
+      <h3>Google Workspace Add-on</h3>
+      <p>When you use the Add-on, it accesses the following Google user data:</p>
       <ul>
-        <li><strong>Google Sheets™ Content:</strong> Read access to the specific spreadsheets you
-        select to synchronise data.</li>
-        <li><strong>Google Slides™ Content:</strong> Read and write access to the specific
-        presentations you are editing to update charts or text.</li>
+        <li><strong>Google Sheets™ content:</strong> Read access to the specific spreadsheets you
+        select as data sources for synchronisation.</li>
+        <li><strong>Google Slides™ content:</strong> Read and write access to the specific
+        presentations you are editing, to identify and replace placeholder variables.</li>
       </ul>
-      <p>These permissions are required solely to enable the synchronisation and management features
-      provided by Crystord.</p>
+      <p>These permissions are limited to the files you explicitly connect and are required solely
+      to perform the synchronisation function.</p>
+
+      <h3>Crystord Web Application</h3>
+      <p>When you sign in to the Crystord App, the following information is processed:</p>
+      <ul>
+        <li><strong>Email address and password:</strong> Submitted at sign-in to authenticate your
+        account. Passwords are never stored in plain text.</li>
+        <li><strong>Session token:</strong> Issued after successful authentication to maintain your
+        signed-in session. Stored only in your browser for the duration of your session.</li>
+      </ul>
+      <p>The App does not collect browsing behaviour, location data, or device identifiers beyond
+      what is necessary for authentication.</p>
     </section>
 
     <section>
       <h2>Data Usage</h2>
-      <p>Crystord's use of your Google User Data accessed from Google APIs adheres to Google's
-      Limited Use Requirements. Specifically, we use your data to:</p>
+      <p>Crystord's use of data adheres to the following principles:</p>
       <ul>
-        <li><strong>Synchronise Content:</strong> Transfer data values from your Sheets to your
-        Slides presentations upon your request.</li>
-        <li><strong>Display Information:</strong> Show your spreadsheet data within the Add-on
-        sidebar to help you select what to sync.</li>
+        <li><strong>Add-on data:</strong> Google Sheets™ and Slides™ content is accessed solely to
+        perform the synchronisation you request. It is not retained, analysed for commercial
+        purposes, or shared with third parties.</li>
+        <li><strong>App account data:</strong> Your email address is used to identify your account.
+        It is not used for marketing without your explicit consent.</li>
+        <li><strong>No profiling:</strong> We do not build profiles of user behaviour or preferences
+        from either product.</li>
+        <li><strong>No AI training:</strong> Your data is not used to train machine learning or
+        artificial intelligence models.</li>
       </ul>
-      <p>Crystord does not use your data for advertising, profiling, or any unauthorised purposes.</p>
+      <p>Crystord's use of information received from Google APIs adheres to the
+      <a href="https://developers.google.com/terms/api-services-user-data-policy" target="_blank" rel="noopener noreferrer">Google API Services User Data Policy</a>,
+      including the Limited Use Requirements.</p>
     </section>
 
     <section>
       <h2>Data Sharing</h2>
-      <p>We do not share your Google User Data with any third parties. Specifically:</p>
+      <p>We do not sell, trade, or transfer your personal data to third parties. Data is shared only
+      in the following limited circumstances:</p>
       <ul>
-        <li><strong>No Third-Party Sharing:</strong> Your data is not sold, traded, or transferred
-        to outside parties.</li>
-        <li><strong>No AI Training:</strong> Your data is not used to train artificial intelligence
-        models.</li>
+        <li><strong>Google APIs:</strong> Add-on operations call Google Sheets™ and Slides™ APIs as
+        required by the synchronisation function. No other external services receive your document
+        data.</li>
+        <li><strong>Legal obligation:</strong> We may disclose information if required by law or to
+        protect the rights and safety of users.</li>
       </ul>
-      <p>Data is only transferred to Google's servers as necessary to execute the Add-on's functions
-      (e.g., calling the Slides API).</p>
     </section>
 
     <section>
       <h2>Data Storage and Protection</h2>
       <ul>
-        <li><strong>No External Storage:</strong> Crystord does not store your Google Sheets™ or
-        Slides™ data on external servers. All data resides within your own Google Drive.</li>
-        <li><strong>Security Measures:</strong> All communication between the Add-on and Google
-        services occurs over HTTPS. Since the application runs within Google Apps Script, it
-        benefits from Google's native security infrastructure.</li>
+        <li><strong>Add-on — no external storage:</strong> Google Sheets™ and Slides™ content is
+        never stored on Aleutheris servers. All document data resides within your Google account and
+        Drive.</li>
+        <li><strong>App — account data:</strong> Account credentials are stored securely on
+        Crystord platform infrastructure. Passwords are stored using a one-way cryptographic hash.
+        Session tokens are short-lived and invalidated on sign-out.</li>
+        <li><strong>Transport security:</strong> All communication between your browser, the App,
+        and Google services uses HTTPS encryption.</li>
+        <li><strong>Apps Script infrastructure:</strong> The Add-on runs within Google Apps Script,
+        which benefits from Google's security and compliance infrastructure.</li>
       </ul>
     </section>
 
     <section>
       <h2>Exception Logging</h2>
-      <p>Crystord uses Google's Cloud Logging for exception logging. This logging is limited to
-      technical error messages and does not include user content or personal data. Exception logs
-      are used solely for debugging and reliability improvements.</p>
+      <p>Both the Add-on and the App use technical logging for error detection and reliability
+      improvements. Logs record error types, timestamps, and operational context. They do not
+      include the content of your Google documents or your account password. Exception logs are
+      retained for up to 30 days and then automatically deleted.</p>
     </section>
 
     <section>
       <h2>User Controls</h2>
       <ul>
-        <li>You can revoke the Add-on's access to your Google account at any time through your
-        Google Account security settings at
-        <a href="https://myaccount.google.com/permissions" target="_blank" rel="noopener">myaccount.google.com/permissions</a>.</li>
-        <li>You may uninstall the Add-on or discontinue use of the Crystord platform whenever
-        you wish.</li>
+        <li><strong>Add-on permissions:</strong> You can revoke the Add-on's access to your Google
+        account at any time via
+        <a href="https://myaccount.google.com/permissions" target="_blank" rel="noopener noreferrer">myaccount.google.com/permissions</a>.
+        Revoking access immediately stops all document data access.</li>
+        <li><strong>Add-on uninstall:</strong> Uninstalling the Add-on removes all associated
+        Google account permissions.</li>
+        <li><strong>App account:</strong> You may contact us to request deletion of your Crystord
+        account and associated data at any time.</li>
       </ul>
     </section>
 
     <section>
       <h2>Data Retention and Deletion</h2>
-      <h3>Data Retention</h3>
+      <h3>Add-on</h3>
       <ul>
-        <li><strong>Google User Data:</strong> Crystord does not retain your Google Sheets™ or
-        Google Slides™ content on external servers. All data operations occur within Google's
-        infrastructure and your Google account.</li>
-        <li><strong>Configuration Data:</strong> Any configuration settings (such as Sheet™ IDs
-        or names) are stored within your Slides™ data properties and are not transmitted to
-        external servers.</li>
-        <li><strong>Exception Logs:</strong> Technical error logs are retained for up to 30 days
-        for debugging purposes, then automatically deleted.</li>
+        <li>No Google document content is retained after a synchronisation session completes. All
+        processing occurs transiently within Google's infrastructure.</li>
+        <li>Configuration data (such as selected Sheet IDs) is stored in your Slides™ file
+        properties within your Google account, not on external servers.</li>
       </ul>
 
-      <h3>Data Deletion</h3>
+      <h3>Web Application</h3>
       <ul>
-        <li><strong>Automatic Deletion:</strong> Since Crystord operates entirely within Google's
-        environment, no user data is stored externally that requires deletion.</li>
-        <li><strong>Access Revocation:</strong> When you revoke the Add-on's permissions through
-        your Google Account settings, all access to your data is immediately terminated.</li>
-        <li><strong>Add-on Removal:</strong> Uninstalling the Add-on removes all associated
-        permissions and stops any data access.</li>
-        <li><strong>User Rights:</strong> You have the right to request confirmation that no
-        personal data is being stored externally by contacting us at
-        <a href={`mailto:${siteConfig.contactEmail}`}>{siteConfig.contactEmail}</a>.</li>
+        <li>Account data is retained for as long as your account remains active.</li>
+        <li>You may request deletion of your account and all associated data by contacting us at
+        <a href={`mailto:${siteConfig.contactEmail}`}>{siteConfig.contactEmail}</a>. Requests are
+        processed within 30 days.</li>
+        <li>Exception logs are deleted after 30 days.</li>
       </ul>
     </section>
 
     <section>
       <h2>Compliance</h2>
-      <p>Crystord's use and transfer of information received from Google APIs will adhere to the
-      Google API Services User Data Policy, including the Limited Use Requirements. This means your
-      data is used only as necessary to provide or improve user-facing features and is never sold or
-      used for unauthorised purposes.</p>
+      <p>Crystord's use and transfer of information received from Google APIs adheres to the Google
+      API Services User Data Policy, including the Limited Use Requirements. Data is used only to
+      provide the features you request and is never used for advertising, profiling, or purposes
+      not disclosed in this policy.</p>
     </section>
 
     <section>
       <h2>Changes to This Policy</h2>
-      <p>This privacy policy may be updated from time to time. Any changes will be posted on this
-      page with an updated revision date.</p>
+      <p>This policy may be updated when product features change or legal requirements evolve.
+      Material changes will be announced on this page with an updated revision date. Continued use
+      of either product after a policy update constitutes acceptance of the revised terms.</p>
     </section>
 
     <section>
       <h2>Contact</h2>
-      <p>If you have any questions or concerns about this privacy policy or the Crystord platform,
-      please contact us at
+      <p>For questions or requests regarding this privacy policy or your personal data, contact
+      Aleutheris at
       <a href={`mailto:${siteConfig.contactEmail}`}>{siteConfig.contactEmail}</a>.</p>
     </section>
 

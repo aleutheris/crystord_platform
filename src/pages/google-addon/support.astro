@@ -6,33 +6,37 @@ import { siteConfig } from "../../config/site";
 <MainLayout title="Add-on Support">
   <article class="panel policy">
     <h1>Crystord Add-on Support</h1>
-    <p class="meta">Last updated: September 15, 2025</p>
+    <p class="meta">Last updated: June 8, 2026</p>
 
     <section>
       <h2>Introduction</h2>
-      <p>Welcome to the Crystord Add-on support page. Here you'll find resources to help you get
-      started, answers to common questions, troubleshooting steps, and ways to contact us.</p>
+      <p>Welcome to the Crystord support page. Here you will find resources to help you get started
+      with the Crystord Google Workspace Add-on and the Crystord web application at
+      <a href="https://app.crystord.com">app.crystord.com</a>, along with answers to common
+      questions, troubleshooting steps, and how to reach us.</p>
     </section>
 
     <section>
       <h2>Getting Started</h2>
       <h3>What is Crystord?</h3>
-      <p>Crystord is a Google Workspace Add-on that syncs variables between Google Sheets™ and
-      Google Slides™. Use it to create dynamic slide templates where placeholders like
-      <code>&#123;&#123;variable_name&#125;&#125;</code> are replaced with values from your
-      spreadsheet.</p>
+      <p>Crystord is a Google Workspace Add-on that synchronises variables between Google Sheets™
+      and Google Slides™. Use it to create dynamic slide templates where placeholders like
+      <code>&#123;&#123;variable_name&#125;&#125;</code> are automatically replaced with values
+      from your spreadsheet. The Crystord web application at
+      <a href="https://app.crystord.com">app.crystord.com</a> provides account management and
+      authentication for the Crystord platform.</p>
 
       <h3>Basic Setup</h3>
       <ol>
         <li>Install the Crystord Add-on from the
-        <a href={siteConfig.addonMarketplaceUrl} target="_blank" rel="noopener">Google Workspace Marketplace</a>.</li>
+        <a href={siteConfig.addonMarketplaceUrl} target="_blank" rel="noopener noreferrer">Google Workspace Marketplace</a>.</li>
         <li>Open your Slides™ presentation and add your variables in any part of your slides as
         <code>&#123;&#123;variable_name&#125;&#125;</code>.</li>
         <li>Click the bottom-left expansion arrow and press the Crystord icon to open the sidebar.</li>
         <li>The sidebar displays four buttons:
           <ul>
             <li><strong>Create Database:</strong> Creates a new Sheets™ file named "database" that
-            the Crystord Add-on is allowed to read, and opens it in a new tab. This file is
+            the Crystord Add-on is authorised to read, and opens it in a new tab. This file is
             automatically selected and initially empty. Add your variables by filling the table with
             the columns "Name" and "Value".</li>
             <li><strong>Select Database:</strong> Allows you to select a previously created Sheets™
@@ -42,11 +46,33 @@ import { siteConfig } from "../../config/site";
             values from the selected database.</li>
           </ul>
         </li>
-        <li>The first step is to create a database — nothing works without it. After making any
-        changes to the database, always click "Synchronise" to reflect updates in your Slides.
+        <li>The first step is always to create a database — no other functions work without it.
+        After making changes to the database, click "Synchronise" to reflect updates in your slides.
         Use clear and consistent naming conventions for variables to avoid conflicts during
         synchronisation.</li>
       </ol>
+    </section>
+
+    <section>
+      <h2>Crystord Web Application</h2>
+      <p>The Crystord web application at <a href="https://app.crystord.com">app.crystord.com</a>
+      is the sign-in and account management portal for the Crystord platform.</p>
+
+      <h3>Signing in</h3>
+      <p>Navigate to <a href="https://app.crystord.com">app.crystord.com</a> and enter your
+      registered email address and password. If you have forgotten your password, use the password
+      reset link on the sign-in page.</p>
+
+      <h3>Sign-in issues</h3>
+      <ul>
+        <li><strong>Invalid credentials:</strong> Double-check that you are using the email address
+        you registered with and that Caps Lock is not active.</li>
+        <li><strong>Password reset:</strong> Use the "Forgot password?" link on the sign-in page to
+        receive a reset email.</li>
+        <li><strong>Account access:</strong> If you cannot access your account after following the
+        above steps, contact us at
+        <a href={`mailto:${siteConfig.contactEmail}`}>{siteConfig.contactEmail}</a>.</li>
+      </ul>
     </section>
 
     <section>
@@ -54,34 +80,34 @@ import { siteConfig } from "../../config/site";
 
       <h3>How do I install the Add-on?</h3>
       <p>Install directly via the
-      <a href={siteConfig.addonMarketplaceUrl} target="_blank" rel="noopener">Google Workspace Marketplace</a>
+      <a href={siteConfig.addonMarketplaceUrl} target="_blank" rel="noopener noreferrer">Google Workspace Marketplace</a>
       or from within Google Slides™ by opening the side panel and searching for "Crystord".</p>
 
       <h3>The variables in Slides aren't updating.</h3>
       <ul>
         <li>Ensure you have created and selected a database using the "Create Database" or
         "Select Database" buttons in the sidebar.</li>
-        <li>Double-check that the variable names in your Slides match exactly with the names in
-        the database (case-sensitive, no extra spaces).</li>
-        <li>Click the "Synchronise" button in the sidebar to update Slides with the latest values
+        <li>Double-check that the variable names in your slides match exactly with the names in
+        the database — matching is case-sensitive and spaces matter.</li>
+        <li>Click the "Synchronise" button in the sidebar to update slides with the latest values
         from the database.</li>
       </ul>
 
       <h3>Do I need to re-link the Sheet every time?</h3>
       <p>No. Once a database is created or selected, it remains linked to the current Slides file.
-      You can refresh values as often as needed.</p>
+      You can synchronise values as often as needed without re-linking.</p>
 
       <h3>What format should I use for variables in Slides?</h3>
-      <p>Use curly brackets: <code>&#123;&#123;variable_name&#125;&#125;</code>
+      <p>Use double curly brackets: <code>&#123;&#123;variable_name&#125;&#125;</code>
       (e.g., <code>&#123;&#123;item_name&#125;&#125;</code>).</p>
 
       <h3>What if I accidentally delete the database file?</h3>
       <p>If the database file is deleted, create a new one using the "Create Database" button in
-      the sidebar and re-add your variables. The database file is a normal Sheets file — you can
-      also try to recover it from the Google Drive trash.</p>
+      the sidebar and re-add your variables. The database file is a standard Sheets file — you can
+      also attempt to recover it from the Google Drive trash.</p>
 
       <h3>What if I select the wrong database?</h3>
-      <p>Use the "Select Database" button in the sidebar to choose the correct one. Ensure the
+      <p>Use the "Select Database" button in the sidebar to choose the correct file. Ensure the
       correct database is selected before clicking "Synchronise".</p>
     </section>
 
@@ -89,27 +115,31 @@ import { siteConfig } from "../../config/site";
       <h2>Troubleshooting</h2>
 
       <h3>Add-on not appearing?</h3>
-      <p>Refresh Google Slides™ and ensure you are using the same account you installed the Add-on
-      with.</p>
+      <p>Refresh Google Slides™ and ensure you are signed in to the same Google account you used
+      to install the Add-on.</p>
 
       <h3>Sidebar won't open or is unresponsive?</h3>
-      <p>Try closing and reopening Google Slides™, or reinstall the Add-on if needed.</p>
+      <p>Try closing and reopening Google Slides™, or reinstall the Add-on from the
+      <a href={siteConfig.addonMarketplaceUrl} target="_blank" rel="noopener noreferrer">Google Workspace Marketplace</a>
+      if the issue persists.</p>
 
       <h3>Unexpected errors or bugs?</h3>
-      <p>Take a screenshot or copy the error message and contact support (details below).</p>
+      <p>Take a screenshot or copy the error message and contact us using the details below. Include
+      your browser version and a description of what you were doing when the error occurred.</p>
 
       <h3>Is the Add-on up to date?</h3>
-      <p>Ensure you are using the latest version of the Crystord Add-on. Outdated versions may not
-      support the latest features or workflows. Update via the Google Workspace Marketplace if
-      needed.</p>
+      <p>The Add-on is updated automatically via the Google Workspace Marketplace. If you experience
+      unexpected behaviour after a Google Workspace update, uninstalling and reinstalling from the
+      Marketplace will ensure you are running the latest version.</p>
     </section>
 
     <section>
       <h2>Contact &amp; Feedback</h2>
       <ul>
-        <li><strong>Contact us at:</strong>
-        <a href={`mailto:${siteConfig.contactEmail}`}>{siteConfig.contactEmail}</a></li>
-        <li><strong>Bug reports:</strong> Please provide the error message, browser version, and a
+        <li><strong>Support:</strong>
+        <a href={`mailto:${siteConfig.contactEmail}`}>{siteConfig.contactEmail}</a> — we aim to
+        respond within three business days.</li>
+        <li><strong>Bug reports:</strong> Include the error message, your browser version, and a
         description of what you were doing when the issue occurred.</li>
         <li><strong>Feature suggestions:</strong> We welcome your ideas — email us at the address
         above.</li>
@@ -119,9 +149,9 @@ import { siteConfig } from "../../config/site";
     <section>
       <h2>Resources</h2>
       <ul>
-        <li><a href={siteConfig.addonMarketplaceUrl} target="_blank" rel="noopener">Crystord on
+        <li><a href={siteConfig.addonMarketplaceUrl} target="_blank" rel="noopener noreferrer">Crystord on
         Google Workspace Marketplace</a></li>
-        <li><a href={siteConfig.youtubeUrl} target="_blank" rel="noopener">Crystord on YouTube</a>
+        <li><a href={siteConfig.youtubeUrl} target="_blank" rel="noopener noreferrer">Crystord on YouTube</a>
         — tutorials and feature walkthroughs</li>
       </ul>
     </section>

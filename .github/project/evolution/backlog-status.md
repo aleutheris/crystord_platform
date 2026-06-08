@@ -23,4 +23,4 @@ Each backlog item must have exactly one of the following statuses:
 | BI-260005 | Finalize build/deploy operation model for GitHub Pages release | Done | ADR-260005 | REQ-FR-260005 |
 | BI-260006 | Implement and run mandatory release gate checks for public-site deployments | Done | ADR-260006 | REQ-FR-260006 |
 | BI-260007 | Deliver phased legal rollout and modernized brand-preserving visual refresh | Done | ADR-260007 | REQ-FR-260007 |
-| BI-260009 | Rewrite Privacy Policy, Terms of Service, and Support pages with product-accurate copy | Ready | ADR-260007 | n/a |
+| BI-260009 | Rewrite Privacy Policy, Terms of Service, and Support pages with product-accurate copy | Done | ADR-260007 | n/a |
