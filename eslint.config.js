@@ -15,4 +15,21 @@ export default defineConfig([
     },
   },
   ...astro.configs.recommended,
+  // Launch integration boundaries: analytics and external form backends are not permitted (ADR-260004)
+  {
+    files: ["**/*.{ts,mjs,cjs,astro}"],
+    rules: {
+      "no-restricted-syntax": [
+        "error",
+        {
+          selector: "Identifier[name='gtag']",
+          message: "gtag (Google Analytics) is not permitted at launch. See ADR-260004.",
+        },
+        {
+          selector: "MemberExpression > Identifier[name='dataLayer']",
+          message: "dataLayer (Google Tag Manager) is not permitted at launch. See ADR-260004.",
+        },
+      ],
+    },
+  },
 ]);
