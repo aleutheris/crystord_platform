@@ -1,15 +1,20 @@
 :root {
   /* branding.md token map */
-  --bg: #fafbfc;        /* Open White */
-  --surface: #f3f6f8;   /* Soft Neutral */
+  --bg: #fafbfc;          /* Open White */
+  --surface: #f3f6f8;     /* Soft Neutral */
   --surface-alt: #e7edf2; /* Structured Neutral */
-  --ink: #17202a;       /* Deep Charcoal */
-  --muted: #5b6b7a;     /* Slate Gray */
-  --brand: #0066cc;     /* Trust Blue */
-  --brand-dark: #004c99; /* Deep Trust Blue */
-  --line: #d6dee5;      /* Soft Border */
-  --error: #d64545;     /* Privacy Red */
-  --white: #ffffff;     /* Pure white — button text, CTA surfaces; add dark-mode override if dark theme is adopted */
+  --ink: #17202a;         /* Deep Charcoal */
+  --muted: #5b6b7a;       /* Slate Gray */
+  --brand: #0066cc;       /* Trust Blue */
+  --brand-dark: #004c99;  /* Deep Trust Blue */
+  --green: #00a676;       /* Control Green — user agency, ownership, safe actions */
+  --green-dark: #007a58;  /* Deep Control Green — hover/selected control states */
+  --gold: #ffb000;        /* Confidence Gold — use sparingly for key emphasis moments */
+  --line: #d6dee5;        /* Soft Border */
+  --success: #2e8b57;     /* Success Green — healthy completion states */
+  --warning: #f39c12;     /* Review Orange — caution, pending review */
+  --error: #d64545;       /* Privacy Red */
+  --white: #ffffff;       /* Pure white — button text, CTA surfaces; add dark-mode override if dark theme is adopted */
 }
 
 * {
