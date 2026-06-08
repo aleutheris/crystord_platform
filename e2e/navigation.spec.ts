@@ -141,4 +141,16 @@ test.describe("Route navigation (BI-260003)", () => {
     await page.locator("footer").getByRole("link", { name: "Support" }).click();
     await expect(page).toHaveURL(/\/google-addon\/support/);
   });
+
+  test("Home nav link navigates to /", async ({ page }) => {
+    await page.goto("/contact");
+    await page.locator("header nav[aria-label='Main']").getByRole("link", { name: "Home" }).click();
+    await expect(page).toHaveURL(/\/$/);
+  });
+
+  test("footer Google Add-on link navigates to /google-addon", async ({ page }) => {
+    await page.goto("/");
+    await page.locator("footer").getByRole("link", { name: "Google Add-on" }).click();
+    await expect(page).toHaveURL(/\/google-addon/);
+  });
 });

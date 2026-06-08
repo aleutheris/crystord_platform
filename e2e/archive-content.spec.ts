@@ -63,6 +63,24 @@ test.describe("Contact path (BI-260002)", () => {
     await page.goto("/contact");
     await expect(page.locator("h1")).toBeVisible();
   });
+
+  test("contact page has an email link", async ({ page }) => {
+    await page.goto("/contact");
+    const emailLink = page.getByRole("link", { name: /@crystord\.com/i });
+    await expect(emailLink).toBeVisible();
+    const href = await emailLink.getAttribute("href");
+    expect(href).toMatch(/^mailto:/);
+  });
+});
+
+test.describe("YouTube reference preserved (BI-260002)", () => {
+  test("landing page connect section links to YouTube", async ({ page }) => {
+    await page.goto("/");
+    const ytLink = page.locator(".connect-panel, .panel").getByRole("link", { name: /youtube/i });
+    await expect(ytLink).toBeVisible();
+    const href = await ytLink.getAttribute("href");
+    expect(href).toContain("youtube.com");
+  });
 });
 
 test.describe("Excluded archive content (BI-260002)", () => {
@@ -73,6 +91,22 @@ test.describe("Excluded archive content (BI-260002)", () => {
 
   test("demo route is not served", async ({ page }) => {
     const response = await page.goto("/demo");
+    expect(response?.status()).toBe(404);
+  });
+
+  // Archive app-internal authenticated routes must not be served on the public site
+  test("/login is not served", async ({ page }) => {
+    const response = await page.goto("/login");
+    expect(response?.status()).toBe(404);
+  });
+
+  test("/register is not served", async ({ page }) => {
+    const response = await page.goto("/register");
+    expect(response?.status()).toBe(404);
+  });
+
+  test("/dashboard is not served", async ({ page }) => {
+    const response = await page.goto("/dashboard");
     expect(response?.status()).toBe(404);
   });
 });
