@@ -28,9 +28,10 @@ test.describe("Google Add-on page (BI-260002)", () => {
 
   test("links to support, privacy, and terms are present", async ({ page }) => {
     await page.goto("/google-addon");
-    await expect(page.getByRole("link", { name: "Support" })).toBeVisible();
-    await expect(page.getByRole("link", { name: "Privacy Policy" })).toBeVisible();
-    await expect(page.getByRole("link", { name: "Terms of Service" })).toBeVisible();
+    const trademark = page.locator(".trademark");
+    await expect(trademark.getByRole("link", { name: "Support" })).toBeVisible();
+    await expect(trademark.getByRole("link", { name: "Privacy Policy" })).toBeVisible();
+    await expect(trademark.getByRole("link", { name: "Terms of Service" })).toBeVisible();
   });
 });
 
