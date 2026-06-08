@@ -1,6 +1,6 @@
 ---
 import "../styles/global.css";
-import { mainNav, siteConfig } from "../config/site";
+import { mainNav, signInLink, footerNav, siteConfig } from "../config/site";
 
 interface Props {
   title: string;
@@ -19,11 +19,12 @@ const { title } = Astro.props;
   <body>
     <header>
       <div class="wrap">
-        <strong>{siteConfig.productName}</strong>
+        <a href="/" class="site-name">{siteConfig.productName}</a>
         <nav aria-label="Main">
           {mainNav.map((item) => (
             <a href={item.href}>{item.label}</a>
           ))}
+          <a href={signInLink.href} class="btn btn-primary nav-signin">{signInLink.label}</a>
         </nav>
       </div>
     </header>
@@ -34,7 +35,16 @@ const { title } = Astro.props;
     </main>
     <footer>
       <div class="wrap">
-        Public site for Crystord. SaaS sign-in is intentionally separated from this landing experience.
+        <nav class="footer-nav" aria-label="Footer">
+          {footerNav.map((item) =>
+            item.external ? (
+              <a href={item.href} target="_blank" rel="noopener noreferrer">{item.label}</a>
+            ) : (
+              <a href={item.href}>{item.label}</a>
+            )
+          )}
+        </nav>
+        <p class="footer-copy">&copy; {new Date().getFullYear()} {siteConfig.productName}. All rights reserved.</p>
       </div>
     </footer>
   </body>

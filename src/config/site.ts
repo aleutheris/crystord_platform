@@ -6,10 +6,22 @@ export const siteConfig = {
   addonMarketplaceUrl: "https://workspace.google.com/marketplace/app/crystord/186388621973"
 };
 
-export const mainNav = [
+export const mainNav: Array<{ href: string; label: string }> = [
   { href: "/", label: "Home" },
   { href: "/google-addon", label: "Google Add-on" },
   { href: "/contact", label: "Contact" },
+];
+
+export const signInLink = {
+  href: siteConfig.appSignInUrl,
+  label: "Sign in to Crystord App",
+};
+
+export const footerNav: Array<{ href: string; label: string; external?: boolean }> = [
+  { href: "/google-addon", label: "Google Add-on" },
+  { href: "/google-addon/support", label: "Support" },
+  { href: "/privacy", label: "Privacy" },
   { href: "/terms", label: "Terms" },
-  { href: "/privacy", label: "Privacy" }
+  { href: "/contact", label: "Contact" },
+  { href: siteConfig.youtubeUrl, label: "YouTube", external: true },
 ];

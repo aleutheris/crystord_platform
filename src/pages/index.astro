@@ -4,22 +4,34 @@ import SignInForm from "../components/SignInForm.astro";
 import { siteConfig } from "../config/site";
 ---
 
-<MainLayout title="Landing Page">
-  <section class="panel">
-    <h1>Sign in to Crystord</h1>
-    <SignInForm />
-  </section>
+<MainLayout title="Home">
 
-  <section class="panel">
-    <h2>Control and Visualise Your Dataflow</h2>
-    <p>
+  <!-- 1. Hero -->
+  <section class="hero">
+    <h1>Control and Visualise Your Dataflow</h1>
+    <p class="hero-sub">
       Crystord synchronises data between Google Sheets™ and Google Slides™, turning static
-      presentations into dynamic, data-driven templates. Define variables in your slides, connect
-      a spreadsheet, and keep everything in sync at the click of a button.
+      presentations into dynamic, data-driven templates you control.
     </p>
   </section>
 
-  <section class="panel">
+  <!-- 2. Primary actions -->
+  <section class="panel actions-panel">
+    <div class="actions-grid">
+      <div class="action-signin">
+        <h2>Sign in to Crystord App</h2>
+        <SignInForm />
+      </div>
+      <div class="action-addon">
+        <h2>Explore the Google Add-on</h2>
+        <p>Install directly from the Google Workspace Marketplace and connect your first spreadsheet in minutes.</p>
+        <a class="btn btn-secondary" href="/google-addon">Learn about the Add-on</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. Product overview -->
+  <section class="overview panel">
     <h2>Why Crystord?</h2>
     <ul class="clean feature-list">
       <li>
@@ -41,18 +53,113 @@ import { siteConfig } from "../config/site";
     </ul>
   </section>
 
-  <section class="panel">
-    <h2>Get started</h2>
+  <!-- 4. Trust / compliance strip — intentionally repeats footer links for above-the-fold discovery -->
+  <nav class="trust-strip" aria-label="Legal and support">
+    <a href="/privacy">Privacy</a>
+    <span aria-hidden="true">·</span>
+    <a href="/terms">Terms</a>
+    <span aria-hidden="true">·</span>
+    <a href="/google-addon/support">Support</a>
+  </nav>
+
+  <!-- 5. Connect block -->
+  <section class="panel connect-panel">
+    <h2>Get in touch</h2>
     <div class="actions">
-      <a class="btn btn-primary" href="/google-addon">Explore the Google Add-on</a>
-      <a class="btn btn-secondary" href={siteConfig.youtubeUrl} target="_blank" rel="noopener">Watch on YouTube</a>
       <a class="btn btn-secondary" href="/contact">Contact us</a>
+      <a class="btn btn-secondary" href={siteConfig.youtubeUrl} target="_blank" rel="noopener noreferrer">Watch on YouTube</a>
     </div>
   </section>
+
+  <!-- 6. Final call-to-action -->
+  <section class="cta-section">
+    <h2>Start managing your data, on your terms</h2>
+    <a class="btn btn-primary" href={siteConfig.appSignInUrl}>Sign in to Crystord App</a>
+  </section>
+
 </MainLayout>
 
 <style>
+  .hero {
+    padding: 3rem 0 2rem;
+  }
+
+  .hero h1 {
+    font-size: clamp(1.6rem, 4vw, 2.4rem);
+    margin-bottom: 0.75rem;
+  }
+
+  .hero-sub {
+    font-size: 1.1rem;
+    color: var(--muted);
+    max-width: 56ch;
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .actions-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2.5rem;
+  }
+
+  .action-addon {
+    border-left: 1px solid var(--line);
+    padding-left: 2.5rem;
+  }
+
+  .action-addon p {
+    color: var(--muted);
+    margin-bottom: 1.25rem;
+    line-height: 1.55;
+  }
+
   .feature-list li {
-    margin-bottom: 0.6rem;
+    margin-bottom: 0.65rem;
+    line-height: 1.5;
+  }
+
+  .trust-strip {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.6rem 0;
+    margin-bottom: 1rem;
+    color: var(--muted);
+    font-size: 0.92rem;
+  }
+
+  .trust-strip a {
+    text-decoration: none;
+    color: var(--muted);
+  }
+
+  .trust-strip a:hover {
+    text-decoration: underline;
+  }
+
+  .cta-section {
+    background: var(--brand-dark);
+    border-radius: 16px;
+    padding: 2.25rem 1.75rem;
+    margin-bottom: 1rem;
+  }
+
+  .cta-section h2 {
+    color: var(--white);
+    margin-bottom: 1.25rem;
+  }
+
+  @media (max-width: 640px) {
+    .actions-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .action-addon {
+      border-left: none;
+      border-top: 1px solid var(--line);
+      padding-left: 0;
+      padding-top: 1.5rem;
+    }
   }
 </style>
