@@ -9,3 +9,4 @@
 | FR-260005 | FR | Deployment and release operation model for the public site | Accepted | ADR-260005 | BI-260005 |
 | FR-260006 | FR | Mandatory verification gates for public-site releases | Accepted | ADR-260006 | BI-260006 |
 | FR-260007 | FR | Resolve legal rollout and visual direction for launch readiness | Accepted | ADR-260007 | BI-260007 |
+| FR-260008 | FR | Comprehensive testing infrastructure for public site | Accepted | ADR-260008 | BI-260008 |
