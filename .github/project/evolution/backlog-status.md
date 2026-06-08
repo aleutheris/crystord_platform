@@ -21,5 +21,5 @@ Each backlog item must have exactly one of the following statuses:
 | BI-260008 | Establish comprehensive testing foundation for public site | Done | ADR-260008 | REQ-FR-260008 |
 | BI-260004 | Enforce section-6 implementation boundaries in public-site build | Done | ADR-260004 | REQ-FR-260004 |
 | BI-260005 | Finalize build/deploy operation model for GitHub Pages release | Done | ADR-260005 | REQ-FR-260005 |
-| BI-260006 | Implement and run mandatory release gate checks for public-site deployments | Ready | ADR-260006 | REQ-FR-260006 |
+| BI-260006 | Implement and run mandatory release gate checks for public-site deployments | Done | ADR-260006 | REQ-FR-260006 |
 | BI-260007 | Deliver phased legal rollout and modernized brand-preserving visual refresh | Ready | ADR-260007 | REQ-FR-260007 |
