@@ -59,8 +59,9 @@ describe("All public pages use MainLayout (BI-260007)", () => {
 
   for (const file of pageFiles) {
     const rel = file.replace(root + "/", "");
-    it(`${rel} imports MainLayout`, () => {
-      expect(read(rel)).toContain("MainLayout");
+    it(`${rel} imports a site layout`, () => {
+      const content = read(rel);
+      expect(content.includes("MainLayout") || content.includes("AddonLayout")).toBe(true);
     });
   }
 });

@@ -1,12 +1,13 @@
 ---
-import MainLayout from "../layouts/MainLayout.astro";
+import AddonLayout from "../layouts/AddonLayout.astro";
 import { siteConfig } from "../config/site";
 ---
 
-<MainLayout title="Google Add-on">
+<AddonLayout title="Google Add-on">
+  <!-- Hero -->
   <section class="panel addon-hero">
     <h1>Crystord</h1>
-    <h2>Control and Visualise Your Dataflow</h2>
+    <p class="tagline">Make Template Reports Easy</p>
     <p class="lead">
       A streamlined Google Workspace Add-on that brings the power of Crystord's synchronisation
       directly to your Google Sheets™ and Google Slides™. Transform static presentations into
@@ -14,62 +15,93 @@ import { siteConfig } from "../config/site";
     </p>
     <div class="actions">
       <a class="btn btn-primary" href={siteConfig.addonMarketplaceUrl} target="_blank" rel="noopener">
-        Install from Marketplace
+        Install From Marketplace
       </a>
     </div>
   </section>
 
+  <!-- How It Works -->
   <section class="panel">
-    <h2>How It Works</h2>
+    <h2 class="section-title">How It Works</h2>
 
-    <div class="how-step">
-      <h3>Dynamic Content Synchronisation</h3>
-      <p>
-        The Crystord Google Workspace Add-on transforms your Google Slides™ into dynamic,
-        data-driven presentations. Simply mark variables in your slides using curly brackets
-        (e.g., <code>&#123;&#123;item_name&#125;&#125;</code>) and sync them with values from
-        your Google Sheets™ at the click of a button.
-      </p>
-      <ul class="clean step-list">
-        <li>Open Google Slides™ and click the expansion arrow to find Crystord in the right sidebar.</li>
-        <li>Create your database, open it, and add your variables.</li>
-        <li>Click Synchronise to update your slides immediately.</li>
-      </ul>
+    <div class="how-row">
+      <div class="how-text">
+        <h3>Dynamic Content Synchronisation</h3>
+        <p>
+          The Crystord Google Workspace Add-on transforms your Google Slides™ into dynamic,
+          data-driven presentations. Simply mark variables in your slides using curly brackets
+          (e.g., <code>&#123;&#123;item_name&#125;&#125;</code>) and sync them with values from
+          your Google Sheets™ at the click of a button.
+        </p>
+        <ul class="clean step-list check-list">
+          <li>Open Google Slides™ and click the expansion arrow to find Crystord in the right sidebar.</li>
+          <li>Create your database, open it, and add your variables.</li>
+          <li>Click Synchronise to update your slides immediately.</li>
+        </ul>
+      </div>
+      <div class="how-media">
+        <img
+          src={`${import.meta.env.BASE_URL}assigning.gif`}
+          alt="Setting up variables in Google Slides"
+          class="how-gif"
+        />
+        <p class="how-caption">Setting up variables in your Google Slides™ presentation</p>
+      </div>
     </div>
 
-    <div class="how-step">
-      <h3>Instant Updates, Zero Hassle</h3>
-      <p>
-        Make changes in your Google Sheets™ and see them reflected immediately in your
-        presentations. No manual copying, no version control issues, no outdated slides.
-      </p>
-      <p>
-        Currently focused on Sheets™-to-Slides™ synchronisation, with new features planned
-        for future releases.
-      </p>
+    <div class="how-row">
+      <div class="how-text">
+        <h3>Instant Updates, Zero Hassle</h3>
+        <p>
+          Make changes in your Google Sheets™ and see them reflected immediately in your
+          presentations. No manual copying, no version control issues, no outdated slides.
+        </p>
+        <p>
+          Currently focused on Sheets™-to-Slides™ synchronisation, with new features planned
+          for future releases.
+        </p>
+      </div>
+      <div class="how-media">
+        <img
+          src={`${import.meta.env.BASE_URL}updating.gif`}
+          alt="Live updates from Google Sheets to Google Slides"
+          class="how-gif"
+        />
+        <p class="how-caption">Watch your slides update instantly as you change values in Sheets™</p>
+      </div>
     </div>
   </section>
 
+  <!-- Perfect For -->
   <section class="panel">
-    <h2>Perfect For</h2>
-    <ul class="clean use-cases">
-      <li>
-        <strong>Live Reports</strong> — Keep stakeholder reports always up-to-date with real-time data.
-      </li>
-      <li>
-        <strong>Budget Tracking</strong> — Present financial data that updates automatically as numbers change.
-      </li>
-      <li>
-        <strong>Executive Dashboards</strong> — Reflect the latest KPIs and metrics without rebuilding slides.
-      </li>
-      <li>
-        <strong>Project Trackers</strong> — Monitor progress with presentations that update themselves.
-      </li>
-    </ul>
+    <h2 class="section-title">Perfect For</h2>
+    <div class="use-cases-grid">
+      <div class="use-case-card">
+        <div class="use-case-icon">📊</div>
+        <h4>Live Reports</h4>
+        <p>Keep your stakeholder reports always up-to-date with real-time data.</p>
+      </div>
+      <div class="use-case-card">
+        <div class="use-case-icon">💰</div>
+        <h4>Budget Tracking</h4>
+        <p>Present financial data that updates automatically as numbers change.</p>
+      </div>
+      <div class="use-case-card">
+        <div class="use-case-icon">📈</div>
+        <h4>Executive Dashboards</h4>
+        <p>Reflect the latest KPIs and metrics without rebuilding slides.</p>
+      </div>
+      <div class="use-case-card">
+        <div class="use-case-icon">✅</div>
+        <h4>Project Trackers</h4>
+        <p>Monitor progress with presentations that update themselves.</p>
+      </div>
+    </div>
   </section>
 
+  <!-- CTA -->
   <section class="panel cta-panel">
-    <h2>Ready to Transform Your Presentations?</h2>
+    <h2>Ready To Transform Your Presentations?</h2>
     <p>
       Install the Crystord for Google Slides™ Add-on today and experience data-driven presentations.
     </p>
@@ -88,41 +120,137 @@ import { siteConfig } from "../config/site";
     &nbsp;·&nbsp;
     <a href="/privacy">Privacy Policy</a>
     &nbsp;·&nbsp;
-    <a href="/terms">Terms of Service</a>
+    <a href="/terms">Terms Of Service</a>
     <br />
     <small>Google Sheets™ and Google Slides™ are trademarks of Google LLC.</small>
   </p>
-</MainLayout>
+</AddonLayout>
 
 <style>
-  .addon-hero h1 {
-    margin-bottom: 0.1rem;
+  .addon-hero {
+    text-align: left;
   }
 
-  .addon-hero h2 {
+  .addon-hero h1 {
+    margin-bottom: 0.25rem;
+    font-size: 2.5rem;
+  }
+
+  .tagline {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--brand-dark);
     margin-top: 0;
-    font-size: 1.25rem;
-    color: var(--muted);
-    font-weight: 600;
+    margin-bottom: 1rem;
   }
 
   .lead {
     font-size: 1.05rem;
+    line-height: 1.75;
     margin-bottom: 1.25rem;
+    max-width: 640px;
   }
 
-  .how-step {
-    margin-bottom: 1.5rem;
+  .section-title {
+    text-align: center;
+    margin-bottom: 2rem;
   }
 
-  .how-step h3 {
+  /* How It Works two-column rows */
+  .how-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    align-items: center;
+    margin-bottom: 2.5rem;
+  }
+
+  .how-row:last-child {
+    margin-bottom: 0;
+  }
+
+  .how-text {
+    line-height: 1.75;
+  }
+
+  .how-text h3 {
     color: var(--brand-dark);
-    margin-bottom: 0.4rem;
+    margin-bottom: 0.5rem;
+    line-height: 1.3;
   }
 
-  .step-list li,
-  .use-cases li {
+  .step-list li {
     margin-bottom: 0.5rem;
+    line-height: 1.7;
+  }
+
+  .check-list {
+    list-style: none;
+    padding-left: 0;
+  }
+
+  .check-list li {
+    padding-left: 1.6rem;
+    position: relative;
+  }
+
+  .check-list li::before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    color: var(--green);
+    font-weight: 700;
+  }
+
+  .how-gif {
+    width: 100%;
+    border-radius: 8px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.12);
+    display: block;
+  }
+
+  .how-caption {
+    font-size: 0.85rem;
+    color: var(--muted);
+    text-align: center;
+    margin-top: 0.5rem;
+    font-style: italic;
+  }
+
+  /* Perfect For cards */
+  .use-cases-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.25rem;
+  }
+
+  .use-case-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 1.25rem;
+    text-align: center;
+  }
+
+  .use-case-icon {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .use-case-card h4 {
+    margin: 0 0 0.4rem;
+    color: var(--brand-dark);
+  }
+
+  .use-case-card p {
+    font-size: 0.9rem;
+    color: var(--muted);
+    margin: 0;
+  }
+
+  /* CTA */
+  .cta-panel {
+    text-align: left;
   }
 
   code {
@@ -141,5 +269,15 @@ import { siteConfig } from "../config/site";
 
   .trademark a {
     color: var(--muted);
+  }
+
+  @media (max-width: 700px) {
+    .how-row {
+      grid-template-columns: 1fr;
+    }
+
+    .use-cases-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
   }
 </style>
