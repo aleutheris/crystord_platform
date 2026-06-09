@@ -19,3 +19,7 @@ src/proxy.conf.json
 *.pyc
 *.pkl
 modified_date.json
+
+# Test results
+test-results/
+playwright-report/

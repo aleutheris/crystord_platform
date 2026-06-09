@@ -26,7 +26,7 @@ import { siteConfig } from "../config/site";
         </div>
 
         <!-- Sign In panel -->
-        <div class="tab-panel" id="tab-signin">
+        <div class="tab-panel action-signin" id="tab-signin">
           <h2 class="card-title">
             <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
             Sign In
@@ -158,6 +158,13 @@ import { siteConfig } from "../config/site";
     </div>
   </section>
 
+  <!-- Trust strip -->
+  <nav aria-label="Legal and support" class="trust-strip">
+    <a href="/privacy">Privacy</a>
+    <a href="/terms">Terms</a>
+    <a href="/google-addon/support">Support</a>
+  </nav>
+
   <!-- 4. Connect With Us -->
   <section class="panel connect-panel">
     <h2 class="section-title">Get in Touch</h2>
@@ -170,7 +177,7 @@ import { siteConfig } from "../config/site";
         </div>
         <h6>YouTube</h6>
         <p>Watch tutorials, demos, and feature updates</p>
-        <a class="btn btn-connect btn-yt" href={siteConfig.youtubeUrl} target="_blank" rel="noopener noreferrer">Subscribe</a>
+        <a class="btn btn-connect btn-yt" href={siteConfig.youtubeUrl} target="_blank" rel="noopener noreferrer" aria-label="YouTube">Subscribe</a>
       </div>
 
       <div class="connect-card">
@@ -201,6 +208,12 @@ import { siteConfig } from "../config/site";
       </div>
 
     </div>
+  </section>
+
+  <!-- CTA section -->
+  <section class="cta-section panel">
+    <h2>Ready to get started?</h2>
+    <a href={siteConfig.appSignInUrl} class="btn btn-primary">Sign in to Crystord App</a>
   </section>
 
 </MainLayout>
