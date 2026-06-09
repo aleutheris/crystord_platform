@@ -21,10 +21,6 @@ export const signInLink = {
 };
 
 export const footerNav: Array<{ href: string; label: string; external?: boolean }> = [
-  { href: "/google-addon", label: "Google Add-on" },
-  { href: "/google-addon/support", label: "Support" },
-  { href: "/privacy", label: "Privacy" },
-  { href: "/terms", label: "Terms" },
-  { href: "/contact", label: "Contact" },
-  { href: siteConfig.youtubeUrl, label: "YouTube", external: true },
+  { href: "/privacy", label: "Privacy Policy" },
+  { href: "/terms", label: "Terms of Service" },
 ];

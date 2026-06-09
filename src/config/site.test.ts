@@ -42,34 +42,11 @@ describe("mainNav (BI-260003)", () => {
 describe("footerNav (BI-260003)", () => {
   const labels = () => footerNav.map((n) => n.label);
 
-  it("contains Google Add-on", () => {
-    expect(labels()).toContain("Google Add-on");
+  it("contains Privacy Policy", () => {
+    expect(labels()).toContain("Privacy Policy");
   });
 
-  it("contains Support", () => {
-    expect(labels()).toContain("Support");
-  });
-
-  it("contains Privacy", () => {
-    expect(labels()).toContain("Privacy");
-  });
-
-  it("contains Terms", () => {
-    expect(labels()).toContain("Terms");
-  });
-
-  it("contains Contact", () => {
-    expect(labels()).toContain("Contact");
-  });
-
-  it("contains YouTube marked as external", () => {
-    const yt = footerNav.find((n) => n.label === "YouTube");
-    expect(yt).toBeDefined();
-    expect(yt?.external).toBe(true);
-  });
-
-  it("only YouTube is marked external", () => {
-    const externalCount = footerNav.filter((n) => n.external).length;
-    expect(externalCount).toBe(1);
+  it("contains Terms of Service", () => {
+    expect(labels()).toContain("Terms of Service");
   });
 });
