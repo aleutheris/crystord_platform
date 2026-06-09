@@ -10,3 +10,4 @@
 | FR-260006 | FR | Mandatory verification gates for public-site releases | Accepted | ADR-260006 | BI-260006 |
 | FR-260007 | FR | Resolve legal rollout and visual direction for launch readiness | Accepted | ADR-260007 | BI-260007 |
 | FR-260008 | FR | Comprehensive testing infrastructure for public site | Accepted | ADR-260008 | BI-260008 |
+| QR-260010 | QR | Reusable UI component library and vertical-slice delivery convention | Accepted | ADR-260010 | BI-260010 |

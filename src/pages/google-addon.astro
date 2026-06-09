@@ -1,5 +1,6 @@
 ---
 import AddonLayout from "../layouts/AddonLayout.astro";
+import CheckList from "../components/ui/CheckList.astro";
 import { siteConfig } from "../config/site";
 ---
 
@@ -33,11 +34,11 @@ import { siteConfig } from "../config/site";
           (e.g., <code>&#123;&#123;item_name&#125;&#125;</code>) and sync them with values from
           your Google Sheets™ at the click of a button.
         </p>
-        <ul class="clean step-list check-list">
-          <li>Open Google Slides™ and click the expansion arrow to find Crystord in the right sidebar.</li>
-          <li>Create your database, open it, and add your variables.</li>
-          <li>Click Synchronise to update your slides immediately.</li>
-        </ul>
+        <CheckList items={[
+          "Open Google Slides™ and click the expansion arrow to find Crystord in the right sidebar.",
+          "Create your database, open it, and add your variables.",
+          "Click Synchronise to update your slides immediately.",
+        ]} />
       </div>
       <div class="how-media">
         <img
@@ -116,11 +117,11 @@ import { siteConfig } from "../config/site";
   </section>
 
   <p class="trademark">
-    <a href="/google-addon/support">Support</a>
-    &nbsp;·&nbsp;
     <a href="/privacy">Privacy Policy</a>
     &nbsp;·&nbsp;
     <a href="/terms">Terms Of Service</a>
+    &nbsp;·&nbsp;
+    <a href="/google-addon/support">Support</a>
     <br />
     <small>Google Sheets™ and Google Slides™ are trademarks of Google LLC.</small>
   </p>
@@ -179,29 +180,6 @@ import { siteConfig } from "../config/site";
     line-height: 1.3;
   }
 
-  .step-list li {
-    margin-bottom: 0.5rem;
-    line-height: 1.7;
-  }
-
-  .check-list {
-    list-style: none;
-    padding-left: 0;
-  }
-
-  .check-list li {
-    padding-left: 1.6rem;
-    position: relative;
-  }
-
-  .check-list li::before {
-    content: "✓";
-    position: absolute;
-    left: 0;
-    color: var(--green);
-    font-weight: 700;
-  }
-
   .how-gif {
     width: 100%;
     border-radius: 8px;
@@ -253,17 +231,10 @@ import { siteConfig } from "../config/site";
     text-align: left;
   }
 
-  code {
-    font-family: monospace;
-    background: var(--surface-alt);
-    padding: 0.1em 0.35em;
-    border-radius: 4px;
-  }
-
   .trademark {
     font-size: 0.85rem;
     color: var(--muted);
-    text-align: center;
+    text-align: left;
     margin-top: 0.5rem;
   }
 

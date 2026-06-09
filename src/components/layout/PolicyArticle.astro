@@ -1,0 +1,19 @@
+---
+interface Props {
+  title: string;
+  updatedAt: string;
+}
+
+const { title, updatedAt } = Astro.props;
+---
+
+<article class="panel policy">
+  <h1>{title}</h1>
+  <p class="meta">Last updated: {updatedAt}</p>
+
+  <slot />
+
+  <p class="trademark">
+    <slot name="trademark" />
+  </p>
+</article>

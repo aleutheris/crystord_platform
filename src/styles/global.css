@@ -179,6 +179,56 @@ footer .wrap {
   font-size: 0.85rem;
 }
 
+/* ── Policy / legal pages ── */
+.policy section {
+  margin-bottom: 1.5rem;
+}
+
+.policy h2 {
+  font-size: 1.1rem;
+  margin-bottom: 0.4rem;
+}
+
+.policy h3 {
+  font-size: 1rem;
+  color: var(--brand-dark);
+  margin-bottom: 0.3rem;
+}
+
+.policy ul,
+.policy ol {
+  padding-left: 1.4rem;
+  margin: 0.4rem 0 0.8rem;
+}
+
+.policy li {
+  margin-bottom: 0.4rem;
+}
+
+.meta {
+  color: var(--muted);
+  font-size: 0.9rem;
+  margin-top: -0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.trademark {
+  color: var(--muted);
+  margin-top: 2rem;
+  font-size: 0.85rem;
+}
+
+.trademark a {
+  color: var(--muted);
+}
+
+code {
+  font-family: monospace;
+  background: var(--surface-alt);
+  padding: 0.1em 0.35em;
+  border-radius: 4px;
+}
+
 @media (max-width: 720px) {
   header .wrap {
     align-items: flex-start;

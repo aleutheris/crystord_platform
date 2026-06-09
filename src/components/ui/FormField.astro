@@ -1,0 +1,72 @@
+---
+interface Props {
+  label: string;
+  name: string;
+  type?: "text" | "password" | "email";
+  placeholder?: string;
+  required?: boolean;
+  error?: string;
+  autocomplete?: string;
+  value?: string;
+}
+
+const {
+  label,
+  name,
+  type = "text",
+  placeholder,
+  required = false,
+  error,
+  autocomplete,
+  value,
+} = Astro.props;
+---
+
+<div class="form-field">
+  <label for={name}>{label}</label>
+  <input
+    id={name}
+    name={name}
+    type={type}
+    placeholder={placeholder}
+    required={required}
+    autocomplete={autocomplete}
+    value={value}
+  />
+  {error && <p class="field-error">{error}</p>}
+</div>
+
+<style>
+  .form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+
+  label {
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+
+  input {
+    padding: 0.55rem 0.75rem;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    font-size: 1rem;
+    font-family: inherit;
+    background: var(--white);
+    color: var(--ink);
+  }
+
+  input:focus {
+    outline: 2px solid var(--brand);
+    outline-offset: 1px;
+    border-color: transparent;
+  }
+
+  .field-error {
+    color: var(--error);
+    font-size: 0.85rem;
+    margin: 0;
+  }
+</style>

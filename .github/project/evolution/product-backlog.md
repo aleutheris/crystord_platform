@@ -10,6 +10,8 @@
 | BI-260006 | Implement and run mandatory release gate checks for public-site deployments | Planned | High |
 | BI-260007 | Deliver phased legal rollout and modernized brand-preserving visual refresh | Planned | High |
 
+| BI-260010 | Establish reusable UI component library and vertical slice structure | In Progress | Medium |
+
 ## Unprioritized intent items
 
 - n/a

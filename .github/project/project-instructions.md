@@ -13,7 +13,7 @@ Instantiated from `.github/generic/process/project-instructions.md`.
 
 - Major modules and responsibilities: Public landing page, separate SaaS sign-in page, Google add-on overview page, legal pages, support page, shared layout and global styling.
 - Module ownership map: Layout and styling in `src/layouts` and `src/styles`; content pages in `src/pages`; deployment metadata in `.github/workflows` and `.github/project`.
-- Allowed dependency directions: Pages may depend on shared layout/config; shared layout may depend on site config and global styles; pages must not depend on each other.
+- Allowed dependency directions: Pages may depend on shared layout/config, `src/components/`, and `src/features/<name>/components/`; shared layout may depend on site config and global styles; pages must not depend on each other.
 - Boundary contract catalog (API/schema/events/config): Public links, build-time environment variables for base path and SaaS sign-in URL, and the copied public contact/legal copy.
 - Behavior-oriented slicing plan: Landing experience, sign-in entry, add-on explanation, legal compliance pages, and support/troubleshooting.
 

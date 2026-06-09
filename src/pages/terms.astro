@@ -1,12 +1,11 @@
 ---
 import MainLayout from "../layouts/MainLayout.astro";
+import PolicyArticle from "../components/layout/PolicyArticle.astro";
 import { siteConfig } from "../config/site";
 ---
 
 <MainLayout title="Terms of Service">
-  <article class="panel policy">
-    <h1>Crystord: Terms of Service</h1>
-    <p class="meta">Last updated: June 8, 2026</p>
+  <PolicyArticle title="Crystord: Terms of Service" updatedAt="June 8, 2026">
 
     <section>
       <h2>Introduction</h2>
@@ -198,47 +197,6 @@ import { siteConfig } from "../config/site";
       <a href={`mailto:${siteConfig.contactEmail}`}>{siteConfig.contactEmail}</a>.</p>
     </section>
 
-    <p class="trademark">
-      <small>Google Sheets™ and Google Slides™ are trademarks of Google LLC.</small>
-    </p>
-  </article>
+    <small slot="trademark">Google Sheets™ and Google Slides™ are trademarks of Google LLC.</small>
+  </PolicyArticle>
 </MainLayout>
-
-<style>
-  .policy section {
-    margin-bottom: 1.5rem;
-  }
-
-  .policy h2 {
-    font-size: 1.1rem;
-    margin-bottom: 0.4rem;
-  }
-
-  .policy h3 {
-    font-size: 1rem;
-    color: var(--brand-dark);
-    margin-bottom: 0.3rem;
-  }
-
-  .policy ul {
-    padding-left: 1.4rem;
-    margin: 0.4rem 0 0.8rem;
-  }
-
-  .policy li {
-    margin-bottom: 0.4rem;
-  }
-
-  .meta {
-    color: var(--muted);
-    font-size: 0.9rem;
-    margin-top: -0.5rem;
-    margin-bottom: 1.5rem;
-  }
-
-  .trademark {
-    color: var(--muted);
-    margin-top: 2rem;
-    font-size: 0.85rem;
-  }
-</style>

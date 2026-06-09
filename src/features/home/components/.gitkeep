@@ -1,0 +1,3 @@
+# Vertical slice: home feature components
+# Place home-page-specific Astro components here.
+# Pages in src/pages/ import from this folder; this folder must not import from src/pages/.

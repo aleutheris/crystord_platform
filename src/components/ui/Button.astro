@@ -1,0 +1,75 @@
+---
+interface Props {
+  href?: string;
+  variant?: "primary" | "secondary" | "outline" | "link";
+  size?: "sm" | "md" | "lg";
+  external?: boolean;
+  type?: "button" | "submit" | "reset";
+  disabled?: boolean;
+  class?: string;
+}
+
+const {
+  href,
+  variant = "primary",
+  size = "md",
+  external = false,
+  type = "button",
+  disabled = false,
+  class: extraClass,
+} = Astro.props;
+
+const classes = [
+  "btn",
+  `btn-${variant}`,
+  size !== "md" ? `btn-${size}` : "",
+  extraClass ?? "",
+]
+  .filter(Boolean)
+  .join(" ");
+
+const externalAttrs = external
+  ? { target: "_blank", rel: "noopener noreferrer" }
+  : {};
+---
+
+{
+  href ? (
+    <a href={href} class={classes} {...externalAttrs}>
+      <slot />
+    </a>
+  ) : (
+    <button type={type} class={classes} disabled={disabled}>
+      <slot />
+    </button>
+  )
+}
+
+<style>
+  .btn-outline {
+    border: 1px solid var(--brand);
+    color: var(--brand);
+    background: transparent;
+  }
+
+  .btn-link {
+    background: none;
+    border: none;
+    padding: 0;
+    color: var(--brand);
+    font-weight: 600;
+    text-decoration: underline;
+    border-radius: 0;
+    cursor: pointer;
+  }
+
+  .btn-sm {
+    padding: 0.4rem 0.75rem;
+    font-size: 0.875rem;
+  }
+
+  .btn-lg {
+    padding: 0.85rem 1.4rem;
+    font-size: 1.05rem;
+  }
+</style>

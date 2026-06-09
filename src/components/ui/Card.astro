@@ -1,0 +1,41 @@
+---
+interface Props {
+  variant?: "default" | "surface";
+  padding?: "sm" | "md" | "lg";
+  class?: string;
+}
+
+const { variant = "default", padding = "md", class: extraClass } = Astro.props;
+
+const classes = [
+  "panel",
+  "card",
+  variant === "surface" ? "card-surface" : "",
+  `card-pad-${padding}`,
+  extraClass ?? "",
+]
+  .filter(Boolean)
+  .join(" ");
+---
+
+<div class={classes}>
+  <slot />
+</div>
+
+<style>
+  .card-surface {
+    background: var(--surface);
+  }
+
+  .card-pad-sm {
+    padding: 0.75rem;
+  }
+
+  .card-pad-md {
+    padding: 1.25rem;
+  }
+
+  .card-pad-lg {
+    padding: 2rem;
+  }
+</style>
