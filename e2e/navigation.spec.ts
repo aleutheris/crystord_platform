@@ -45,31 +45,12 @@ test.describe("Footer navigation (BI-260003)", () => {
     await page.goto("/");
   });
 
-  test("footer contains Google Add-on link", async ({ page }) => {
-    await expect(page.locator("footer").getByRole("link", { name: "Google Add-on" })).toBeVisible();
+  test("footer contains Privacy Policy link", async ({ page }) => {
+    await expect(page.locator("footer").getByRole("link", { name: "Privacy Policy" })).toBeVisible();
   });
 
-  test("footer contains Support link", async ({ page }) => {
-    await expect(page.locator("footer").getByRole("link", { name: "Support" })).toBeVisible();
-  });
-
-  test("footer contains Privacy link", async ({ page }) => {
-    await expect(page.locator("footer").getByRole("link", { name: "Privacy" })).toBeVisible();
-  });
-
-  test("footer contains Terms link", async ({ page }) => {
-    await expect(page.locator("footer").getByRole("link", { name: "Terms" })).toBeVisible();
-  });
-
-  test("footer contains Contact link", async ({ page }) => {
-    await expect(page.locator("footer").getByRole("link", { name: "Contact" })).toBeVisible();
-  });
-
-  test("footer contains YouTube link opening in new tab", async ({ page }) => {
-    const yt = page.locator("footer").getByRole("link", { name: "YouTube" });
-    await expect(yt).toBeVisible();
-    await expect(yt).toHaveAttribute("target", "_blank");
-    await expect(yt).toHaveAttribute("rel", "noopener noreferrer");
+  test("footer contains Terms of Service link", async ({ page }) => {
+    await expect(page.locator("footer").getByRole("link", { name: "Terms of Service" })).toBeVisible();
   });
 
   test("footer shows copyright notice", async ({ page }) => {
@@ -126,20 +107,14 @@ test.describe("Route navigation (BI-260003)", () => {
 
   test("Privacy footer link navigates to /privacy", async ({ page }) => {
     await page.goto("/");
-    await page.locator("footer").getByRole("link", { name: "Privacy" }).click();
+    await page.locator("footer").getByRole("link", { name: "Privacy Policy" }).click();
     await expect(page).toHaveURL(/\/privacy/);
   });
 
   test("Terms footer link navigates to /terms", async ({ page }) => {
     await page.goto("/");
-    await page.locator("footer").getByRole("link", { name: "Terms" }).click();
+    await page.locator("footer").getByRole("link", { name: "Terms of Service" }).click();
     await expect(page).toHaveURL(/\/terms/);
-  });
-
-  test("Support footer link navigates to /google-addon/support", async ({ page }) => {
-    await page.goto("/");
-    await page.locator("footer").getByRole("link", { name: "Support" }).click();
-    await expect(page).toHaveURL(/\/google-addon\/support/);
   });
 
   test("Home nav link navigates to /", async ({ page }) => {
@@ -148,9 +123,4 @@ test.describe("Route navigation (BI-260003)", () => {
     await expect(page).toHaveURL(/\/$/);
   });
 
-  test("footer Google Add-on link navigates to /google-addon", async ({ page }) => {
-    await page.goto("/");
-    await page.locator("footer").getByRole("link", { name: "Google Add-on" }).click();
-    await expect(page).toHaveURL(/\/google-addon/);
-  });
 });
