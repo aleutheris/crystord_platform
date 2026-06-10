@@ -27,14 +27,14 @@ test.describe("Main navigation (BI-260003)", () => {
     await expect(nav.getByRole("link", { name: "Contact" })).toBeVisible();
   });
 
-  test("nav contains Sign in to Crystord App button", async ({ page }) => {
+  test("nav contains Sign In button", async ({ page }) => {
     const nav = page.locator("header nav[aria-label='Main']");
-    await expect(nav.getByRole("link", { name: "Sign in to Crystord App" })).toBeVisible();
+    await expect(nav.getByRole("link", { name: "Sign In" })).toBeVisible();
   });
 
   test("sign-in link routes to app domain", async ({ page }) => {
     const nav = page.locator("header nav[aria-label='Main']");
-    const signIn = nav.getByRole("link", { name: "Sign in to Crystord App" });
+    const signIn = nav.getByRole("link", { name: "Sign In" });
     const href = await signIn.getAttribute("href");
     expect(href).toContain("crystord.com");
   });
@@ -74,20 +74,16 @@ test.describe("Landing page section order (BI-260003)", () => {
     await expect(page.locator(".overview")).toBeVisible();
   });
 
-  test("trust strip with legal and support links is present", async ({ page }) => {
+  test("trust strip is not present on landing page", async ({ page }) => {
     await page.goto("/");
-    const strip = page.locator("nav[aria-label='Legal and support']");
-    await expect(strip).toBeVisible();
-    await expect(strip.getByRole("link", { name: "Privacy" })).toBeVisible();
-    await expect(strip.getByRole("link", { name: "Terms" })).toBeVisible();
-    await expect(strip.getByRole("link", { name: "Support" })).toBeVisible();
+    await expect(page.locator("nav[aria-label='Legal and support']")).not.toBeVisible();
   });
 
   test("final CTA section is present", async ({ page }) => {
     await page.goto("/");
     await expect(page.locator(".cta-section")).toBeVisible();
     await expect(
-      page.locator(".cta-section").getByRole("link", { name: "Sign in to Crystord App" })
+      page.locator(".cta-section").getByRole("link", { name: "Sign In" })
     ).toBeVisible();
   });
 });

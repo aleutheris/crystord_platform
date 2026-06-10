@@ -9,8 +9,8 @@ describe("siteConfig", () => {
 
 // BI-260001: sign-in entry must carry the required label and route
 describe("signInLink (BI-260001)", () => {
-  it("label is 'Sign in to Crystord App'", () => {
-    expect(signInLink.label).toBe("Sign in to Crystord App");
+  it("label is 'Sign In'", () => {
+    expect(signInLink.label).toBe("Sign In");
   });
 
   it("href resolves to the app sign-in URL", () => {

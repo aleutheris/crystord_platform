@@ -17,7 +17,7 @@ export const mainNav: Array<{ href: string; label: string }> = [
 
 export const signInLink = {
   href: siteConfig.appSignInUrl,
-  label: "Sign in to Crystord App",
+  label: "Sign In",
 };
 
 export const footerNav: Array<{ href: string; label: string; external?: boolean }> = [
