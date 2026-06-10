@@ -11,3 +11,4 @@
 | FR-260007 | FR | Resolve legal rollout and visual direction for launch readiness | Accepted | ADR-260007 | BI-260007 |
 | FR-260008 | FR | Comprehensive testing infrastructure for public site | Accepted | ADR-260008 | BI-260008 |
 | QR-260010 | QR | Reusable UI component library and vertical-slice delivery convention | Accepted | ADR-260010 | BI-260010 |
+| FR-260011 | FR | GraphQL-backed authentication with Google Sign-In and demo access | Accepted | ADR-260011 | BI-260011 |

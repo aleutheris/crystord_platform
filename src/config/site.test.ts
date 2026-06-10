@@ -5,6 +5,10 @@ describe("siteConfig", () => {
   it("appSignInUrl points to the Crystord app domain", () => {
     expect(siteConfig.appSignInUrl).toContain("crystord.com");
   });
+
+  it("graphqlUrl points to the Crystord app domain", () => {
+    expect(siteConfig.graphqlUrl).toContain("crystord.com");
+  });
 });
 
 // BI-260001: sign-in entry must carry the required label and route

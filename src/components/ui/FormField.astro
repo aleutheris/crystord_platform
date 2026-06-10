@@ -20,6 +20,8 @@ const {
   autocomplete,
   value,
 } = Astro.props;
+
+const errorId = error ? `${name}-error` : undefined;
 ---
 
 <div class="form-field">
@@ -32,8 +34,10 @@ const {
     required={required}
     autocomplete={autocomplete}
     value={value}
+    aria-describedby={errorId}
+    aria-invalid={error ? "true" : undefined}
   />
-  {error && <p class="field-error">{error}</p>}
+  {error && <p id={errorId} class="field-error" role="alert">{error}</p>}
 </div>
 
 <style>

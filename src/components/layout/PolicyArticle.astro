@@ -13,7 +13,9 @@ const { title, updatedAt } = Astro.props;
 
   <slot />
 
-  <p class="trademark">
-    <slot name="trademark" />
-  </p>
+  {Astro.slots.has("trademark") && (
+    <p class="trademark">
+      <slot name="trademark" />
+    </p>
+  )}
 </article>

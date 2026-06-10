@@ -1,6 +1,8 @@
 ---
 import MainLayout from "../layouts/MainLayout.astro";
 import CheckList from "../components/ui/CheckList.astro";
+import Button from "../components/ui/Button.astro";
+import Card from "../components/ui/Card.astro";
 import { siteConfig } from "../config/site";
 ---
 
@@ -15,9 +17,7 @@ import { siteConfig } from "../config/site";
       dynamic, data-driven templates with just a few clicks.
     </p>
     <div class="actions">
-      <a class="btn btn-primary" href={siteConfig.addonMarketplaceUrl} target="_blank" rel="noopener">
-        Install From Marketplace
-      </a>
+      <Button href={siteConfig.addonMarketplaceUrl} external>Install From Marketplace</Button>
     </div>
   </section>
 
@@ -77,26 +77,26 @@ import { siteConfig } from "../config/site";
   <section class="panel">
     <h2 class="section-title">Perfect For</h2>
     <div class="use-cases-grid">
-      <div class="use-case-card">
+      <Card variant="surface" class="use-case-card">
         <div class="use-case-icon">📊</div>
         <h4>Live Reports</h4>
         <p>Keep your stakeholder reports always up-to-date with real-time data.</p>
-      </div>
-      <div class="use-case-card">
+      </Card>
+      <Card variant="surface" class="use-case-card">
         <div class="use-case-icon">💰</div>
         <h4>Budget Tracking</h4>
         <p>Present financial data that updates automatically as numbers change.</p>
-      </div>
-      <div class="use-case-card">
+      </Card>
+      <Card variant="surface" class="use-case-card">
         <div class="use-case-icon">📈</div>
         <h4>Executive Dashboards</h4>
         <p>Reflect the latest KPIs and metrics without rebuilding slides.</p>
-      </div>
-      <div class="use-case-card">
+      </Card>
+      <Card variant="surface" class="use-case-card">
         <div class="use-case-icon">✅</div>
         <h4>Project Trackers</h4>
         <p>Monitor progress with presentations that update themselves.</p>
-      </div>
+      </Card>
     </div>
   </section>
 
@@ -107,12 +107,8 @@ import { siteConfig } from "../config/site";
       Install the Crystord for Google Slides™ Add-on today and experience data-driven presentations.
     </p>
     <div class="actions">
-      <a class="btn btn-primary" href={siteConfig.addonMarketplaceUrl} target="_blank" rel="noopener">
-        Install Now
-      </a>
-      <a class="btn btn-secondary" href={`mailto:${siteConfig.contactEmail}?subject=Google%20Add-on%20Support`}>
-        Contact Support
-      </a>
+      <Button href={siteConfig.addonMarketplaceUrl} external>Install Now</Button>
+      <Button href={`mailto:${siteConfig.contactEmail}?subject=Google%20Add-on%20Support`} variant="secondary">Contact Support</Button>
     </div>
   </section>
 
@@ -197,11 +193,9 @@ import { siteConfig } from "../config/site";
   }
 
   .use-case-card {
-    background: var(--surface);
-    border: 1px solid var(--line);
     border-radius: 8px;
-    padding: 1.25rem;
     text-align: center;
+    margin-bottom: 0;
   }
 
   .use-case-icon {

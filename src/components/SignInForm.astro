@@ -1,13 +1,19 @@
 ---
 import FormField from "./ui/FormField.astro";
+import Button from "./ui/Button.astro";
 import { siteConfig } from "../config/site";
 ---
 
-<form class="sign-in-form" data-auth-url={siteConfig.appSignInUrl} novalidate>
+<form class="sign-in-form" data-graphql-url={siteConfig.graphqlUrl} novalidate>
   <FormField label="Email" name="si-email" type="email" required autocomplete="email" />
   <FormField label="Password" name="si-password" type="password" required autocomplete="current-password" />
   <p class="sign-in-error" hidden aria-live="polite"></p>
-  <button type="submit" class="btn btn-primary">Sign In</button>
+  <div class="sign-in-actions">
+    <Button type="submit">Sign In</Button>
+    <Button type="button" variant="secondary" class="sign-in-demo">Try Demo</Button>
+  </div>
+  <div class="sign-in-divider"><span>or</span></div>
+  <div class="sign-in-google"></div>
 </form>
 
 <style>
@@ -24,52 +30,130 @@ import { siteConfig } from "../config/site";
     font-size: 0.9rem;
   }
 
-  button[type="submit"] {
-    align-self: flex-start;
+  .sign-in-actions {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .sign-in-actions button {
     border: none;
     cursor: pointer;
     font-size: 1rem;
     font-family: inherit;
   }
 
-  button[type="submit"]:disabled {
+  .sign-in-actions button:disabled {
     opacity: 0.6;
     cursor: not-allowed;
+  }
+
+  .sign-in-divider {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: var(--muted);
+    font-size: 0.85rem;
+  }
+
+  .sign-in-divider::before,
+  .sign-in-divider::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--line);
+  }
+
+  .sign-in-google {
+    min-height: 40px;
   }
 </style>
 
 <script>
-  import { submitSignIn } from "../utils/sign-in";
+  import { gqlSignIn } from "../utils/auth-graphql";
+  import { loadGsi, initGoogleButton } from "../utils/google-auth";
+  import { getGoogleClientId } from "../utils/auth-graphql";
+
+  const DEMO_EMAIL = "demo";
+  const DEMO_PASSWORD = "demo";
+
+  async function handleAuth(
+    graphqlUrl: string,
+    email: string,
+    password: string,
+    errorEl: HTMLParagraphElement,
+    primaryBtn: HTMLButtonElement,
+    busyLabel: string
+  ) {
+    errorEl.hidden = true;
+    primaryBtn.disabled = true;
+    primaryBtn.textContent = busyLabel;
+
+    try {
+      const result = await gqlSignIn(graphqlUrl, email, password);
+      if (result.ok) {
+        window.location.href = `${new URL(graphqlUrl).origin}/?token=${result.token}`;
+      } else {
+        errorEl.textContent = result.message;
+        errorEl.hidden = false;
+        primaryBtn.disabled = false;
+        primaryBtn.textContent = "Sign In";
+      }
+    } catch {
+      errorEl.textContent = "Unable to reach the sign-in service. Please try again.";
+      errorEl.hidden = false;
+      primaryBtn.disabled = false;
+      primaryBtn.textContent = "Sign In";
+    }
+  }
 
   document.querySelectorAll<HTMLFormElement>(".sign-in-form").forEach((form) => {
+    const graphqlUrl = form.dataset.graphqlUrl!;
+    const errorEl = form.querySelector<HTMLParagraphElement>(".sign-in-error")!;
+    const submitBtn = form.querySelector<HTMLButtonElement>("button[type=submit]")!;
+    const demoBtn = form.querySelector<HTMLButtonElement>(".sign-in-demo")!;
+    const googleContainer = form.querySelector<HTMLDivElement>(".sign-in-google")!;
+
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
-      const authUrl = form.dataset.authUrl!;
       const email = form.querySelector<HTMLInputElement>("#si-email")!.value.trim();
       const password = form.querySelector<HTMLInputElement>("#si-password")!.value;
-      const errorEl = form.querySelector<HTMLParagraphElement>(".sign-in-error")!;
-      const submitBtn = form.querySelector<HTMLButtonElement>("button[type=submit]")!;
-
-      errorEl.hidden = true;
-      submitBtn.disabled = true;
-      submitBtn.textContent = "Signing in…";
-
-      try {
-        const result = await submitSignIn(authUrl, email, password);
-        if (result.ok) {
-          window.location.href = result.redirectUrl;
-        } else {
-          errorEl.textContent = result.message;
-          errorEl.hidden = false;
-          submitBtn.disabled = false;
-          submitBtn.textContent = "Sign In";
-        }
-      } catch {
-        errorEl.textContent = "Unable to reach the sign-in service. Please try again.";
-        errorEl.hidden = false;
-        submitBtn.disabled = false;
-        submitBtn.textContent = "Sign In";
-      }
+      await handleAuth(graphqlUrl, email, password, errorEl, submitBtn, "Signing in…");
     });
+
+    demoBtn.addEventListener("click", async () => {
+      await handleAuth(graphqlUrl, DEMO_EMAIL, DEMO_PASSWORD, errorEl, submitBtn, "Loading demo…");
+    });
+
+    loadGsi()
+      .then(() => getGoogleClientId(graphqlUrl))
+      .then((clientId) => {
+        initGoogleButton(clientId, googleContainer, async (idToken) => {
+          import("../utils/auth-graphql").then(async ({ gqlSignInGoogle }) => {
+            submitBtn.disabled = true;
+            submitBtn.textContent = "Signing in…";
+            try {
+              const result = await gqlSignInGoogle(graphqlUrl, idToken);
+              if (result.ok) {
+                window.location.href = `${new URL(graphqlUrl).origin}/?token=${result.token}`;
+              } else {
+                errorEl.textContent = result.message;
+                errorEl.hidden = false;
+                submitBtn.disabled = false;
+                submitBtn.textContent = "Sign In";
+              }
+            } catch {
+              errorEl.textContent = "Unable to reach the sign-in service. Please try again.";
+              errorEl.hidden = false;
+              submitBtn.disabled = false;
+              submitBtn.textContent = "Sign In";
+            }
+          });
+        });
+      })
+      .catch(() => {
+        // Google button unavailable — email/password path still works
+      });
   });
 </script>
