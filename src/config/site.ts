@@ -5,7 +5,7 @@ export const siteConfig = {
   appDemoUrl: import.meta.env.PUBLIC_APP_DEMO_URL || "https://app.crystord.com/demo",
   youtubeUrl: "https://www.youtube.com/@crystord",
   newsletterUrl: import.meta.env.PUBLIC_NEWSLETTER_URL || "https://crystord.com/newsletter",
-  contactEmail: "hello@crystord.com",
+  contactEmail: "info@aleutheris.com",
   addonMarketplaceUrl: "https://workspace.google.com/marketplace/app/crystord/186388621973"
 };
 
@@ -23,4 +23,5 @@ export const signInLink = {
 export const footerNav: Array<{ href: string; label: string; external?: boolean }> = [
   { href: "/privacy", label: "Privacy Policy" },
   { href: "/terms", label: "Terms of Service" },
+  { href: "/google-addon/support", label: "Support" },
 ];

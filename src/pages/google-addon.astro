@@ -1,10 +1,10 @@
 ---
-import AddonLayout from "../layouts/AddonLayout.astro";
+import MainLayout from "../layouts/MainLayout.astro";
 import CheckList from "../components/ui/CheckList.astro";
 import { siteConfig } from "../config/site";
 ---
 
-<AddonLayout title="Google Add-on">
+<MainLayout title="Google Add-on">
   <!-- Hero -->
   <section class="panel addon-hero">
     <h1>Crystord</h1>
@@ -117,15 +117,9 @@ import { siteConfig } from "../config/site";
   </section>
 
   <p class="trademark">
-    <a href="/privacy">Privacy Policy</a>
-    &nbsp;·&nbsp;
-    <a href="/terms">Terms Of Service</a>
-    &nbsp;·&nbsp;
-    <a href="/google-addon/support">Support</a>
-    <br />
     <small>Google Sheets™ and Google Slides™ are trademarks of Google LLC.</small>
   </p>
-</AddonLayout>
+</MainLayout>
 
 <style>
   .addon-hero {

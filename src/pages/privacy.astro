@@ -58,7 +58,8 @@ import { siteConfig } from "../config/site";
       <p>Crystord's use of data adheres to the following principles:</p>
       <ul>
         <li><strong>Add-on data:</strong> Google Sheets™ and Slides™ content is accessed solely to
-        perform the synchronisation you request. It is not retained, analysed for commercial
+        perform the synchronisation you request and to display your spreadsheet data within the
+        add-on sidebar so you can select what to sync. It is not retained, analysed for commercial
         purposes, or shared with third parties.</li>
         <li><strong>App account data:</strong> Your email address is used to identify your account.
         It is not used for marketing without your explicit consent.</li>
@@ -104,9 +105,10 @@ import { siteConfig } from "../config/site";
     <section>
       <h2>Exception Logging</h2>
       <p>Both the Add-on and the App use technical logging for error detection and reliability
-      improvements. Logs record error types, timestamps, and operational context. They do not
-      include the content of your Google documents or your account password. Exception logs are
-      retained for up to 30 days and then automatically deleted.</p>
+      improvements. The Add-on uses Google Cloud Logging for exception logging. Logs record error
+      types, timestamps, and operational context. They do not include the content of your Google
+      documents or your account password. Exception logs are retained for up to 30 days and then
+      automatically deleted.</p>
     </section>
 
     <section>
