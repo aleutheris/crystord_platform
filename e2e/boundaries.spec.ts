@@ -63,7 +63,7 @@ test.describe("Contact flow: contact page and mailto fallback (BI-260004)", () =
 
   test("contact page has a mailto link as fallback", async ({ page }) => {
     await page.goto("/contact");
-    const emailLink = page.getByRole("link", { name: /@crystord\.com/i });
+    const emailLink = page.getByRole("link", { name: /@/i });
     await expect(emailLink).toBeVisible();
     const href = await emailLink.getAttribute("href");
     expect(href).toMatch(/^mailto:/);

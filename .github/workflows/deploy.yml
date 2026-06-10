@@ -36,7 +36,6 @@ jobs:
 
       - name: Build site
         env:
-          GITHUB_PAGES_BASE: /crystord_platform/
           PUBLIC_APP_SIGN_IN_URL: https://app.crystord.com/sign-in
         run: npm run build
 

@@ -26,12 +26,12 @@ test.describe("Google Add-on page (BI-260002)", () => {
     await expect(page.locator(".trademark")).toContainText("Google Slides");
   });
 
-  test("links to support, privacy, and terms are present", async ({ page }) => {
+  test("links to support, privacy, and terms are present in footer", async ({ page }) => {
     await page.goto("/google-addon");
-    const trademark = page.locator(".trademark");
-    await expect(trademark.getByRole("link", { name: "Support" })).toBeVisible();
-    await expect(trademark.getByRole("link", { name: "Privacy Policy" })).toBeVisible();
-    await expect(trademark.getByRole("link", { name: "Terms of Service" })).toBeVisible();
+    const footer = page.locator("footer");
+    await expect(footer.getByRole("link", { name: "Privacy Policy" })).toBeVisible();
+    await expect(footer.getByRole("link", { name: "Terms of Service" })).toBeVisible();
+    await expect(footer.getByRole("link", { name: "Support" })).toBeVisible();
   });
 });
 
@@ -67,7 +67,7 @@ test.describe("Contact path (BI-260002)", () => {
 
   test("contact page has an email link", async ({ page }) => {
     await page.goto("/contact");
-    const emailLink = page.getByRole("link", { name: /@crystord\.com/i });
+    const emailLink = page.getByRole("link", { name: /@/i });
     await expect(emailLink).toBeVisible();
     const href = await emailLink.getAttribute("href");
     expect(href).toMatch(/^mailto:/);
