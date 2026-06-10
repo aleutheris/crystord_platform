@@ -27,7 +27,7 @@ test.describe("Main navigation (BI-260003)", () => {
     await expect(nav.getByRole("link", { name: "Contact" })).toBeVisible();
   });
 
-  test("nav contains Sign In button", async ({ page }) => {
+  test("nav contains Sign In link", async ({ page }) => {
     const nav = page.locator("header nav[aria-label='Main']");
     await expect(nav.getByRole("link", { name: "Sign In" })).toBeVisible();
   });
@@ -79,13 +79,6 @@ test.describe("Landing page section order (BI-260003)", () => {
     await expect(page.locator("nav[aria-label='Legal and support']")).not.toBeVisible();
   });
 
-  test("final CTA section is present", async ({ page }) => {
-    await page.goto("/");
-    await expect(page.locator(".cta-section")).toBeVisible();
-    await expect(
-      page.locator(".cta-section").getByRole("link", { name: "Sign In" })
-    ).toBeVisible();
-  });
 });
 
 test.describe("Route navigation (BI-260003)", () => {

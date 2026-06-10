@@ -27,7 +27,7 @@ const { title } = Astro.props;
           {mainNav.map((item) => (
             <a href={item.href}>{item.label}</a>
           ))}
-          <a href={signInLink.href} class="btn btn-primary nav-signin">{signInLink.label}</a>
+          <a href={signInLink.href}>{signInLink.label}</a>
         </nav>
       </div>
     </header>

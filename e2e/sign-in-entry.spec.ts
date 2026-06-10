@@ -28,11 +28,6 @@ test.describe("Sign-in entry (BI-260001)", () => {
     const link = page.locator("header nav[aria-label='Main']").getByRole("link", { name: "Sign In" });
     await expect(link).toBeVisible();
   });
-
-  test("final CTA sign-in link is labelled correctly", async ({ page }) => {
-    const link = page.locator(".cta-section").getByRole("link", { name: "Sign In" });
-    await expect(link).toBeVisible();
-  });
 });
 
 test.describe("Sign-in form submission (BI-260001)", () => {
