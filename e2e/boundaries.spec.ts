@@ -26,10 +26,10 @@ test.describe("Compatibility routes for legacy archive URLs (BI-260004)", () => 
     expect(page.url()).toContain("/terms");
   });
 
-  test("/gaddon/support redirects to /google-addon/support", async ({ page }) => {
+  test("/gaddon/support redirects to /support", async ({ page }) => {
     await page.goto("/gaddon/support");
-    await page.waitForURL(/\/google-addon\/support/, { timeout: 5000 });
-    expect(page.url()).toContain("/google-addon/support");
+    await page.waitForURL(/\/support/, { timeout: 5000 });
+    expect(page.url()).toContain("/support");
   });
 });
 

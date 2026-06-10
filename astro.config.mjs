@@ -10,6 +10,7 @@ export default defineConfig({
     "/gaddon": "/google-addon",
     "/gaddon/privacy": "/privacy",
     "/gaddon/terms": "/terms",
-    "/gaddon/support": "/google-addon/support",
+    "/gaddon/support": "/support",
+    "/google-addon/support": "/support",
   },
 });

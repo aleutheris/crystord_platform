@@ -23,5 +23,5 @@ export const signInLink = {
 export const footerNav: Array<{ href: string; label: string; external?: boolean }> = [
   { href: "/privacy", label: "Privacy Policy" },
   { href: "/terms", label: "Terms of Service" },
-  { href: "https://crystord.com/support", label: "Support", external: true },
+  { href: "/support", label: "Support" },
 ];

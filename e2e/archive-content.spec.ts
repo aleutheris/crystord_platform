@@ -37,12 +37,12 @@ test.describe("Google Add-on page (BI-260002)", () => {
 
 test.describe("Support page (BI-260002)", () => {
   test("page loads successfully", async ({ page }) => {
-    const response = await page.goto("/google-addon/support");
+    const response = await page.goto("/support");
     expect(response?.status()).toBeLessThan(400);
   });
 
   test("page has a heading", async ({ page }) => {
-    await page.goto("/google-addon/support");
+    await page.goto("/support");
     await expect(page.locator("h1")).toBeVisible();
   });
 });

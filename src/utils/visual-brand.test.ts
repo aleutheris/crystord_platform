@@ -87,12 +87,12 @@ describe("Legal page content preserved (BI-260007 phase 1)", () => {
     expect(read("src/pages/terms.astro")).toContain("Description of the Service");
   });
 
-  it("google-addon/support.astro contains the support heading", () => {
-    expect(read("src/pages/google-addon/support.astro")).toContain("Add-on Support");
+  it("support.astro contains the support heading", () => {
+    expect(read("src/pages/support.astro")).toContain("Add-on Support");
   });
 
-  it("google-addon/support.astro contains the Getting Started section", () => {
-    expect(read("src/pages/google-addon/support.astro")).toContain("Getting Started");
+  it("support.astro contains the Getting Started section", () => {
+    expect(read("src/pages/support.astro")).toContain("Getting Started");
   });
 });
 
