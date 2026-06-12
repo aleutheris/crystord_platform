@@ -1,5 +1,6 @@
 // BI-260011: sign-in and sign-up connected to the GraphQL backend
 import { test, expect } from "@playwright/test";
+import { graphqlEndpoint } from "./active-config";
 
 test.describe("Sign-in entry (BI-260001 / BI-260011)", () => {
   test.beforeEach(async ({ page }) => {
@@ -35,7 +36,7 @@ test.describe("Sign-in form submission (BI-260011)", () => {
     await page.goto("/");
     const graphqlUrl = await page.locator("form.sign-in-form").getAttribute("data-graphql-url");
     expect(graphqlUrl).toBeTruthy();
-    expect(graphqlUrl).toContain("crystord.com");
+    expect(graphqlUrl).toBe(graphqlEndpoint);
   });
 
   test("successful sign-in redirects to the app domain with a token", async ({ page }) => {

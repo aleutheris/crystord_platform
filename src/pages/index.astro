@@ -515,6 +515,7 @@ import { siteConfig } from "../config/site";
   // Auth utilities
   import { gqlSignIn, gqlSignUp, gqlSignInGoogle, getGoogleClientId } from "../utils/auth-graphql";
   import { loadGsi, initGoogleButton } from "../utils/google-auth";
+  import { siteConfig } from "../config/site";
 
   const DEMO_EMAIL = "demo";
   const DEMO_PASSWORD = "demo";
@@ -645,7 +646,7 @@ import { siteConfig } from "../config/site";
   }
 
   loadGsi()
-    .then(() => getGoogleClientId(graphqlUrlForGsi))
+    .then(() => siteConfig.googleClientId || getGoogleClientId(graphqlUrlForGsi))
     .then((clientId) => {
       const signinContainer = document.getElementById("google-signin-btn") as HTMLDivElement | null;
       const signupContainer = document.getElementById("google-signup-btn") as HTMLDivElement | null;

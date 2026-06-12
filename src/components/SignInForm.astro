@@ -74,6 +74,7 @@ import { siteConfig } from "../config/site";
   import { gqlSignIn } from "../utils/auth-graphql";
   import { loadGsi, initGoogleButton } from "../utils/google-auth";
   import { getGoogleClientId } from "../utils/auth-graphql";
+  import { siteConfig } from "../config/site";
 
   const DEMO_EMAIL = "demo";
   const DEMO_PASSWORD = "demo";
@@ -127,7 +128,7 @@ import { siteConfig } from "../config/site";
     });
 
     loadGsi()
-      .then(() => getGoogleClientId(graphqlUrl))
+      .then(() => siteConfig.googleClientId || getGoogleClientId(graphqlUrl))
       .then((clientId) => {
         initGoogleButton(clientId, googleContainer, async (idToken) => {
           import("../utils/auth-graphql").then(async ({ gqlSignInGoogle }) => {

@@ -4,6 +4,7 @@ export const siteConfig = {
   appSignUpUrl: import.meta.env.PUBLIC_APP_SIGN_UP_URL || "https://app.crystord.com/sign-up",
   appDemoUrl: import.meta.env.PUBLIC_APP_DEMO_URL || "https://app.crystord.com/demo",
   graphqlUrl: import.meta.env.PUBLIC_GRAPHQL_URL || "https://app.crystord.com/graphql",
+  googleClientId: import.meta.env.PUBLIC_GOOGLE_CLIENT_ID || "",
   youtubeUrl: "https://www.youtube.com/@crystord",
   newsletterUrl: import.meta.env.PUBLIC_NEWSLETTER_URL || "https://crystord.com/newsletter",
   contactEmail: "info@aleutheris.com",

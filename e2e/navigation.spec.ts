@@ -1,5 +1,6 @@
 // BI-260003: landing-page section model and navigation structure
 import { test, expect } from "@playwright/test";
+import { signInUrl } from "./active-config";
 
 test.describe("Main navigation (BI-260003)", () => {
   test.beforeEach(async ({ page }) => {
@@ -36,7 +37,7 @@ test.describe("Main navigation (BI-260003)", () => {
     const nav = page.locator("header nav[aria-label='Main']");
     const signIn = nav.getByRole("link", { name: "Sign In" });
     const href = await signIn.getAttribute("href");
-    expect(href).toContain("crystord.com");
+    expect(href).toBe(signInUrl);
   });
 });
 

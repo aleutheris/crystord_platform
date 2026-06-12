@@ -84,6 +84,7 @@ import { siteConfig } from "../config/site";
 <script>
   import { gqlSignUp, gqlSignInGoogle, getGoogleClientId } from "../utils/auth-graphql";
   import { loadGsi, initGoogleButton } from "../utils/google-auth";
+  import { siteConfig } from "../config/site";
 
   const form = document.querySelector<HTMLFormElement>(".sign-up-page-form")!;
   const graphqlUrl = form.dataset.graphqlUrl!;
@@ -128,7 +129,7 @@ import { siteConfig } from "../config/site";
   const googleContainer = document.getElementById("google-signup-page-btn") as HTMLDivElement | null;
   if (googleContainer) {
     loadGsi()
-      .then(() => getGoogleClientId(graphqlUrl))
+      .then(() => siteConfig.googleClientId || getGoogleClientId(graphqlUrl))
       .then((clientId) => {
         initGoogleButton(clientId, googleContainer, async (idToken) => {
           const result = await gqlSignInGoogle(graphqlUrl, idToken);
