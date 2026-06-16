@@ -22,7 +22,7 @@ test.describe("Sign-in entry (BI-260001 / BI-260011)", () => {
   });
 
   test("submit button is present in the sign-in form", async ({ page }) => {
-    await expect(page.locator(".action-signin").getByRole("button", { name: /sign in/i })).toBeVisible();
+    await expect(page.locator(".action-signin").getByRole("button", { name: "Sign In", exact: true })).toBeVisible();
   });
 
   test("nav sign-in link is labelled correctly", async ({ page }) => {
@@ -62,7 +62,7 @@ test.describe("Sign-in form submission (BI-260011)", () => {
 
     await page.locator("form.sign-in-form").getByLabel(/email/i).fill("user@example.com");
     await page.locator("form.sign-in-form").getByLabel(/password/i).fill("secret");
-    await page.locator("form.sign-in-form").getByRole("button", { name: /sign in/i }).click();
+    await page.locator("form.sign-in-form").getByRole("button", { name: "Sign In", exact: true }).click();
 
     await page.waitForURL((url) => url.href.startsWith(appOrigin));
     expect(page.url()).toMatch(new RegExp(`^${appOrigin}`));
@@ -83,7 +83,7 @@ test.describe("Sign-in form submission (BI-260011)", () => {
 
     await page.locator("form.sign-in-form").getByLabel(/email/i).fill("user@example.com");
     await page.locator("form.sign-in-form").getByLabel(/password/i).fill("wrong");
-    await page.locator("form.sign-in-form").getByRole("button", { name: /sign in/i }).click();
+    await page.locator("form.sign-in-form").getByRole("button", { name: "Sign In", exact: true }).click();
 
     const errorEl = page.locator("form.sign-in-form .sign-in-error");
     await expect(errorEl).toBeVisible();
@@ -91,7 +91,7 @@ test.describe("Sign-in form submission (BI-260011)", () => {
 
     // Form and submit button must remain on the page (no full reload)
     await expect(page.locator("form.sign-in-form")).toBeVisible();
-    await expect(page.locator("form.sign-in-form").getByRole("button", { name: /sign in/i })).toBeEnabled();
+    await expect(page.locator("form.sign-in-form").getByRole("button", { name: "Sign In", exact: true })).toBeEnabled();
   });
 
   test("network error shows generic inline error and re-enables the submit button", async ({ page }) => {
@@ -104,12 +104,12 @@ test.describe("Sign-in form submission (BI-260011)", () => {
 
     await page.locator("form.sign-in-form").getByLabel(/email/i).fill("user@example.com");
     await page.locator("form.sign-in-form").getByLabel(/password/i).fill("secret");
-    await page.locator("form.sign-in-form").getByRole("button", { name: /sign in/i }).click();
+    await page.locator("form.sign-in-form").getByRole("button", { name: "Sign In", exact: true }).click();
 
     const errorEl = page.locator("form.sign-in-form .sign-in-error");
     await expect(errorEl).toBeVisible();
     await expect(errorEl).toContainText(/unable to reach/i);
-    await expect(page.locator("form.sign-in-form").getByRole("button", { name: /sign in/i })).toBeEnabled();
+    await expect(page.locator("form.sign-in-form").getByRole("button", { name: "Sign In", exact: true })).toBeEnabled();
   });
 });
 
