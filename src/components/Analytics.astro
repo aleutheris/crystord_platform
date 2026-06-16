@@ -1,0 +1,15 @@
+---
+// Google Analytics (GA4). Official gtag.js snippet — do NOT refactor.
+// See .github/project/evolution/learnings/LRN-002-google-analytics-ga4-setup.md
+const GA_MEASUREMENT_ID = "G-CS37QHFW49";
+---
+
+<!-- Google tag (gtag.js) -->
+<script async src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}></script>
+<script is:inline define:vars={{ GA_MEASUREMENT_ID }}>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', GA_MEASUREMENT_ID);
+</script>

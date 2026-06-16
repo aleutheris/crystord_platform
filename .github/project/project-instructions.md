@@ -86,8 +86,8 @@ Every instantiated project must create and maintain the following one-file-per-i
 
 ### Learnings Folder (On-Demand Knowledge)
 
-- `.github/project/learnings/`
-- `.github/project/learnings/index.md`
+- `.github/project/evolution/learnings/`
+- `.github/project/evolution/learnings-index.md`
 
 ### Project-Specific Instantiation
 
@@ -110,4 +110,4 @@ On-demand:
 - `.github/project/evolution/requirements/*`
 - `.github/project/evolution/adr/*`
 - `.github/project/evolution/backlog-items/*`
-- `.github/project/learnings/*`
+- `.github/project/evolution/learnings/*`

@@ -119,18 +119,18 @@ Every instantiated project must create and maintain the following one-file-per-i
 
 ### Learnings Folder (On-Demand Knowledge)
 
-Create a separate learnings folder at project bootstrap:
+Create a separate learnings folder under evolution at project bootstrap:
 
-- `.github/project/learnings/`
+- `.github/project/evolution/learnings/`
   - Stores on-demand learning records from mistakes, regressions, and repeated pitfalls.
   - Keep this folder out of always-on loading; load only when explicitly requested or when recurring issues appear.
 
-- `.github/project/learnings/index.md`
+- `.github/project/evolution/learnings-index.md`
   - Lightweight tracker of learning records with one-line summaries and links.
   - Should reference related backlog items and ADRs when relevant.
   - Template: `.github/generic/templates/learnings-index-template.md`
 
-- `.github/project/learnings/LRN-001-short-title.md`
+- `.github/project/evolution/learnings/LRN-001-short-title.md`
   - Detailed learning record for one concrete lesson.
   - Naming: `LRN-###-short-title.md` with stable incremental IDs.
   - Template: `.github/generic/templates/learning-entry-template.md`
@@ -163,7 +163,7 @@ On-demand:
 - `<fill: design plans>`
 - `<fill: ADRs>`
 - `<fill: backlog item drafts>`
-- `<fill: learnings index and detailed learning records under .github/project/learnings/>`
+- `<fill: learnings index and detailed learning records under .github/project/evolution/learnings/>`
 
 Budget guardrails:
 

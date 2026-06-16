@@ -1,5 +1,6 @@
 ---
 import "../styles/global.css";
+import Analytics from "../components/Analytics.astro";
 import { mainNav, signInLink, footerNav, siteConfig } from "../config/site";
 
 interface Props {
@@ -16,6 +17,7 @@ const { title } = Astro.props;
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>{title} | {siteConfig.productName}</title>
     <link rel="icon" type="image/x-icon" href={`${import.meta.env.BASE_URL}favicon.ico`} />
+    <Analytics />
   </head>
   <body>
     <header>
