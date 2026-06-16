@@ -3,6 +3,7 @@ export const siteConfig = {
   appSignInUrl: import.meta.env.PUBLIC_APP_SIGN_IN_URL || "https://app.crystord.com/sign-in",
   appSignUpUrl: import.meta.env.PUBLIC_APP_SIGN_UP_URL || "https://app.crystord.com/sign-up",
   appDemoUrl: import.meta.env.PUBLIC_APP_DEMO_URL || "https://app.crystord.com/demo",
+  appUrl: import.meta.env.PUBLIC_APP_URL || "https://app.crystord.com",
   graphqlUrl: import.meta.env.PUBLIC_GRAPHQL_URL || "https://app.crystord.com/graphql",
   googleClientId: import.meta.env.PUBLIC_GOOGLE_CLIENT_ID || "",
   youtubeUrl: "https://www.youtube.com/@crystord",

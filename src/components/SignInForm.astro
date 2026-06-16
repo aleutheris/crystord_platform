@@ -94,7 +94,7 @@ import { siteConfig } from "../config/site";
     try {
       const result = await gqlSignIn(graphqlUrl, email, password);
       if (result.ok) {
-        window.location.href = `${new URL(graphqlUrl).origin}/?token=${result.token}`;
+        window.location.href = `${siteConfig.appUrl}/?token=${result.token}`;
       } else {
         errorEl.textContent = result.message;
         errorEl.hidden = false;
@@ -137,7 +137,7 @@ import { siteConfig } from "../config/site";
             try {
               const result = await gqlSignInGoogle(graphqlUrl, idToken);
               if (result.ok) {
-                window.location.href = `${new URL(graphqlUrl).origin}/?token=${result.token}`;
+                window.location.href = `${siteConfig.appUrl}/?token=${result.token}`;
               } else {
                 errorEl.textContent = result.message;
                 errorEl.hidden = false;

@@ -520,8 +520,8 @@ import { siteConfig } from "../config/site";
   const DEMO_EMAIL = "demo";
   const DEMO_PASSWORD = "demo";
 
-  function appRedirect(graphqlUrl: string, token: string) {
-    window.location.href = `${new URL(graphqlUrl).origin}/?token=${token}`;
+  function appRedirect(_graphqlUrl: string, token: string) {
+    window.location.href = `${siteConfig.appUrl}/?token=${token}`;
   }
 
   // Sign-in form
@@ -587,7 +587,7 @@ import { siteConfig } from "../config/site";
       try {
         const result = await gqlSignUp(graphqlUrl, email, password);
         if (result.ok) {
-          window.location.href = `${new URL(graphqlUrl).origin}/?token=${result.token}`;
+          window.location.href = `${siteConfig.appUrl}/?token=${result.token}`;
         } else {
           errorEl.textContent = result.message;
           errorEl.hidden = false;
@@ -617,7 +617,7 @@ import { siteConfig } from "../config/site";
       try {
         const result = await gqlSignIn(graphqlUrl, DEMO_EMAIL, DEMO_PASSWORD);
         if (result.ok) {
-          window.location.href = `${new URL(graphqlUrl).origin}/?token=${result.token}`;
+          window.location.href = `${siteConfig.appUrl}/?token=${result.token}`;
         } else {
           errorEl.textContent = result.message;
           errorEl.hidden = false;
@@ -641,7 +641,7 @@ import { siteConfig } from "../config/site";
   async function handleGoogleToken(idToken: string) {
     const result = await gqlSignInGoogle(graphqlUrlForGsi, idToken);
     if (result.ok) {
-      window.location.href = `${new URL(graphqlUrlForGsi).origin}/?token=${result.token}`;
+      window.location.href = `${siteConfig.appUrl}/?token=${result.token}`;
     }
   }
 
