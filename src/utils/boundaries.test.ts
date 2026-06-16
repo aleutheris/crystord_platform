@@ -1,4 +1,6 @@
-// BI-260004: launch boundary enforcement — no analytics, no form backends, contact mailto present
+// BI-260004: launch boundary enforcement — no form backends, contact mailto present.
+// BI-260012 / ADR-260012: GA4 analytics approved post-launch (supersedes the
+// analytics-launch clause of ADR-260004); analytics is now required, not forbidden.
 import { describe, it, expect } from "vitest";
 import { readFileSync } from "fs";
 import { join } from "path";
@@ -9,19 +11,24 @@ function read(relPath: string) {
   return readFileSync(join(root, relPath), "utf-8");
 }
 
-const ANALYTICS_PATTERNS =
-  /googletagmanager\.com|google-analytics\.com|analytics\.js|gtag\s*\(|dataLayer\.push/i;
-
 const FORM_BACKEND_PATTERNS =
   /formspree\.io|web3forms\.com|netlify\.com\/api\/form|getform\.io/i;
 
-describe("No analytics at launch (BI-260004)", () => {
-  it("MainLayout contains no external analytics scripts", () => {
-    expect(read("src/layouts/MainLayout.astro")).not.toMatch(ANALYTICS_PATTERNS);
+describe("Google Analytics integration (BI-260012 / ADR-260012)", () => {
+  it("Analytics component uses the official gtag.js snippet verbatim", () => {
+    const analytics = read("src/components/Analytics.astro");
+    // Must load the gtag library and use the unmodified snippet (no rest-params
+    // rewrite — see LRN-002, which silently sends zero data).
+    expect(analytics).toMatch(/googletagmanager\.com\/gtag\/js/);
+    expect(analytics).toContain("dataLayer.push(arguments)");
   });
 
-  it("landing page contains no external analytics scripts", () => {
-    expect(read("src/pages/index.astro")).not.toMatch(ANALYTICS_PATTERNS);
+  it("both layouts include the Analytics component so every content page is covered", () => {
+    for (const layout of ["src/layouts/MainLayout.astro", "src/layouts/AddonLayout.astro"]) {
+      const src = read(layout);
+      expect(src).toMatch(/import\s+Analytics\s+from/);
+      expect(src).toContain("<Analytics");
+    }
   });
 });
 

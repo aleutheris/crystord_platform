@@ -26,3 +26,4 @@ Each backlog item must have exactly one of the following statuses:
 | BI-260009 | Rewrite Privacy Policy, Terms of Service, and Support pages with product-accurate copy | Done | ADR-260007 | n/a |
 | BI-260010 | Establish reusable UI component library and vertical slice structure | Done | ADR-260010 | REQ-QR-260010 |
 | BI-260011 | Connect sign-in and sign-up to the GraphQL backend with Google Sign-In | Done | ADR-260011 | REQ-FR-260011 |
+| BI-260012 | Add approved GA4 analytics integration to the public site | Done | ADR-260012 | REQ-FR-260004 |

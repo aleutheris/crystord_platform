@@ -33,25 +33,25 @@ test.describe("Compatibility routes for legacy archive URLs (BI-260004)", () => 
   });
 });
 
-test.describe("No analytics integrations at launch (BI-260004)", () => {
-  const ANALYTICS_PATTERN = /googletagmanager\.com|google-analytics\.com|analytics\.js/;
+// ADR-260012 approved GA4 post-launch, superseding the analytics-launch clause of
+// ADR-260004. Content pages must now carry the official gtag.js tag.
+test.describe("Google Analytics present on content pages (BI-260012 / ADR-260012)", () => {
+  const GA_TAG_PATTERN = /googletagmanager\.com\/gtag\/js/;
 
-  test("landing page HTML contains no analytics script tags", async ({ page }) => {
-    await page.goto("/");
+  async function gaTagSrcs(page: import("@playwright/test").Page) {
     const scripts = await page.locator("script[src]").all();
-    for (const script of scripts) {
-      const src = await script.getAttribute("src");
-      expect(src ?? "").not.toMatch(ANALYTICS_PATTERN);
-    }
+    const srcs = await Promise.all(scripts.map((s) => s.getAttribute("src")));
+    return srcs.filter((src): src is string => !!src && GA_TAG_PATTERN.test(src));
+  }
+
+  test("landing page loads the GA4 gtag script", async ({ page }) => {
+    await page.goto("/");
+    expect(await gaTagSrcs(page)).toHaveLength(1);
   });
 
-  test("Google Add-on page HTML contains no analytics script tags", async ({ page }) => {
+  test("Google Add-on page loads the GA4 gtag script", async ({ page }) => {
     await page.goto("/google-addon");
-    const scripts = await page.locator("script[src]").all();
-    for (const script of scripts) {
-      const src = await script.getAttribute("src");
-      expect(src ?? "").not.toMatch(ANALYTICS_PATTERN);
-    }
+    expect(await gaTagSrcs(page)).toHaveLength(1);
   });
 });
 
