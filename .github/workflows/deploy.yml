@@ -37,6 +37,7 @@ jobs:
       - name: Build site
         env:
           PUBLIC_APP_SIGN_IN_URL: https://app.crystord.com/sign-in
+          PUBLIC_APP_URL: https://app.crystord.com
         run: npm run build
 
       - name: Verify build output
@@ -84,6 +85,7 @@ jobs:
       - name: Run release gate checks
         env:
           PUBLIC_APP_SIGN_IN_URL: https://app.crystord.com/sign-in
+          PUBLIC_APP_URL: https://app.crystord.com
           CI: true
         run: npm run test:e2e
 

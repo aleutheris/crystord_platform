@@ -40,6 +40,7 @@ const env = {
   PUBLIC_APP_SIGN_IN_URL: `${origin}/sign-in`,
   PUBLIC_APP_SIGN_UP_URL: `${origin}/sign-up`,
   PUBLIC_APP_DEMO_URL: `${origin}/demo`,
+  PUBLIC_APP_URL: origin,
   PUBLIC_GRAPHQL_URL: profile.graphqlEndpoint,
   PUBLIC_GOOGLE_CLIENT_ID: googleClientId,
 }
