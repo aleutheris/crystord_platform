@@ -14,12 +14,19 @@ if (!profile) {
 }
 
 export const graphqlEndpoint: string = profile.graphqlEndpoint;
-export const appOrigin: string = new URL(graphqlEndpoint).origin;
+
+// The app is often hosted on a different origin than the GraphQL API (e.g.
+// app.crystord.com vs crystord.aleutheris.com/api), so the app origin must NOT
+// be derived from the GraphQL host. Mirror scripts/config.mjs precedence:
+// PUBLIC_APP_URL env override (CI/production pins it via deploy.yml) → the
+// profile's explicit appUrl → the GraphQL origin (legacy co-located fallback).
+export const appOrigin: string = new URL(
+  process.env.PUBLIC_APP_URL || profile.appUrl || graphqlEndpoint,
+).origin;
 
 // The app resolves the sign-in link from PUBLIC_APP_SIGN_IN_URL when set
 // (CI/production pins it to the real app domain via deploy.yml, independent of
-// whichever profile is committed), falling back to the active profile's origin
-// (the value scripts/config.mjs bakes into .env locally). Mirror that same
-// precedence so the assertion matches whatever the build actually rendered,
-// rather than assuming the sign-in host always equals the GraphQL host.
+// whichever profile is committed), falling back to the active profile's app
+// origin (the value scripts/config.mjs bakes into .env locally). Mirror that
+// same precedence so the assertion matches whatever the build actually rendered.
 export const signInUrl = process.env.PUBLIC_APP_SIGN_IN_URL || `${appOrigin}/sign-in`;

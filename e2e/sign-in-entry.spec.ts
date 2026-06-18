@@ -1,6 +1,6 @@
 // BI-260011: sign-in and sign-up connected to the GraphQL backend
 import { test, expect } from "@playwright/test";
-import { graphqlEndpoint } from "./active-config";
+import { graphqlEndpoint, appOrigin } from "./active-config";
 
 test.describe("Sign-in entry (BI-260001 / BI-260011)", () => {
   test.beforeEach(async ({ page }) => {
@@ -45,8 +45,8 @@ test.describe("Sign-in form submission (BI-260011)", () => {
     const graphqlUrl = await page.locator("form.sign-in-form").getAttribute("data-graphql-url");
     expect(graphqlUrl).toBeTruthy();
 
-    const appOrigin = new URL(graphqlUrl!).origin;
-
+    // The post-auth redirect targets the app origin, which is decoupled from the
+    // GraphQL host (see active-config.ts). Mock both independently.
     // Wildcard registered first — specific GraphQL route registered second so it wins (Playwright LIFO)
     await page.route(`${appOrigin}/**`, async (route) => {
       await route.fulfill({ status: 200, contentType: "text/html", body: "<html><body>app</body></html>" });
@@ -142,8 +142,8 @@ test.describe("Sign-up form (BI-260011)", () => {
     const graphqlUrl = await page.locator("form.sign-up-form").getAttribute("data-graphql-url");
     expect(graphqlUrl).toBeTruthy();
 
-    const appOrigin = new URL(graphqlUrl!).origin;
-
+    // The post-auth redirect targets the app origin, which is decoupled from the
+    // GraphQL host (see active-config.ts). Mock both independently.
     // Wildcard registered first — specific GraphQL route registered second so it wins (Playwright LIFO)
     await page.route(`${appOrigin}/**`, async (route) => {
       await route.fulfill({ status: 200, contentType: "text/html", body: "<html><body>app</body></html>" });

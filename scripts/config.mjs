@@ -32,9 +32,12 @@ if (oauthClient != null) {
   }
 }
 
-// The marketing site's Sign In / Sign Up / Demo links point at the app, which
-// lives at the origin of the GraphQL endpoint.
-const origin = new URL(profile.graphqlEndpoint).origin
+// The marketing site's Sign In / Sign Up / Demo links and the post-auth token
+// redirect point at the app. The app is often hosted on a different origin than
+// the GraphQL API (e.g. app.crystord.com vs crystord.aleutheris.com/api), so a
+// profile may set an explicit "appUrl". When absent we fall back to the GraphQL
+// endpoint's origin (the historical behavior, for co-located deployments).
+const origin = new URL(profile.appUrl ?? profile.graphqlEndpoint).origin
 
 const env = {
   PUBLIC_APP_SIGN_IN_URL: `${origin}/sign-in`,
