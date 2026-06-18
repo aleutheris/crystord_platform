@@ -10,8 +10,9 @@ import { siteConfig } from "../config/site";
   <section class="hero">
     <h1>Welcome to Crystord</h1>
     <p class="hero-sub">
-      Your comprehensive control and monitoring solution. Experience powerful analytics,
-      real-time monitoring, and intuitive controls all in one place.
+      Crystord turns scattered records into connected data. Store your information as Atoms,
+      link them with named Bonds, and explore the whole picture as a living graph. Your data,
+      your control, no lock-in.
     </p>
   </section>
 
@@ -74,19 +75,19 @@ import { siteConfig } from "../config/site";
         <ul class="demo-features">
           <li>
             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--green)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-            Interactive Dashboard
+            Interactive Graph Workspace
           </li>
           <li>
             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--green)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-            Real-time Charts &amp; Analytics
+            Atom &amp; Bond Management
           </li>
           <li>
             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--green)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-            Control Panels
+            Search &amp; Discovery
           </li>
           <li>
             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--green)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-            User Management (View Only)
+            Real-time Data View
           </li>
         </ul>
         <button type="button" class="btn btn-primary demo-btn" id="demo-start-btn" data-graphql-url={siteConfig.graphqlUrl}>
@@ -100,7 +101,36 @@ import { siteConfig } from "../config/site";
     </div>
   </section>
 
-  <!-- 3. Why Crystord -->
+  <!-- 3. What is an Atom -->
+  <section class="panel concept-panel">
+    <h2 class="section-title">What is an Atom?</h2>
+    <p class="section-sub">Crystord stores everything as small, connected units. Here's the model in three pieces.</p>
+    <div class="concept-grid">
+      <div class="feature-card">
+        <div class="feature-icon" style="color: var(--brand);">
+          <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3.5"/><ellipse cx="12" cy="12" rx="10" ry="4.5"/><ellipse cx="12" cy="12" rx="10" ry="4.5" transform="rotate(60 12 12)"/></svg>
+        </div>
+        <h5>Atom</h5>
+        <p>The smallest meaningful unit of information. A project, task, customer, document, or note. One important entity = one Atom.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="color: var(--green);">
+          <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+        </div>
+        <h5>Label</h5>
+        <p>Categories you attach to an Atom — such as Project, Task, or Customer — to group, classify, and filter your information.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="color: var(--brand-dark);">
+          <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="5" cy="12" r="2.5"/><circle cx="19" cy="12" r="2.5"/><line x1="7.5" y1="12" x2="16.5" y2="12"/><polyline points="14 9 17 12 14 15"/></svg>
+        </div>
+        <h5>Bond</h5>
+        <p>Directional link between Atoms that you decide to name, or functions that computes values based other Atoms values. Bonds are how you connect and relate your data.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. Why Crystord -->
   <section class="overview panel">
     <h2 class="section-title">Why Crystord?</h2>
     <div class="features-grid">
@@ -108,34 +138,34 @@ import { siteConfig } from "../config/site";
         <div class="feature-icon" style="color: var(--brand);">
           <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
         </div>
-        <h5>Live data in your slides</h5>
-        <p>Values from your Sheets update your Slides instantly — no manual copying, no outdated decks.</p>
+        <h5>Data as a connected graph</h5>
+        <p>Store information as Atoms and link them with named, directional Bonds. Model how your data actually relates, instead of forcing it into rigid tables.</p>
       </div>
       <div class="feature-card">
         <div class="feature-icon" style="color: var(--green);">
-          <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="6" cy="6" r="2.5"/><circle cx="18" cy="9" r="2.5"/><circle cx="9" cy="18" r="2.5"/><line x1="8" y1="7" x2="16" y2="9"/><line x1="7" y1="8" x2="9" y2="16"/></svg>
         </div>
-        <h5>Works where you work</h5>
-        <p>Runs entirely inside Google Workspace as an Add-on; no separate install or account beyond your Google login.</p>
+        <h5>Explore it visually</h5>
+        <p>An interactive graph workspace lets you create, edit, search, and navigate your Atoms and Bonds in real time.</p>
       </div>
       <div class="feature-card">
         <div class="feature-icon" style="color: var(--brand-dark);">
           <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
         </div>
         <h5>Your data stays yours</h5>
-        <p>All processing happens within Google's infrastructure. Nothing is stored on external servers.</p>
+        <p>Build and explore knowledge graphs with no lock-in and no hidden complexity. Export and integrate freely.</p>
       </div>
       <div class="feature-card">
         <div class="feature-icon" style="color: var(--gold);">
-          <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
         </div>
-        <h5>Built for recurring use</h5>
-        <p>Perfect for live reports, budget decks, executive dashboards, and project trackers that need to stay current.</p>
+        <h5>Built on an open GraphQL API</h5>
+        <p>Everything in the workspace is backed by a documented GraphQL API, ready for your own apps, spreadsheets, and automations.</p>
       </div>
     </div>
   </section>
 
-  <!-- 4. Connect With Us -->
+  <!-- 5. Connect With Us -->
   <section class="panel connect-panel">
     <h2 class="section-title">Get in Touch</h2>
     <p class="section-sub">Stay updated and get the most out of Crystord</p>
@@ -376,6 +406,12 @@ import { siteConfig } from "../config/site";
     gap: 1.25rem;
   }
 
+  .concept-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+  }
+
   .feature-card {
     text-align: center;
     padding: 1rem 0.5rem;
@@ -476,14 +512,16 @@ import { siteConfig } from "../config/site";
     }
 
     .features-grid,
-    .connect-grid {
+    .connect-grid,
+    .concept-grid {
       grid-template-columns: 1fr 1fr;
     }
   }
 
   @media (max-width: 400px) {
     .features-grid,
-    .connect-grid {
+    .connect-grid,
+    .concept-grid {
       grid-template-columns: 1fr;
     }
   }
