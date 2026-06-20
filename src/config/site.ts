@@ -8,7 +8,7 @@ export const siteConfig = {
   googleClientId: import.meta.env.PUBLIC_GOOGLE_CLIENT_ID || "",
   youtubeUrl: "https://www.youtube.com/@crystord",
   newsletterUrl: import.meta.env.PUBLIC_NEWSLETTER_URL || "https://crystord.com/newsletter",
-  contactEmail: "info@aleutheris.com",
+  contactEmail: "info@crystord.com",
   addonMarketplaceUrl: "https://workspace.google.com/marketplace/app/crystord/186388621973"
 };
 
