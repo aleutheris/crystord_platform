@@ -76,8 +76,10 @@ import { siteConfig } from "../config/site";
   import { getGoogleClientId } from "../utils/auth-graphql";
   import { siteConfig } from "../config/site";
 
-  const DEMO_EMAIL = "demo";
-  const DEMO_PASSWORD = "demo";
+  // Public demo account seeded by the backend (crystord_engine deployment/demo_account.json).
+  // Intentionally not a secret — a shared, world-usable sandbox. Keep in sync with the engine seed.
+  const DEMO_EMAIL = "demo@demo.invalid";
+  const DEMO_PASSWORD = "crystord-demo";
 
   async function handleAuth(
     graphqlUrl: string,
