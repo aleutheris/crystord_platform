@@ -113,33 +113,74 @@ test.describe("Sign-in form submission (BI-260011)", () => {
   });
 });
 
-test.describe("Sign-up form (BI-260011)", () => {
-  test("sign-up tab is reachable and contains a create account button", async ({ page }) => {
+test.describe("Sign-up form — two-step verify-first (BI-260011 / BI-260065)", () => {
+  test("sign-up tab is reachable and starts on the email step", async ({ page }) => {
     await page.goto("/");
     await page.getByRole("tab", { name: /sign up/i }).click();
     await expect(page.locator(".tab-panel#tab-signup")).toBeVisible();
-    await expect(page.locator(".sign-up-form").getByRole("button", { name: /create account/i })).toBeVisible();
+    // Step 1 asks only for an email; the button reads "Send code" until a code is requested.
+    await expect(page.locator(".signup-form").getByRole("button", { name: "Send code", exact: true })).toBeVisible();
+    await expect(page.locator(".signup-form").getByLabel(/^email/i)).toBeVisible();
+    // The verification step must stay collapsed until a code is requested (regression: the `hidden`
+    // attribute was being overridden by an author display rule, showing all fields on load).
+    await expect(page.locator(".signup-form").getByLabel(/verification code/i)).toBeHidden();
+    await expect(page.locator(".signup-form").getByLabel(/^password$/i)).toBeHidden();
+    await expect(page.locator(".signup-form").getByLabel(/^username$/i)).toBeHidden();
+  });
+
+  test("requesting a code reveals the verification step", async ({ page }) => {
+    await page.goto("/");
+    await page.getByRole("tab", { name: /sign up/i }).click();
+
+    const graphqlUrl = await page.locator("form.signup-form").getAttribute("data-graphql-url");
+    await page.route(graphqlUrl!, async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({ data: { beginSignup: true } }),
+      });
+    });
+
+    await page.locator(".signup-form").getByLabel(/^email/i).fill("user@example.com");
+    await page.locator(".signup-form").getByRole("button", { name: "Send code", exact: true }).click();
+
+    await expect(page.locator(".signup-form").getByLabel(/verification code/i)).toBeVisible();
+    await expect(page.locator(".signup-form").getByLabel(/^username$/i)).toBeVisible();
+    await expect(page.locator(".signup-form").getByRole("button", { name: "Create account", exact: true })).toBeVisible();
   });
 
   test("password mismatch shows inline error without submitting", async ({ page }) => {
     await page.goto("/");
     await page.getByRole("tab", { name: /sign up/i }).click();
 
-    await page.locator(".sign-up-form").getByLabel(/^email/i).fill("user@example.com");
-    await page.locator(".sign-up-form").getByLabel(/^password$/i).fill("secret");
-    await page.locator(".sign-up-form").getByLabel(/confirm/i).fill("different");
-    await page.locator(".sign-up-form").getByRole("button", { name: /create account/i }).click();
+    const graphqlUrl = await page.locator("form.signup-form").getAttribute("data-graphql-url");
+    await page.route(graphqlUrl!, async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({ data: { beginSignup: true } }),
+      });
+    });
 
-    const errorEl = page.locator(".sign-up-form .sign-up-error");
+    await page.locator(".signup-form").getByLabel(/^email/i).fill("user@example.com");
+    await page.locator(".signup-form").getByRole("button", { name: "Send code", exact: true }).click();
+
+    await page.locator(".signup-form").getByLabel(/verification code/i).fill("123456");
+    await page.locator(".signup-form").getByLabel(/^password$/i).fill("a-strong-password");
+    await page.locator(".signup-form").getByLabel(/confirm/i).fill("different");
+    await page.locator(".signup-form").getByLabel(/^username$/i).fill("johndoe");
+    await page.locator(".signup-form").getByRole("button", { name: "Create account", exact: true }).click();
+
+    const errorEl = page.locator(".signup-form .signup-error");
     await expect(errorEl).toBeVisible();
     await expect(errorEl).toContainText(/passwords do not match/i);
   });
 
-  test("successful sign-up redirects to the app domain with a token", async ({ page }) => {
+  test("successful two-step sign-up redirects to the app domain with a token", async ({ page }) => {
     await page.goto("/");
     await page.getByRole("tab", { name: /sign up/i }).click();
 
-    const graphqlUrl = await page.locator("form.sign-up-form").getAttribute("data-graphql-url");
+    const graphqlUrl = await page.locator("form.signup-form").getAttribute("data-graphql-url");
     expect(graphqlUrl).toBeTruthy();
 
     // The post-auth redirect targets the app origin, which is decoupled from the
@@ -149,18 +190,27 @@ test.describe("Sign-up form (BI-260011)", () => {
       await route.fulfill({ status: 200, contentType: "text/html", body: "<html><body>app</body></html>" });
     });
 
+    // One endpoint serves both mutations — branch on the request body.
     await page.route(graphqlUrl!, async (route) => {
+      const body = route.request().postData() || "";
+      const data = body.includes("beginSignup")
+        ? { beginSignup: true }
+        : { completeSignup: "test-jwt-token" };
       await route.fulfill({
         status: 200,
         contentType: "application/json",
-        body: JSON.stringify({ data: { signup: "test-jwt-token" } }),
+        body: JSON.stringify({ data }),
       });
     });
 
-    await page.locator(".sign-up-form").getByLabel(/^email/i).fill("new@example.com");
-    await page.locator(".sign-up-form").getByLabel(/^password$/i).fill("secret");
-    await page.locator(".sign-up-form").getByLabel(/confirm/i).fill("secret");
-    await page.locator(".sign-up-form").getByRole("button", { name: /create account/i }).click();
+    await page.locator(".signup-form").getByLabel(/^email/i).fill("new@example.com");
+    await page.locator(".signup-form").getByRole("button", { name: "Send code", exact: true }).click();
+
+    await page.locator(".signup-form").getByLabel(/verification code/i).fill("123456");
+    await page.locator(".signup-form").getByLabel(/^password$/i).fill("a-strong-password");
+    await page.locator(".signup-form").getByLabel(/confirm/i).fill("a-strong-password");
+    await page.locator(".signup-form").getByLabel(/^username$/i).fill("johndoe");
+    await page.locator(".signup-form").getByRole("button", { name: "Create account", exact: true }).click();
 
     await page.waitForURL((url) => url.href.startsWith(appOrigin));
     expect(page.url()).toContain("token=");
@@ -171,6 +221,6 @@ test.describe("/sign-up standalone page (BI-260011)", () => {
   test("sign-up page is accessible at /sign-up", async ({ page }) => {
     await page.goto("/sign-up");
     await expect(page.getByRole("heading", { name: /create your crystord account/i })).toBeVisible();
-    await expect(page.locator(".sign-up-page-form")).toBeVisible();
+    await expect(page.locator(".signup-form")).toBeVisible();
   });
 });

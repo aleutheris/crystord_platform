@@ -1,6 +1,7 @@
 ---
 import MainLayout from "../layouts/MainLayout.astro";
 import FormField from "../components/ui/FormField.astro";
+import SignUpForm from "../components/SignUpForm.astro";
 import { siteConfig } from "../config/site";
 ---
 
@@ -52,13 +53,7 @@ import { siteConfig } from "../config/site";
             Create Account
           </h2>
           <p class="card-sub">Create your account to get started</p>
-          <form class="sign-up-form" data-graphql-url={siteConfig.graphqlUrl} novalidate>
-            <FormField label="Email" name="su-email" type="email" required autocomplete="email" />
-            <FormField label="Password" name="su-password" type="password" required autocomplete="new-password" />
-            <FormField label="Confirm Password" name="su-confirm" type="password" required autocomplete="new-password" />
-            <p class="sign-up-error" hidden aria-live="polite"></p>
-            <button type="submit" class="btn btn-primary form-btn">Create Account</button>
-          </form>
+          <SignUpForm />
           <div class="divider"><span>or sign up with</span></div>
           <div class="google-btn-wrap" id="google-signup-btn"></div>
           <p class="auth-switch">Already have an account? <button class="link-btn" data-switch="signin">Sign in</button></p>
@@ -551,7 +546,7 @@ import { siteConfig } from "../config/site";
   });
 
   // Auth utilities
-  import { gqlSignIn, gqlSignUp, gqlSignInGoogle, getGoogleClientId } from "../utils/auth-graphql";
+  import { gqlSignIn, gqlSignInGoogle, friendlyAuthError } from "../utils/auth-graphql";
   import { loadGsi, initGoogleButton } from "../utils/google-auth";
   import { siteConfig } from "../config/site";
 
@@ -580,7 +575,7 @@ import { siteConfig } from "../config/site";
         if (result.ok) {
           appRedirect(graphqlUrl, result.token);
         } else {
-          errorEl.textContent = result.message;
+          errorEl.textContent = friendlyAuthError(result.message);
           errorEl.hidden = false;
           submitBtn.disabled = false;
           submitBtn.textContent = "Sign In";
@@ -601,47 +596,7 @@ import { siteConfig } from "../config/site";
     });
   }
 
-  // Sign-up form
-  const signUpForm = document.querySelector<HTMLFormElement>(".sign-up-form");
-  if (signUpForm) {
-    const graphqlUrl = signUpForm.dataset.graphqlUrl!;
-    const errorEl = signUpForm.querySelector<HTMLParagraphElement>(".sign-up-error")!;
-    const submitBtn = signUpForm.querySelector<HTMLButtonElement>("button[type=submit]")!;
-
-    signUpForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const email = signUpForm.querySelector<HTMLInputElement>("#su-email")!.value.trim();
-      const password = signUpForm.querySelector<HTMLInputElement>("#su-password")!.value;
-      const confirm = signUpForm.querySelector<HTMLInputElement>("#su-confirm")!.value;
-
-      if (password !== confirm) {
-        errorEl.textContent = "Passwords do not match.";
-        errorEl.hidden = false;
-        return;
-      }
-
-      errorEl.hidden = true;
-      submitBtn.disabled = true;
-      submitBtn.textContent = "Creating account…";
-
-      try {
-        const result = await gqlSignUp(graphqlUrl, email, password);
-        if (result.ok) {
-          window.location.href = `${siteConfig.appUrl}/?token=${result.token}`;
-        } else {
-          errorEl.textContent = result.message;
-          errorEl.hidden = false;
-          submitBtn.disabled = false;
-          submitBtn.textContent = "Create Account";
-        }
-      } catch {
-        errorEl.textContent = "Unable to reach the sign-up service. Please try again.";
-        errorEl.hidden = false;
-        submitBtn.disabled = false;
-        submitBtn.textContent = "Create Account";
-      }
-    });
-  }
+  // Sign-up is handled by the SignUpForm component (two-step verify-first flow).
 
   // Demo button
   const demoBtn = document.querySelector<HTMLButtonElement>("#demo-start-btn");
@@ -659,7 +614,7 @@ import { siteConfig } from "../config/site";
         if (result.ok) {
           window.location.href = `${siteConfig.appUrl}/?token=${result.token}`;
         } else {
-          errorEl.textContent = result.message;
+          errorEl.textContent = friendlyAuthError(result.message);
           errorEl.hidden = false;
           demoBtn.disabled = false;
           demoBtn.textContent = "Start Demo";
@@ -673,27 +628,41 @@ import { siteConfig } from "../config/site";
     });
   }
 
-  // Google Sign-In buttons
-  const graphqlUrlForGsi =
-    (document.querySelector<HTMLElement>("[data-graphql-url]") as HTMLElement | null)
-      ?.dataset.graphqlUrl ?? "https://app.crystord.com/graphql";
-
-  async function handleGoogleToken(idToken: string) {
-    const result = await gqlSignInGoogle(graphqlUrlForGsi, idToken);
-    if (result.ok) {
-      window.location.href = `${siteConfig.appUrl}/?token=${result.token}`;
-    }
+  // Google Sign-In buttons (sign-in + sign-up tabs). The client ID comes only from
+  // PUBLIC_GOOGLE_CLIENT_ID — the backend no longer exposes getGoogleClientID. Each button routes
+  // its errors to the error element of its own tab so messages land where the user is looking.
+  function makeGoogleHandler(errorEl: HTMLParagraphElement | null) {
+    return async (idToken: string) => {
+      try {
+        const result = await gqlSignInGoogle(siteConfig.graphqlUrl, idToken);
+        if (result.ok) {
+          window.location.href = `${siteConfig.appUrl}/?token=${result.token}`;
+        } else if (errorEl) {
+          errorEl.textContent = friendlyAuthError(result.message);
+          errorEl.hidden = false;
+        }
+      } catch {
+        if (errorEl) {
+          errorEl.textContent = "Unable to reach the sign-in service. Please try again.";
+          errorEl.hidden = false;
+        }
+      }
+    };
   }
 
-  loadGsi()
-    .then(() => siteConfig.googleClientId || getGoogleClientId(graphqlUrlForGsi))
-    .then((clientId) => {
-      const signinContainer = document.getElementById("google-signin-btn") as HTMLDivElement | null;
-      const signupContainer = document.getElementById("google-signup-btn") as HTMLDivElement | null;
-      if (signinContainer) initGoogleButton(clientId, signinContainer, handleGoogleToken);
-      if (signupContainer) initGoogleButton(clientId, signupContainer, handleGoogleToken);
-    })
-    .catch(() => {
-      // Google button unavailable — email/password path still works
-    });
+  const googleClientId = siteConfig.googleClientId;
+  if (googleClientId) {
+    loadGsi()
+      .then(() => {
+        const signinContainer = document.getElementById("google-signin-btn") as HTMLDivElement | null;
+        const signupContainer = document.getElementById("google-signup-btn") as HTMLDivElement | null;
+        const signinError = document.querySelector<HTMLParagraphElement>(".sign-in-error");
+        const signupError = document.querySelector<HTMLParagraphElement>(".signup-error");
+        if (signinContainer) initGoogleButton(googleClientId, signinContainer, makeGoogleHandler(signinError));
+        if (signupContainer) initGoogleButton(googleClientId, signupContainer, makeGoogleHandler(signupError));
+      })
+      .catch(() => {
+        // Google button unavailable — email/password path still works
+      });
+  }
 </script>

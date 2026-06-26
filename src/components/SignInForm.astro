@@ -71,9 +71,8 @@ import { siteConfig } from "../config/site";
 </style>
 
 <script>
-  import { gqlSignIn } from "../utils/auth-graphql";
+  import { gqlSignIn, gqlSignInGoogle, friendlyAuthError } from "../utils/auth-graphql";
   import { loadGsi, initGoogleButton } from "../utils/google-auth";
-  import { getGoogleClientId } from "../utils/auth-graphql";
   import { siteConfig } from "../config/site";
 
   // Public demo account seeded by the backend (crystord_engine deployment/demo_account.json).
@@ -98,7 +97,7 @@ import { siteConfig } from "../config/site";
       if (result.ok) {
         window.location.href = `${siteConfig.appUrl}/?token=${result.token}`;
       } else {
-        errorEl.textContent = result.message;
+        errorEl.textContent = friendlyAuthError(result.message);
         errorEl.hidden = false;
         primaryBtn.disabled = false;
         primaryBtn.textContent = "Sign In";
@@ -129,11 +128,13 @@ import { siteConfig } from "../config/site";
       await handleAuth(graphqlUrl, DEMO_EMAIL, DEMO_PASSWORD, errorEl, submitBtn, "Loading demo…");
     });
 
-    loadGsi()
-      .then(() => siteConfig.googleClientId || getGoogleClientId(graphqlUrl))
-      .then((clientId) => {
-        initGoogleButton(clientId, googleContainer, async (idToken) => {
-          import("../utils/auth-graphql").then(async ({ gqlSignInGoogle }) => {
+    // Google sign-in needs a client ID, which now comes only from PUBLIC_GOOGLE_CLIENT_ID
+    // (the backend no longer exposes getGoogleClientID). With none configured, skip the button.
+    const googleClientId = siteConfig.googleClientId;
+    if (googleClientId) {
+      loadGsi()
+        .then(() => {
+          initGoogleButton(googleClientId, googleContainer, async (idToken) => {
             submitBtn.disabled = true;
             submitBtn.textContent = "Signing in…";
             try {
@@ -141,7 +142,7 @@ import { siteConfig } from "../config/site";
               if (result.ok) {
                 window.location.href = `${siteConfig.appUrl}/?token=${result.token}`;
               } else {
-                errorEl.textContent = result.message;
+                errorEl.textContent = friendlyAuthError(result.message);
                 errorEl.hidden = false;
                 submitBtn.disabled = false;
                 submitBtn.textContent = "Sign In";
@@ -153,10 +154,10 @@ import { siteConfig } from "../config/site";
               submitBtn.textContent = "Sign In";
             }
           });
+        })
+        .catch(() => {
+          // Google button unavailable — email/password path still works
         });
-      })
-      .catch(() => {
-        // Google button unavailable — email/password path still works
-      });
+    }
   });
 </script>

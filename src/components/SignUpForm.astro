@@ -1,0 +1,245 @@
+---
+import FormField from "./ui/FormField.astro";
+import { siteConfig } from "../config/site";
+---
+
+{/* Two-step verify-first signup (BI-260065): the user enters an email, receives a verification
+    code, then submits the code together with a password and username to create the account. */}
+<form class="signup-form" data-graphql-url={siteConfig.graphqlUrl} novalidate>
+  <div class="signup-step-email">
+    <FormField label="Email" name="su-email" type="email" required autocomplete="email" />
+  </div>
+
+  <div class="signup-step-verify" hidden>
+    <p class="signup-sent-note"></p>
+    <FormField label="Verification code" name="su-code" type="text" autocomplete="one-time-code" />
+    <FormField label="Password" name="su-password" type="password" autocomplete="new-password" />
+    <FormField label="Confirm Password" name="su-confirm" type="password" autocomplete="new-password" />
+    <FormField label="Username" name="su-username" type="text" autocomplete="username" />
+    <button type="button" class="signup-resend signup-link">Resend code</button>
+  </div>
+
+  <p class="signup-error" hidden aria-live="polite"></p>
+
+  <div class="signup-actions">
+    <button type="submit" class="btn btn-primary form-btn signup-submit">Send code</button>
+    <button type="button" class="signup-back signup-link" hidden>Use a different email</button>
+  </div>
+</form>
+
+<style>
+  .signup-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    max-width: 360px;
+  }
+
+  .signup-step-verify {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  /* The `hidden` attribute (UA display:none) is overridden by the class rule above, since author
+     styles beat the UA stylesheet. Re-assert it with a higher-specificity selector so the verify
+     step stays collapsed until a code is requested. */
+  .signup-step-verify[hidden] {
+    display: none;
+  }
+
+  .signup-sent-note {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--muted);
+    line-height: 1.45;
+  }
+
+  .signup-error {
+    color: var(--error);
+    margin: 0;
+    font-size: 0.9rem;
+  }
+
+  .signup-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .form-btn {
+    align-self: flex-start;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    font-family: inherit;
+  }
+
+  .form-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  .signup-link {
+    background: none;
+    border: none;
+    color: var(--brand);
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-family: inherit;
+    text-decoration: underline;
+    padding: 0;
+  }
+
+  .signup-link:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+</style>
+
+<script>
+  import { gqlBeginSignup, gqlCompleteSignup, friendlyAuthError } from "../utils/auth-graphql";
+  import { siteConfig } from "../config/site";
+
+  document.querySelectorAll<HTMLFormElement>(".signup-form").forEach((form) => {
+    const graphqlUrl = form.dataset.graphqlUrl!;
+    const verifyStep = form.querySelector<HTMLDivElement>(".signup-step-verify")!;
+    const sentNote = form.querySelector<HTMLParagraphElement>(".signup-sent-note")!;
+    const errorEl = form.querySelector<HTMLParagraphElement>(".signup-error")!;
+    const submitBtn = form.querySelector<HTMLButtonElement>(".signup-submit")!;
+    const backBtn = form.querySelector<HTMLButtonElement>(".signup-back")!;
+    const resendBtn = form.querySelector<HTMLButtonElement>(".signup-resend")!;
+    const emailInput = form.querySelector<HTMLInputElement>("#su-email")!;
+    const codeInput = form.querySelector<HTMLInputElement>("#su-code")!;
+    const passwordInput = form.querySelector<HTMLInputElement>("#su-password")!;
+    const confirmInput = form.querySelector<HTMLInputElement>("#su-confirm")!;
+    const usernameInput = form.querySelector<HTMLInputElement>("#su-username")!;
+
+    let phase: "email" | "verify" = "email";
+
+    const showError = (msg: string) => {
+      errorEl.textContent = msg;
+      errorEl.hidden = false;
+    };
+    const clearError = () => {
+      errorEl.hidden = true;
+    };
+
+    function toVerify(email: string) {
+      phase = "verify";
+      verifyStep.hidden = false;
+      backBtn.hidden = false;
+      emailInput.readOnly = true;
+      sentNote.textContent =
+        `If ${email} can be registered, we've emailed it a 6-digit code. Enter the code below with a password and username to finish.`;
+      submitBtn.textContent = "Create account";
+      codeInput.focus();
+    }
+
+    function toEmail() {
+      phase = "email";
+      verifyStep.hidden = true;
+      backBtn.hidden = true;
+      emailInput.readOnly = false;
+      submitBtn.textContent = "Send code";
+      clearError();
+      emailInput.focus();
+    }
+
+    // Ask the backend to send a code. Resolves true when the request succeeded (the backend always
+    // reports success for anti-enumeration; a false here is a GraphQL-level error worth surfacing).
+    async function sendCode(email: string): Promise<boolean> {
+      const result = await gqlBeginSignup(graphqlUrl, email);
+      if (!result.ok) {
+        showError(friendlyAuthError(result.message));
+        return false;
+      }
+      return true;
+    }
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      clearError();
+
+      if (phase === "email") {
+        const email = emailInput.value.trim();
+        if (!email) {
+          showError("Please enter your email address.");
+          return;
+        }
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Sending code…";
+        try {
+          if (await sendCode(email)) {
+            toVerify(email);
+          } else {
+            submitBtn.textContent = "Send code";
+          }
+        } catch {
+          showError("Unable to reach the sign-up service. Please try again.");
+          submitBtn.textContent = "Send code";
+        } finally {
+          submitBtn.disabled = false;
+        }
+        return;
+      }
+
+      const email = emailInput.value.trim();
+      const code = codeInput.value.trim();
+      const password = passwordInput.value;
+      const confirm = confirmInput.value;
+      const username = usernameInput.value.trim();
+
+      if (!code) {
+        showError("Enter the verification code we emailed you.");
+        return;
+      }
+      if (password !== confirm) {
+        showError("Passwords do not match.");
+        return;
+      }
+      if (!username) {
+        showError("Choose a username.");
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Creating account…";
+      try {
+        const result = await gqlCompleteSignup(graphqlUrl, email, code, password, username);
+        if (result.ok) {
+          window.location.href = `${siteConfig.appUrl}/?token=${result.token}`;
+          return;
+        }
+        showError(friendlyAuthError(result.message));
+      } catch {
+        showError("Unable to reach the sign-up service. Please try again.");
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Create account";
+      }
+    });
+
+    backBtn.addEventListener("click", () => toEmail());
+
+    resendBtn.addEventListener("click", async () => {
+      clearError();
+      const email = emailInput.value.trim();
+      if (!email) return;
+      const original = resendBtn.textContent;
+      resendBtn.disabled = true;
+      resendBtn.textContent = "Sending…";
+      try {
+        if (await sendCode(email)) {
+          sentNote.textContent = `A new code has been sent to ${email} (if it can be registered).`;
+        }
+      } catch {
+        showError("Unable to reach the sign-up service. Please try again.");
+      } finally {
+        resendBtn.disabled = false;
+        resendBtn.textContent = original;
+      }
+    });
+  });
+</script>

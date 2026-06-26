@@ -1,6 +1,6 @@
 ---
 import MainLayout from "../layouts/MainLayout.astro";
-import FormField from "../components/ui/FormField.astro";
+import SignUpForm from "../components/SignUpForm.astro";
 import { siteConfig } from "../config/site";
 ---
 
@@ -9,14 +9,7 @@ import { siteConfig } from "../config/site";
     <h1>Create your Crystord account</h1>
     <p class="page-sub">Already have an account? <a href={siteConfig.appSignInUrl}>Sign in</a></p>
 
-    <form class="sign-up-page-form" data-graphql-url={siteConfig.graphqlUrl} novalidate>
-      <FormField label="Email" name="sup-email" type="email" required autocomplete="email" />
-      <FormField label="Password" name="sup-password" type="password" required autocomplete="new-password" />
-      <FormField label="Confirm Password" name="sup-confirm" type="password" required autocomplete="new-password" />
-      <FormField label="Username (optional)" name="sup-username" type="text" autocomplete="username" />
-      <p class="sign-up-error" hidden aria-live="polite"></p>
-      <button type="submit" class="btn btn-primary form-btn">Create Account</button>
-    </form>
+    <SignUpForm />
 
     <div class="divider"><span>or sign up with</span></div>
     <div class="google-btn-wrap" id="google-signup-page-btn"></div>
@@ -28,33 +21,6 @@ import { siteConfig } from "../config/site";
     color: var(--muted);
     font-size: 0.95rem;
     margin-bottom: 1.5rem;
-  }
-
-  .sign-up-page-form {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-    max-width: 360px;
-  }
-
-  .sign-up-error {
-    color: var(--error);
-    margin: 0;
-    font-size: 0.9rem;
-  }
-
-  .form-btn {
-    align-self: flex-start;
-    border: none;
-    cursor: pointer;
-    font-size: 1rem;
-    font-family: inherit;
-    margin-top: 0.25rem;
-  }
-
-  .form-btn:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
   }
 
   .divider {
@@ -82,62 +48,32 @@ import { siteConfig } from "../config/site";
 </style>
 
 <script>
-  import { gqlSignUp, gqlSignInGoogle, getGoogleClientId } from "../utils/auth-graphql";
+  import { gqlSignInGoogle, friendlyAuthError } from "../utils/auth-graphql";
   import { loadGsi, initGoogleButton } from "../utils/google-auth";
   import { siteConfig } from "../config/site";
 
-  const form = document.querySelector<HTMLFormElement>(".sign-up-page-form")!;
-  const graphqlUrl = form.dataset.graphqlUrl!;
-  const errorEl = form.querySelector<HTMLParagraphElement>(".sign-up-error")!;
-  const submitBtn = form.querySelector<HTMLButtonElement>("button[type=submit]")!;
-
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const email = form.querySelector<HTMLInputElement>("#sup-email")!.value.trim();
-    const password = form.querySelector<HTMLInputElement>("#sup-password")!.value;
-    const confirm = form.querySelector<HTMLInputElement>("#sup-confirm")!.value;
-    const username = form.querySelector<HTMLInputElement>("#sup-username")!.value.trim() || undefined;
-
-    if (password !== confirm) {
-      errorEl.textContent = "Passwords do not match.";
-      errorEl.hidden = false;
-      return;
-    }
-
-    errorEl.hidden = true;
-    submitBtn.disabled = true;
-    submitBtn.textContent = "Creating account…";
-
-    try {
-      const result = await gqlSignUp(graphqlUrl, email, password, username);
-      if (result.ok) {
-        window.location.href = `${siteConfig.appUrl}/?token=${result.token}`;
-      } else {
-        errorEl.textContent = result.message;
-        errorEl.hidden = false;
-        submitBtn.disabled = false;
-        submitBtn.textContent = "Create Account";
-      }
-    } catch {
-      errorEl.textContent = "Unable to reach the sign-up service. Please try again.";
-      errorEl.hidden = false;
-      submitBtn.disabled = false;
-      submitBtn.textContent = "Create Account";
-    }
-  });
-
   const googleContainer = document.getElementById("google-signup-page-btn") as HTMLDivElement | null;
-  if (googleContainer) {
+  const googleClientId = siteConfig.googleClientId;
+  const errorEl = document.querySelector<HTMLParagraphElement>(".signup-error");
+
+  // Google needs a client ID from PUBLIC_GOOGLE_CLIENT_ID (the backend no longer exposes one).
+  if (googleContainer && googleClientId) {
     loadGsi()
-      .then(() => siteConfig.googleClientId || getGoogleClientId(graphqlUrl))
-      .then((clientId) => {
-        initGoogleButton(clientId, googleContainer, async (idToken) => {
-          const result = await gqlSignInGoogle(graphqlUrl, idToken);
-          if (result.ok) {
-            window.location.href = `${siteConfig.appUrl}/?token=${result.token}`;
-          } else {
-            errorEl.textContent = result.message;
-            errorEl.hidden = false;
+      .then(() => {
+        initGoogleButton(googleClientId, googleContainer, async (idToken) => {
+          try {
+            const result = await gqlSignInGoogle(siteConfig.graphqlUrl, idToken);
+            if (result.ok) {
+              window.location.href = `${siteConfig.appUrl}/?token=${result.token}`;
+            } else if (errorEl) {
+              errorEl.textContent = friendlyAuthError(result.message);
+              errorEl.hidden = false;
+            }
+          } catch {
+            if (errorEl) {
+              errorEl.textContent = "Unable to reach the sign-up service. Please try again.";
+              errorEl.hidden = false;
+            }
           }
         });
       })
