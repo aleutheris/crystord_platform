@@ -32,7 +32,8 @@ import { siteConfig } from "../config/site";
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
-    max-width: 360px;
+    /* Width is controlled by the parent so the fields match the sign-in fields in each context
+       (full-width in the home auth card; constrained by a wrapper on the standalone /sign-up page). */
   }
 
   .signup-step-verify {

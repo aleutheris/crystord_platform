@@ -3,6 +3,7 @@ type GsiLib = {
     id: {
       initialize(cfg: {
         client_id: string;
+        locale?: string;
         callback(response: { credential: string }): void;
       }): void;
       renderButton(parent: HTMLElement, cfg: object): void;
@@ -35,11 +36,15 @@ export function initGoogleButton(
 ): void {
   gsi()!.accounts.id.initialize({
     client_id: clientId,
+    locale: "en",
     callback: (response) => onIdToken(response.credential),
   });
+  // Icon-only button (just the Google logo) so it doesn't need to match the input width — Google
+  // caps a text button at 400px, which can never line up with wider full-width fields. This mirrors
+  // the working config in crystord_app (no `shape` — adding it renders a blank/white icon).
   gsi()!.accounts.id.renderButton(container, {
+    type: "icon",
     theme: "outline",
     size: "large",
-    width: container.offsetWidth || 360,
   });
 }

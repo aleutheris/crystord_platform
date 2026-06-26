@@ -9,7 +9,9 @@ import { siteConfig } from "../config/site";
     <h1>Create your Crystord account</h1>
     <p class="page-sub">Already have an account? <a href={siteConfig.appSignInUrl}>Sign in</a></p>
 
-    <SignUpForm />
+    <div class="signup-form-col">
+      <SignUpForm />
+    </div>
 
     <div class="divider"><span>or sign up with</span></div>
     <div class="google-btn-wrap" id="google-signup-page-btn"></div>
@@ -21,6 +23,11 @@ import { siteConfig } from "../config/site";
     color: var(--muted);
     font-size: 0.95rem;
     margin-bottom: 1.5rem;
+  }
+
+  /* Match the standalone /sign-in page (max-width 360) and the divider/Google width below. */
+  .signup-form-col {
+    max-width: 360px;
   }
 
   .divider {

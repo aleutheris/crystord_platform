@@ -21,6 +21,22 @@
   box-sizing: border-box;
 }
 
+/* Google Identity Services renders its sign-in button (and the logo SVG inside it) assuming the
+   default content-box sizing. The universal border-box reset above collapses that logo SVG to 0×0,
+   leaving a blank white button. Restore content-box inside the GSI button wrappers so the Google
+   logo renders. (Wrappers: .google-btn-wrap on the home + /sign-up pages, .sign-in-google on /sign-in.) */
+.google-btn-wrap *,
+.sign-in-google * {
+  box-sizing: content-box;
+}
+
+/* Center the Google sign-in button within its wrapper (matches crystord_app). */
+.google-btn-wrap,
+.sign-in-google {
+  display: flex;
+  justify-content: center;
+}
+
 body {
   margin: 0;
   font-family: "Source Sans 3", "Segoe UI", sans-serif;

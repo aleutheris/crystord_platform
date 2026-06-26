@@ -97,22 +97,17 @@ describe("initGoogleButton", () => {
     );
   });
 
-  it("uses container.offsetWidth as the button width", () => {
+  it("renders an icon-only button (no width, so it never needs to match the input width)", () => {
     const container = { offsetWidth: 420 } as HTMLElement;
     initGoogleButton("client-id", container, vi.fn());
     expect(renderButtonSpy).toHaveBeenCalledWith(
       container,
-      expect.objectContaining({ width: 420 })
+      expect.objectContaining({ type: "icon", theme: "outline", size: "large" })
     );
-  });
-
-  it("falls back to width 360 when offsetWidth is 0", () => {
-    const container = { offsetWidth: 0 } as HTMLElement;
-    initGoogleButton("client-id", container, vi.fn());
-    expect(renderButtonSpy).toHaveBeenCalledWith(
-      container,
-      expect.objectContaining({ width: 360 })
-    );
+    // No `width` (icon button) and no `shape` (adding it renders a blank icon — see crystord_app).
+    const cfg = renderButtonSpy.mock.calls[0][1] as Record<string, unknown>;
+    expect(cfg).not.toHaveProperty("width");
+    expect(cfg).not.toHaveProperty("shape");
   });
 
   it("invokes onIdToken with the credential from the GSI callback", () => {
